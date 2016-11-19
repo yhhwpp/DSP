@@ -1,0 +1,271 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../css/jquery.fancybox.css">
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox"></div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-campaign-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<!-- 搜索关键字 -->
+<div id="zones-up" class="zones-up">
+    <div class="zones-up-ct">
+        <span  class="am-close am-close-spin floater-close">×</span>
+        <table class="floatertb table table-striped table-bordered table-hover table-fixed-header" id="floatertb">
+            <thead>
+                <tr>
+                    <th width="220" class="up-text">搜索关键字</th>
+                    <th width="150">竞争力</th>
+                    <th width="130">加价金额</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade campaign-modal" id="js-campaign-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">查看广告</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal"></form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="js-check-campaign-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">审核广告</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="js-accept">接受投放</button>
+                <button type="button" class="btn btn-default" id="js-reject">暂不接受投放</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" name="platform">
+<input type="hidden" name="category">
+<input type="hidden" name="app_rank">
+<input type="hidden" name="status">
+<input type="hidden" name="mode">
+<input type="hidden" name="js-adtype">
+<script type="text-x-dot-template" id="tpl-adtype">
+    <ul class="nav nav-tabs js-adtype-tab">
+        <li role="app" <%? it == '' || it == '0' %> class="active" <%?%>><a href="?ad_type=0">应用推荐广告</a></li>
+        <li role="banner" <%? it == '1' %> class="active" <%?%>><a href="?ad_type=1">Banner广告</a></li>
+        <li role="feeds" <%? it == '2' %> class="active" <%?%>><a href="?ad_type=2">Feeds广告</a></li>
+        <li role="screen" <%? it == '3' %> class="active" <%?%>><a href="?ad_type=3">插屏广告</a></li>
+        <li role="appstore" <%? it == '71' %> class="active" <%?%>><a href="?ad_type=71">AppStore广告</a></li>
+    </ul>
+</script>
+
+<script type="text-x-dot-template" id="tpl-app">
+  <input type="hidden" value="<%=it.bannerid%>" name="bannerid">
+  <div class="campaign-modal">
+      <div class="form-group">
+          <label class="col-sm-3 control-label">应用:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static"><%=it.appinfos_app_name%></p>
+          </div>
+      </div>
+      <%##def.snippet:
+        <%#def.appothers%>
+      <!--
+      <div class="form-group">
+          <label class="col-sm-3 control-label">应用包:</label>
+          <div class="col-sm-9">
+          <%if (it.download_url && it.download_url.length > 0) {%>
+            <p class="form-control-static text-warning"><a href="<%=it.download_url%>" target="_blank">点击下载安装包</a></p>
+          <%} else {%>
+            <p class="form-control-static text-warning">请联系联盟客服线下传包</p>
+          <%}%>
+          </div>
+      </div>
+      -->
+      <div class="form-group">
+          <label class="col-sm-3 control-label">图标:</label>
+          <div class="col-sm-9">
+          <%if (it.appinfos_app_show_icon && it.appinfos_app_show_icon.length > 0) {%>
+            <p class="form-control-static icon-w text-warning">
+              <a href="<%=it.appinfos_app_show_icon%>" class="fancybox" alt="点击预览大图" title="点击预览大图">
+                <img src="<%=it.appinfos_app_show_icon%>"/>
+              </a>
+            </p>
+          <%}%>
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="col-sm-3 control-label">平台:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static"><%=LANG.platform_group[it.platform]%></p>
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="col-sm-3 control-label">计费类型:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static"><%=LANG.revenue_type[it.revenue_type]%></p>
+          </div>
+      </div>
+
+      <%? it.revenue_type != CONSTANT.revenue_type_cps%>
+          <div class="form-group">
+              <label class="col-sm-3 control-label">基础出价:</label>
+              <div class="col-sm-9">
+                <p class="form-control-static"><%=it.af_income%>&nbsp;元</p>
+              </div>
+          </div>
+          <div class="form-group">
+              <label class="col-sm-3 control-label">关键字加价:</label>
+              <div class="col-sm-4">
+                  <table class="floatertb table table-striped table-bordered table-hover table-fixed-header" id="floatertb">
+                    <thead>
+                        <tr>
+                            <th width="150">关键字</th>
+                            <th width="130">加价金额</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <%if (it.keywords && it.keywords.length > 0) {%>
+                      <%for (var i = 0, j = it.keywords.length; i < j; i++) {%>
+                        <tr><td><%=it.keywords[i].keyword%></td><td><%=it.keywords[i].price_up%></td></tr>
+                      <%}%>
+                    <%}%>
+                    </tbody>
+                  </table>
+              </div>
+          </div>
+      <%?%>
+
+      <div class="form-group">
+          <label class="col-sm-3 control-label">应用介绍:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static"><%=it.description%></p>
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="col-sm-3 control-label">一句话简介:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static"><%=it.profile%></p>
+          </div>
+      </div>
+      <%if (it.appinfos_update_des && it.appinfos_update_des.length > 0) {%>
+      <div class="form-group">
+          <label class="col-sm-3 control-label">更新说明:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static"><%=it.appinfos_update_des%></p>
+          </div>
+      </div>
+      <%}%>
+      <div class="form-group">
+          <label class="col-sm-3 control-label">应用截图:</label>
+          <div class="col-sm-9">
+            <p class="form-control-static material-w">
+            <%if (it.appinfos_images) {%>
+                <%var oImages = it.appinfos_images;%>
+                <% for(var key in oImages) { %>
+                    <%if (oImages[key] && oImages[key].url && oImages[key].url.length > 0) {%>
+                        <span class="text-warning" style="display:block;margin-bottom:4px;">
+                          <%=oImages[key].width%>*<%=oImages[key].height%>
+                        </span>
+                        <%for(var j = 0; j < oImages[key].url.length; j++) {%>
+                            <span>
+                              <a href="<%=oImages[key].url[j]%>" class="fancybox" alt="点击预览大图" title="点击预览大图" rel="gallery">
+                                <img src="<%=oImages[key].url[j]%>" alt="点击预览大图" />
+                              </a>
+                            </span>
+                        <%}%>
+                    <%}%>
+                <% } %>
+            <%}%>
+            </p>
+          </div>
+      </div>
+  </div>
+  <%if(it.mode=='1' || it.mode=='3') {%>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">类别:</label>
+        <div class="col-sm-9">
+            <div id="category-list"></div>
+        </div>
+    </div>
+   #%>
+  <%#def.snippet%>
+  <div class="form-group" <%if(it.isEdit){%>style="display:none;"<%}%>>
+      <label class="col-sm-3 control-label">质量等级:</label>
+      <div class="col-sm-9">
+          <select class="form-control" name="app_rank" style="width:120px;">
+          <%if(it.rankInfo) {%>
+            <%for (var key in it.rankInfo) {%>
+              <option value="<%=key%>"><%=it.rankInfo[key]%></option>
+            <%}%>
+          <%}%>
+          </select>
+      </div>
+  </div>
+  <%}%>
+</script>
+<script type="text-x-dot-template" id="tpl-app-package">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">应用显示名称:</label>
+        <div class="col-sm-9">
+          <p class="form-control-static"><%=it.products_show_name%></p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">应用包:</label>
+        <div class="col-sm-9">
+        <%if (it.download_url && it.download_url.length > 0) {%>
+          <p class="form-control-static text-warning"><a href="<%=it.download_url%>" target="_blank">点击下载安装包</a></p>
+        <%} else {%>
+          <p class="form-control-static text-warning">请联系联盟客服线下传包</p>
+        <%}%>
+        </div>
+    </div>
+</script>
+<script type="text-x-dot-template" id="tpl-appstore-addr">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">应用显示名称:</label>
+        <div class="col-sm-9">
+          <p class="form-control-static"><%=it.products_show_name%></p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">推广链接:</label>
+        <div class="col-sm-9">
+            <p class="form-control-static text-warning"><a href="<%=it.link_url%>" target="_blank"><%=it.link_url%></a></p>
+        </div>
+    </div>
+</script>
+<!--#include virtual="/bos-front/dev/trafficker/template/category-common.html"-->
+<script type="text-x-dot-template" id="tpl-view-campaign"></script>
+<!-- 单元测试
+<script src="http://mockjs.com/dist/mock.js"></script>
+<script src="../../data/trafficker/campaign.js"></script>
+-->
+
+<script src="../../js/plugins/jquery.fancybox.pack.js"></script>
+<script src="../../js/common/editable.js"></script>
+<script src="../../js/common/modal.js"></script>
+<script src="../../js/common/validate.js"></script>
+<script src="../../js/common/common.js"></script>
+<script src="../../js/common/lang.js"></script>
+<script src="../js/category-edit.js"></script>
+<script src="../../js/common/constant.js"></script>
+<script src="../js/trafficker-common.js"></script>
+<script src="../js/trafficker-category.js"></script>
+<script src="../js/campaign-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

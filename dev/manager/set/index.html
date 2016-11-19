@@ -1,0 +1,91 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div id="system-set">
+    <ul class="nav nav-tabs" role="tablist">
+    </ul>
+    <div class="tab-content">
+    </div>
+    <button  class="btn btn-primary btn-lg system-update" type="button"> 更新 </button>
+</div>
+
+<script type="text-x-dot-template" id="tpl-tabs-li">
+    <% for(var i=0; i < it.length; i ++) { %>
+        <li role="presentation" <% if (i === 0) {%> class="active" <% }%> >
+            <a  role="tab" data-toggle="tab"><%=it[i].label%></a>
+        </li>
+    <% } %>
+</script>
+<script type="text-x-dot-template" id="tpl-tabs-con">
+    <% for(var i=0; i < it.length; i ++) { %>
+        <div role="tabpanel" class="tab-pane <% if (i === 0) {%> active <% }%>" >
+            <form class="form-horizontal" style="width:800px;padding:20px">
+            <% for(var j = 0; j < it[i].data.length; j++) { %>
+                <% var list = it[i].data[j],dir = list.store_dir || ''; %>
+                <div class="form-group"  data-code=<%=list.code%>>
+                    <label for="" class="col-sm-3 control-label" data-code=<%=list.code%>><%=list.label%></label>
+                    <div class="col-sm-9 store-dir" data-dir="<%=dir%>">
+                        <% if (list.type === 'text' || list.type === 'password') {%>
+                        <input type="<%=list.type%>" class="form-control" name=<%=list.code%>  check-type="required" required-message="请输入<%=list.label%>" value=<%=list.value%> >
+                        <% } else if(list.type === 'select') {%>
+                            <select class="form-control" name=<%=list.code%>>
+                                <% for(k in list.store_range ) {%>
+                                    <option value=<%=k%> <% if (k === list.value) {%> selected <% }%>> <%=list.store_range[k]%></option>
+                                <%}%>
+                            </select>
+                        <% } else if (list.type === 'radio') {%>
+                            <% for(k in list.store_range ) {%>
+                                <label class="radio-inline">
+                                    <input type="radio" name="<%=list.code%>" value=<%=k%> name=<%=list.code%> <% if (k === list.value) {%> checked <% }%>> <%=list.store_range[k]%>
+                                </label>
+                            <%}%>
+                        <% }else if(list.type === 'checkbox'){ %>
+                            <% for(k in list.store_range ) {%>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name=<%=list.code%> value=<%=k%> <% if ($.inArray(parseInt(k, 10), list.value) >= 0) {%> checked <% }%>> <%=list.store_range[k]%>
+                                </label>
+                            <%}%>
+                        <%} else if (list.type === 'json'){ %>
+                            <% var label = JSON.parse(list.store_range), sublist = JSON.parse(list.value) ;%>
+                            <%if(list.code === 'ad_spec') {%>
+                                <%for (k in sublist ) {%>
+                                    <% var adSpec = sublist[k]; %>
+                                    <div class="form-group spec" data-adtype=<%=k%>>
+                                        <label class="col-sm-3 control-label"><%=label[k]%></label>
+                                        <div class="col-sm-9"  >
+                                            <div class="spec-container">
+                                                <%for( key in adSpec ) {%>
+                                                    <% var _w = adSpec[key].toString().split('*')[0],_h = adSpec[key].toString().split('*')[1]; %>
+                                                    <div class="row form-group spec-list" data-type=<%=key%>>
+                                                        <div class="col-sm-4"><input type="text" class="form-control" value=<%=_w%> check-type="number required" number-message="正确的数"  /></div>
+                                                        <div class="col-sm-4"><input type="text" class="form-control" value=<%=_h%> check-type="number required" number-message="正确的数"/></div>
+                                                        <div class="col-sm-1 delete">×</div>
+                                                    </div>
+                                                <%}%>
+                                            </div>
+                                            <%if (k != CONSTANT.ad_type_feeds || (k === CONSTANT.ad_type_feeds && adSpec.length === 0)) {%>
+                                                <button class="btn btn-primary add" type="button">增加</button>
+                                            <%}%>
+                                        </div>
+                                    </div>
+                                <%}%>
+                            <%} else {%>
+                                <%for (k in sublist ) {%>
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-3 control-label"><%=label[k]%></label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name=<%=k%> value=<%=sublist[k]%> check-type="required" required-message="请输入<%=list.label%>"  >
+                                        </div>
+                                    </div>
+                                <%}%>
+                            <%}%>
+                        <%}%>
+                    </div>
+                </div>
+            <% } %> 
+            </form>
+        </div>
+    <% } %>
+</script>
+
+<script src="../../js/common/validate.js"></script>
+<script src="../js/system-set.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

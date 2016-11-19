@@ -1,0 +1,70 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div class="tf-receipt">
+    <!-- 余额 -->
+    <div class="overall">
+        <ul class="fl">
+            <li>
+                充值账户余额（元）：
+                <span class="balance">loading...</span>
+            </li>
+            <li>
+                赠送账户余额（元）：
+                <span class="gift">loading...</span>
+            </li>
+        </ul>
+    </div>
+    <!-- Tab项 -->
+    <div class="tabbox"></div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-balance-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<script type="text/x-dot-template" id="tpl-overall">
+        <%? it && it.res === 0 && it.obj %>
+            <ul class="fl">
+                <li>
+                    充值账户余额（元）：
+                    <span class="balance"><%=(it.obj.balance-it.obj.gift).toFixed(2)%></span>
+                </li>
+                <li>
+                    赠送账户余额（元）：
+                    <span class="gift"><%=it.obj.gift%></span>
+                </li>
+            </ul>
+        <%??%>
+            <ul class="fl">
+                <li>
+                    充值账户余额（元）：
+                    <span class="balance">loading...</span>
+                </li>
+                <li>
+                    赠送账户余额（元）：
+                    <span class="gift">loading...</span>
+                </li>
+            </ul>
+        <%?%>
+        <a href="pay.html" class="btn btn-primary"><i class="fa fa-money"></i>
+            充值
+        </a>
+        <a href="invoice.html" class="btn btn-primary"><i class="fa fa-money"></i>
+            申请发票
+        </a>
+</script>
+<script type="text-x-dot-template" id="tpl-balance">
+        <ul class="nav nav-tabs js-balanceTab">
+          <li role="recharge" <%? it == '' || it == 'recharge' %> class="active" <%?%>><a href="?list=recharge">充值账户明细</a></li>
+          <li role="gift" <%? it == 'gift' %> class="active" <%?%>><a href="?list=gift">赠送账户明细</a></li>
+          <li role="invoice_history" <%? it == 'invoice_history' %> class="active" <%?%>><a href="?list=invoice_history">发票申请记录</a></li>
+        </ul>
+</script>
+<script type="text-x-dot-template" id="tpl-recharge-money">
+        <table class="rechar-money-table rechar-money-table_<%=it.invoice_id%>">
+            <tr><th>充值时间</th><th>类型</th><th>发生金额</th></tr>
+            <% for(var i = 0, j = it.list.length; i < j; i++) { %>
+                <tr><td><%=it.list[i].create_time%></td><td><%=it.list[i].pay_type_label%></td><td><%=it.list[i].amount%></td></tr>
+            <% } %>
+        </table>
+</script>
+<script src="../js/balance-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

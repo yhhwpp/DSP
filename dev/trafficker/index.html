@@ -1,0 +1,50 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+
+    <div id="overview">
+        <!-- 整体情况 -->
+        <div>
+            <div class="overview-header">
+                <h2>30天收入概览</h2>
+            </div>
+            <div id="chart-30-days" class="overview-chart js-chart"></div>
+        </div>
+        <div class="overview-half right">
+            <div id="chart-zone-header" class="overview-header">
+                <h2>广告位收入分布
+                    <a href="javascript:void(0);" data-day-type="5" class="cur">累计</a>
+                    <a href="javascript:void(0);" data-day-type="4">上月</a>
+                    <a href="javascript:void(0);" data-day-type="3">本月</a>
+                    <a href="javascript:void(0);" data-day-type="2">上周</a>
+                    <a href="javascript:void(0);" data-day-type="1">本周</a>
+                </h2>
+            </div>
+            <div id="chart-zone" class="overview-pie js-chart"></div>
+        </div>
+        <div class="overview-half">
+            <div id="chart-client-header" class="overview-header">
+                <h2>广告消耗分布
+                    <a href="javascript:void(0);" data-day-type="5" class="cur">累计</a>
+                    <a href="javascript:void(0);" data-day-type="4">上月</a>
+                    <a href="javascript:void(0);" data-day-type="3">本月</a>
+                    <a href="javascript:void(0);" data-day-type="2">上周</a>
+                    <a href="javascript:void(0);" data-day-type="1">本周</a>
+                </h2>
+            </div>
+            <div id="chart-client" class="overview-pie js-chart"></div>
+        </div>
+    </div>
+
+    <script id="tpl-line-chart-tooltip" type="text/x-kendo-template">
+        <div class="tpl-chart-tootip">
+            <p>#: Date.parse(category).toString("yyyy-MM-dd") #</p>
+            <p>收入：#: dataItem.revenue ? kendo.toString(+dataItem.revenue, 'n2') : 0 #元</p>
+            <p>CPC：#: dataItem.cpc_revenue ? kendo.toString(+dataItem.cpc_revenue, 'n2') : 0 #元</p>
+            <p>CPD：#: dataItem.cpd_revenue ? kendo.toString(+dataItem.cpd_revenue, 'n2') : 0 #元</p>
+        </div>
+    </script>
+
+    <script src="../js/plugins/date.js"></script>
+    <script src="js/index.js" ></script>
+
+
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

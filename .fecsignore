@@ -1,0 +1,12 @@
+dev/js/plugins/
+dev/site/domain/
+demo/
+demo.html
+dev/site/login.html
+dev/fis-conf.js
+dev/js/common/editable.js
+dev/ckeditor/
+
+dev/css/jquery.dataTables.css
+dev/css/jquery.fancybox.css
+dev/css/bootstrap-multiselect.css

@@ -1,0 +1,199 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../css/jquery.fancybox.css">
+<link href="../../css/bootstrap-datepicker3.min.css" rel="stylesheet">
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox" id="js-activity-tab"></div>
+    <div class="table-ctl" id="js-add-btn">
+    </div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-activity-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<div class="modal fade" id="js-activity-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">发布直客广告主活动</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal"></form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="js-publish-btn">发布</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="js-preview-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="js-recipient-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">默认收件人</h4>
+            </div>
+            <div class="modal-body" style="max-height: 600px; overflow-y: auto">
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="role" value="A">
+<script type="text-x-dot-template" id="tpl-add-btn">
+    <%if (it.tab === 'advertiser') {%>
+    <button type="button" class="btn btn-primary pull-right" id="js-add-advertiser">+ 发布直客广告主活动</button>
+    <%}%>
+
+    <%if (it.tab === 'trafficker') {%>
+    <button type="button" class="btn btn-primary pull-right" id="js-add-trafficker">+ 发布媒体商活动</button>
+    <%}%>
+</script>
+<script type="text-x-dot-template" id="tpl-activity-notice-tab">
+    <ul class="nav nav-tabs">
+        <%if (1 === it.report.bDaily) {%>
+            <li type="1" <%if(it.tab === 'dailyReport'){%>class="active"<%}%>>
+                <a href="../activity/index.html?tab=dailyReport">BiddingOS日报</a>
+            </li>
+        <%}%>
+
+        <%if (1 === it.report.bWeekly) {%>
+            <li type="2" <%if(it.tab === 'weeklyReport'){%>class="active"<%}%>>
+                <a href="../activity/index.html?tab=weeklyReport">BiddingOS周报</a>
+            </li>
+        <%}%>
+
+        <li role="advertiser" <%if(it.tab === 'advertiser'){%>class="active"<%}%>>
+            <a href="../activity/index.html?tab=advertiser">直客广告主-活动</a>
+        </li>
+
+        <li role="trafficker" <%if(it.tab === 'trafficker'){%>class="active"<%}%>>
+            <a href="../activity/index.html?tab=trafficker">媒体商-活动</a>
+        </li>
+        <li role="advertiser">
+            <a href="../notice/index.html?tab=advertiser">直客广告主-站内信</a>
+        </li>
+        <li role="trafficker">
+            <a href="../notice/index.html?tab=trafficker">媒体商-站内信</a>
+        </li>
+        <li role="advertiser">
+            <a href="../notice/mail.html?tab=advertiser">直客广告主-邮件</a>
+        </li>
+    </ul>
+</script>
+<!-- 新建、修改活动 -->
+<script type="text-x-dot-template" id="tpl-add-activity">
+    <input type="hidden" name="id" data-name="id" value="<%=it.modelInfo.id%>">
+    <div class="form-group required">
+        <label class="col-sm-2 control-label">活动名称:</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="title" data-name="title" value="<%=it.modelInfo.title%>"
+                <%if (it.modelInfo.role === '' || it.modelInfo.role === 'advertiser') {%>placeholder="如：充80万送20万大优惠"<%}%> maxlength="30"
+                check-type="required" required-message="请填写活动名称">
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-2 control-label">活动图片:</label>
+        <div class="col-sm-3">
+            <button id="js-upload" class="btn btn-primary" type="button">上传</button>
+            <div class="js-des-thumb" id="js-des-thumb">
+            <%if(it.modelInfo.imageurl) {%>
+                <img src="<%=it.modelInfo.imageurl%>" width="120" height="auto"/><i class="fa fa-times-circle"></i>
+            <%}%>
+            </div>
+            <input type="hidden" name="imageurl" data-name="imageurl" value="<%=it.modelInfo.imageurl%>"
+                check-type="required" required-message="请上传活动图片" />
+        </div>
+        <div class="col-sm-7"><p class="form-control-static text-muted">（请上传小于2M，格式为png,gif,jpg的图片,宽度1000px,高度150px;）</p></div>
+    </div>
+    <div class="form-group required">
+        <label for="description" class="col-sm-2 control-label">活动规则说明:</label>
+        <div class="col-sm-6">
+            <textarea class="form-control" name="content" data-name="content" value="<%=it.modelInfo.content%>"
+                maxlength="1000" rows="6" check-type="required" required-message="请填写活动规则说明"><%=it.modelInfo.content%></textarea>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label for="description" class="col-sm-2 control-label">开始日期:</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="startdate" data-name="startdate"
+                check-type="required" required-message="请选择开始日期" value="<%=it.modelInfo.startdate%>"
+                data-provide="datepicker"
+                data-date-format="yyyy-mm-dd"
+                data-date-start-date="0d"
+                data-date-language="zh-CN"
+                data-date-today-btn="true"
+                data-date-clear-btn="true"
+                data-date-today-highlight="true"
+                data-date-autoclose="true">
+        </div>
+    </div>
+    <div class="form-group required">
+        <label for="description" class="col-sm-2 control-label">结束日期:</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="enddate" data-name="enddate" value="<%=it.modelInfo.enddate%>"
+                check-type="required" required-message="请选择结束日期"
+                data-provide="datepicker"
+                data-date-format="yyyy-mm-dd"
+                data-date-start-date="0d"
+                data-date-today-btn="true"
+                data-date-clear-btn="true"
+                data-date-today-highlight="true"
+                data-date-language="zh-CN"
+                data-date-autoclose="true">
+        </div>
+    </div>
+</script>
+<!-- 预览活动 -->
+<script type="text-x-dot-template" id="tpl-activity-detail">
+    <div class="actDetail" style="font-family:\5FAE\8F6F\96C5\9ED1;margin:0 auto;">
+        <div class="actDetailPic">
+            <% if(it.imageurl && it.imageurl.length > 0) { %>
+            <img alt="" src="<%=it.imageurl%>" style="width:800px;height:auto">
+            <% } %>
+        </div>
+        <h1 style="font-weight:bold; font-size:20px"><%=it.title%></h1>
+        <div class="actDate"> <strong>开始时间：</strong>
+            <%=it.startdate%>
+        </div>
+        <div class="actDate"> <strong>结束时间：</strong>
+            <%=it.enddate%>
+        </div>
+        <div class="actDetailContent" style="padding:4px 0; margin-top:10px;font-size:14px;line-height:25px">
+            <p><%=it.content%></p>
+        </div>
+    </div>
+</script>
+<!-- 新建、修改活动 -->
+<script type="text-x-dot-template" id="tpl-set-recipient">
+    <%if (it.obj && it.obj.length > 0) {%>
+        <%for(var i = 0; i<it.obj.length; i++) {%>
+            <label class="checkbox-inline">
+                <input type="checkbox" value="<%=it.obj[i].user_id%>"> <%=it.obj[i].username%>
+            </label>
+        <%}%>
+    <%}%>
+</script>
+<script src="../../js/plugins/bootstrap-datepicker.min.js"></script>
+<script src="../../js/plugins/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="../../js/plugins/jquery.fancybox.pack.js"></script>
+<script src="../../js/plugins/plupload.full.min.js"></script>
+<script src="../../js/plugins/qiniu.js"></script>
+<script src="../../js/common/validate.js"></script>
+<script src="../../js/common/basemodel.js"></script>
+<script src="../model/activitymodel.js"></script>
+<script src="../js/activity-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

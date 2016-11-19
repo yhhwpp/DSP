@@ -1,0 +1,188 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link href="../../css/bootstrap-select.min.css" rel="stylesheet">
+<link href="../../css/kendo.common-material.min.css" rel="stylesheet">
+<link href="../../css/kendo.material.min.css" rel="stylesheet">
+<!--STYLE_PLACEHOLDER-->
+<div id="nav-menu-wrapper" class="tabbox">
+    <span class="btn-m cur" data-revenue-type="0" onclick="">安装包下载</span>
+    <span class="btn-m" data-revenue-type="1" onclick="">链接推广</span>
+</div>
+
+<div class="report-tbs">
+    <label>开始时间</label>
+    <input type="text" class="report-in" id="date-start" value="">
+    <label>结束时间</label>
+    <input type="text" class="report-in" id="date-end" value="">
+    <button id="query" onclick="" class="btn btn-primary" type="button"><i class="fa fa-search-plus"></i> 查 询</button>
+    <span class="js-day-select date-select-key">
+        <a data-type="select-day" data-day-type="1" class="btn btn-default change-status" href="javascript:void(0);">今天</a>
+        <a data-type="select-day" data-day-type="2" class="btn btn-default change-status" href="javascript:void(0);">昨日</a>
+
+        <a data-type="select-day" data-day-type="3" style="display:none" class="btn btn-default change-status" href="javascript:void(0);">前一天</a>
+        <a data-type="select-day" data-day-type="4" style="display:none" class="btn btn-default change-status" href="javascript:void(0);">后一天</a>
+
+        <a data-type="select-day" data-day-type="5" class="btn btn-default change-status" href="javascript:void(0);">最近7天</a>
+        <a data-type="select-day" data-day-type="6" class="btn btn-default change-status" href="javascript:void(0);">上周</a>
+        <a data-type="select-day" data-day-type="7" class="btn btn-default change-status" href="javascript:void(0);">本月</a>
+        <a data-type="select-day" data-day-type="8" class="btn btn-default change-status" href="javascript:void(0);">历史12个月</a>
+    </span>
+</div>
+<div class="row select-wripper">
+    <div class="col-xs-2">
+        <select id="select-item" class="form-control" title="请选择">
+        </select>
+    </div>
+    <div class="col-xs-2">
+        <select id="select-major" class="form-control">
+        </select>
+    </div>
+    <div class="col-xs-2">
+        <select id="select-secondary" class="form-control">
+        </select>
+    </div>
+    <div class="col-xs-2">
+        <select id="select-three-level" class="form-control">
+        </select>
+    </div>
+    <span class="status-tip text-warning">提示：有效数据三个工作日内更新</span>
+</div>
+<div id="chart"></div>
+<div class="table-header-wrapper">
+    <span id="by-time" class="tab active"> 按时间</span><span>&nbsp;|&nbsp;</span><span id="by-campaign" class="tab">按广告</span>
+    <span id="data-search-wrapper" class="export-excel" style="display:none;">搜索：<input id="data-search" type="text"></span>
+    <span id="export-report-btn" class="export-excel"><a class="btn btn-primary" href="javascript:void(0);" onclick=""><i class="fa fa-file-excel-o"></i> 导出报表</a></span>
+    <span id="daily-export-report-btn" class="export-excel" style="display:none;"><a class="btn btn-primary" href="javascript:void(0);" onclick=""><i class="fa fa-file-excel-o"></i> 导出每日报表</a></span>
+</div>
+<div id="treelist" style="display:none;"></div>
+<div id="page-wripper" style="display:none;"></div>
+<div id="day-grid"></div>
+<div class="select-pagesize-wripper">
+    <span>每页显示
+        <select id="select-grid-pagesize">
+            <option value="2">2</option>
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        条记录
+    </span>
+</div>
+
+<script id="tpl-page" type="text/x-dot-template">
+    <div class="k-pager-wrap k-widget k-floatwrap" data-role="pager">
+        <a href="javascript:void(0);" title="首页" class="k-link k-pager-nav k-pager-first <% if(it.currentPage<=1){ %> k-state-disabled <%}%>" data-page="1" tabindex="-1">
+            <span class="k-icon k-i-seek-w">首页</span>
+        </a>
+        <a href="javascript:void(0);" title="上一页" class="k-link k-pager-nav <% if(it.currentPage<=1){ %> k-state-disabled <%}%>" data-page="<%=(it.currentPage-1)>0 ? it.currentPage-1 : 1%>" tabindex="-1">
+            <span class="k-icon k-i-arrow-w">上一页</span>
+        </a>
+        <ul class="k-pager-numbers k-reset">
+            <% for(var i=it.start; i<=it.end; i++){ %>
+                <% if(i==it.currentPage) {%>
+                    <li>
+                        <span class="k-state-selected"><%=i%></span>
+                    </li>
+                <%} else { %>
+                    <li>
+                        <a tabindex="-1" href="javascript:void(0);" class="k-link" data-page="<%=i%>">
+                            <%=i%>
+                        </a>
+                    </li>
+                <%}%>
+            <%}%>
+        </ul>
+        <a href="javascript:void(0);" title="下一页" class="k-link k-pager-nav <% if(it.currentPage>=it.totalPage){ %> k-state-disabled <%}%>" data-page="<%=(it.currentPage+1)<it.totalPage ? it.currentPage+1 : it.totalPage%>" tabindex="-1">
+            <span class="k-icon k-i-arrow-e">下一页</span>
+        </a>
+        <a href="javascript:void(0);" title="尾页" class="k-link k-pager-nav k-pager-last <% if(it.currentPage>=it.totalPage){ %> k-state-disabled <%}%>" data-page="<%=it.totalPage%>" tabindex="-1">
+            <span class="k-icon k-i-seek-e">尾页</span>
+        </a>
+        <% if (it.totalNO > 0) { %>
+            <span class="k-pager-info k-label">显示条目 <%=(it.currentPage-1)*it.pageSize+1%> - <%=(it.currentPage*it.pageSize)<it.totalNO?it.currentPage*it.pageSize:it.totalNO%> 共 <%=it.totalNO%></span>
+        <%}%>
+    </div>
+</script>
+<script id="tpl-chart-tooltip" type="text/x-kendo-template">
+    # var format = series.mformat;
+    if (Stat.selectedThreeLevel === 'all' && series.type === 'column' ) {
+        var view = Stat.seriesDataSource.view();
+        var tmp = null;
+        var curDate = Date.parse(data.category.toString('yyyy-MM-dd')); // 直接复制对象，后面日期累加时，原对象也会累加
+        var dataItem = {};
+        var summary = {};
+        var field = series.field;
+        var itemInfo = Stat.oChartInfo.ofItem[field];
+        var val = 0;
+        for (var i = 0, l = view.length; i < l; i++) {
+            tmp = view[i];
+            if (Date.parse(tmp.value).compareTo(curDate) === 0) { 
+                dataItem = tmp.aggregates;
+                break;
+            }
+        }
+        for (var key in dataItem) {
+            if (dataItem.hasOwnProperty(key)) {
+                summary[key] = dataItem[key].sum;
+            }
+        }
+        if (itemInfo.field_type === 'basics') {
+            val = summary[field];
+        }
+        else {
+            val = Stat.fnCalculate(summary, itemInfo.arithmetic);
+        }
+
+        val = kendo.toString(val, format);
+    #
+        <p class="tpl-tootip-text-left">#: series.name ? (series.name + '(' + series.fieldName + '): ' + kendo.toString(value, format)) : (series.fieldName + ':' + kendo.toString(value, format)) #</p>
+        <p class="tpl-tootip-text-left">#: '总(' + series.fieldName + '): ' + val #</p>
+    # } else { #
+        <p class="tpl-tootip-text-left">#: series.name ? (series.name + '(' + series.fieldName + '): ' + kendo.toString(value, format)) : (series.fieldName + ':' + kendo.toString(value, format)) #</p>
+    # } #
+</script>
+<script src="../../js/plugins/bootstrap-select.js"></script>
+<!-- public js -->
+<script src="../../js/plugins/kendo.core.min.js"></script>
+<script src="../../js/plugins/kendo.data.min.js"></script>
+<script src="../../js/plugins/kendo.userevents.min.js"></script>
+
+<!-- datepicker js -->
+<script src="../../js/plugins/kendo.calendar.min.js"></script>
+<script src="../../js/plugins/kendo.datepicker.min.js"></script>
+
+<!-- chart js -->
+<script src="../../js/plugins/kendo.color.min.js"></script>
+<script src="../../js/plugins/kendo.drawing.min.js"></script>
+<script src="../../js/plugins/kendo.dataviz.core.min.js"></script>
+<script src="../../js/plugins/kendo.dataviz.themes.min.js"></script>
+<script src="../../js/plugins/kendo.dataviz.chart.min.js"></script>
+
+<!-- treelist js -->
+<script src="../../js/plugins/kendo.popup.min.js"></script>
+<script src="../../js/plugins/kendo.dom.min.js"></script>
+<script src="../../js/plugins/kendo.columnsorter.min.js"></script>
+<script src="../../js/plugins/kendo.editable.min.js"></script>
+<script src="../../js/plugins/kendo.numerictextbox.min.js"></script>
+<script src="../../js/plugins/kendo.list.min.js"></script>
+<script src="../../js/plugins/kendo.dropdownlist.min.js"></script>
+<script src="../../js/plugins/kendo.binder.min.js"></script>
+<script src="../../js/plugins/kendo.filtermenu.min.js"></script>
+<script src="../../js/plugins/kendo.menu.min.js"></script>
+<script src="../../js/plugins/kendo.columnmenu.min.js"></script>
+<script src="../../js/plugins/kendo.selectable.min.js"></script>
+<script src="../../js/plugins/kendo.resizable.min.js"></script>
+<script src="../../js/plugins/kendo.draganddrop.min.js"></script>
+<script src="../../js/plugins/kendo.treelist.min.js"></script>
+
+<!-- grid js -->
+<script src="../../js/plugins/kendo.pager.min.js"></script>
+<script src="../../js/plugins/kendo.grid.min.js"></script>
+
+<script src="../../js/plugins/kendo.culture.zh-CN.min.js"></script>
+<script src="../../js/plugins/kendo.messages.zh-CN.min.js"></script>
+
+<script src="../../js/plugins/date.js"></script>
+<script src="../js/stat-index.js"></script>
+<!--SCRIPT_PLACEHOLDER-->
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

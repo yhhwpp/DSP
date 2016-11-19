@@ -1,0 +1,64 @@
+.wrap{
+width: 100%;bottom: 0px;background: #333;color: #fff; height:95px;left: 0px;font: 12px/1.5 Verdana,"5B8B体",sans-serif;
+font-size:12px;}
+.wrap_top{width: 100%; height:5px; background:#333;}
+.wrap_main{width:1024px;margin:0 auto;}
+.wrap_logo{ float:left; width:166px; height:43px; margin-top:30px; }
+.wrap_a{ float:left; width:500px; height:55px; margin-top:28px; color:#fff; font-size:12px; margin-left:160px; line-height:55px;}
+/*重置样式*/
+a{transition:background-color 300ms}
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, fieldset, lengend, button, input, textarea, th, td, form,span,img{ margin: 0; padding:0;}
+fieldset,img {border:0 none;}
+body,button, input, select, textarea{font: 12px/1.6 Verdana,"\5B8B\4F53", sans-serif;color:#4e4e4e;outline: 0;background: # none repeat scroll 0% 0%; }
+input, select{ vertical-align:middle;}
+ul, ol { list-style: none outside none;}
+h1,h2,h3,h4{ font-size:12px; font-weight:normal;font-family: \5FAE\8F6F\96C5\9ED1;}
+a{ text-decoration:none;color:#404040;}
+a:hover{ color:#c52720; text-decoration:none;}
+area{outline: none}
+.loginyz im{border-radius:5px;}
+/*定位*/
+.tl { text-align:left;}
+.tr { text-align:right;}
+.tc { text-align:center;}
+.fl{ float:left; display:inline;}
+.fr{ float:right; display:inline;}
+.fix:after {visibility: hidden;display: block;font-size: 0;content: " ";clear: both;height: 0;}
+.fix { display: inline-block;}
+html[xmlns] .fix { display: block;}
+* html .fix { height: 1%;}
+.clear{ clear:both; height:0; overflow:hidden;}
+.mt10{margin-top: 10px;}
+.mt20{margin-top: 20px;}
+.mt40{margin-top: 40px;}
+.index {font: 12px/1.6 Verdana,"\5B8B\4F53", sans-serif;color:#4e4e4e;outline: 0}
+.index .w{width: 1024px; margin: 0 auto;}
+.index .header{height: 85px;overflow: hidden;background: #000; background:url(../images/top_bj_im.jpg)}
+.index .header h1{width: 210px; height: 69px;overflow: hidden;float: left;margin-top: 10px;}
+.index .header .email a{float: right;font-family: \5FAE\8F6F\96C5\9ED1;font-size: 15px;color: #131313;padding: 28px 0;}
+.index .header .email a:hover{text-decoration: underline;}
+.index .banner{height: 885px;background:#031523 url(itools-banner.jpg) center top no-repeat;color: #000;}
+.index .banner .bannerCon{float: left;width: 485px;padding-top: 44px;font-family: \5FAE\8F6F\96C5\9ED1;color: #000;font-size: 18px;line-height: 1.8;}
+.index .banner .bannerCon h4{font-weight: bold;font-size: 24px;padding: 24px 0 9px 0;}
+.index .banner .bannerCon h4 span{font-weight: normal;font-size: 20px;text-transform:uppercase;}
+.index .banner a.more{display: block;width: 223px;height: 62px;margin-top: 22px;}
+.index .login{background: #fff;float: right;margin-top:230px;width: 290px;padding: 10px 20px 2px;height: 358px;overflow: hidden;border-radius:20px;}
+.index .login h3{font-size: 20px;color: #000;padding: 15px 8px;}
+.index .login div{margin-bottom: 16px;overflow: hidden;}
+.index .loginIn{background-color: #fff;border: none;padding: 10px 10px;height: 20px;line-height: 20px;width: 268px;font-size: 16px;border: 1px solid #d9d9d9;}
+.index .loginIn:-moz-placeholder-moz-placeholder {color: #d8d8d8;}
+.index .loginIn:-ms-input-placeholder { color: #d8d8d8;}
+.index .loginIn::-webkit-input-placeholder{color: #d8d8d8;}
+.index .loginName{width: 41px;height: 41px;display: block;float: left;}
+.index .loginPassword{width: 41px;height: 41px;display: block;float: left;}
+.index .loginverfIn{background-color: #fff;width: 122px;float: left;}
+.index .loginyz{display: block;float: left;margin: 0 10px}
+.index .loginbt{height: 42px;background-color: #ff549f;color: #fff;border-radius: 8px;font-size: 20px; letter-spacing:4px;width: 290px;margin-top: 20px; cursor: pointer;border: none;font-family: \5FAE\8F6F\96C5\9ED1;}
+.index .loginforget{color: #fff;}
+.index .loginforget a{padding: 0 5px;}
+.index .login a:hover{text-decoration: underline;}
+ .msgerror{padding-left: 10px;color: red;font-size: 14px;}
+
+
+.login-tips{color: #D60202;font-size: 14px;padding-left: 6px;}
+.login .loginbt[disabled], .login input[disabled]{cursor: not-allowed;}

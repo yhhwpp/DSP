@@ -1,0 +1,1579 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../css/jquery.fancybox.css">
+<!-- 页面步骤指引 -->
+<div class="step" style="margin-right:8px;">
+    <div class="step-line"></div>
+    <div class="bd">
+        <div class="step1 step-li cur">
+            <div class="icon-a">
+                <div class="icon-tx">
+                    1
+                </div>
+                产品信息
+            </div>
+        </div>
+        <div class="step2 step-li">
+            <div class="icon-a">
+                <div class="icon-tx">
+                    2
+                </div>
+                广告内容
+            </div>
+        </div>
+        <div class="step3 step-li">
+            <div class="icon-a">
+                <div class="icon-tx">
+                    3
+                </div>
+                提交成功
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 各个步骤表单信息 -->
+<!-- 隐藏推广计划campaignid -->
+<input type="hidden" id="campaignid">
+<input type="hidden" id="js-status" value="4">
+<!-- 上传包配置 -->
+<input type="hidden" id="js-extension" value="apk,ipa">
+<div style="display: none;"><div id="js-file-up" style="display: none;">上传包</div></div>
+<!-- step one start -->
+<div class="step1-cont step-cont form-horizontal" style="max-width:620px;">
+    loading...
+</div>
+<!-- step one end -->
+<!-- step two start -->
+<div class="step2-cont step-cont form-horizontal" style="display:none;margin-right:8px;">
+    <div class="js-body-form">
+        <!-- 应用市场内容 -->
+        <!-- banner内容 -->
+        <!-- feeds内容 -->
+    </div>
+    <div class="js-body-btn"></div>
+</div>
+<!-- step two end -->
+<!-- step three start -->
+<div class="step3-cont step-cont" style="display:none;">
+    <div class="bd">
+        <div class="tj-im"></div>
+        保存成功！
+    </div>
+    <a class="btn btn-primary" href="index.html">查看我的推广</a>
+</div>
+<!-- step three end -->
+<!-- template start -->
+<script type="text-x-dot-template" id="tpl-step1">
+    <div class="form-group required">
+        <label for="" class="col-sm-3 control-label">推广类型</label>
+        <div class="col-sm-9">
+            <label class="radio-inline">
+                <input type="radio" name="products_type" value="0" check-type="required" id="js-ProductsType0" data-toggle="showDiv" data-name="products_type"
+                    <%=it.campaignInfo.disabled%> 
+                    <% if(it.campaignInfo.products_type == '0') { %>checked<%}%> >安装包下载</label>
+            <label class="radio-inline">
+                <input type="radio" name="products_type" value="1" id="js-productsType1" data-toggle="showDiv" data-name="products_type"
+                    <%=it.campaignInfo.disabled%> 
+                    <% if(it.campaignInfo.products_type == '1') { %>checked<%}%> >链接推广</label>
+        </div>
+    </div>
+    <!-- 安装包下载开始 -->
+    <form class="form-horizontal" id="js-PackageForm" aria-labelledby="js-ProductsType0" style="<%if(it.campaignInfo.products_type == '1'){%>display:none;<%}%>">
+         
+    </form>
+    <!-- 安装包下载结束 -->
+    <!-- 链接推广开始 -->
+    <form class="form-horizontal" id="js-LinkForm"  aria-labelledby="js-productsType1" style="<%if(it.campaignInfo.products_type != '1'){%>display:none;<%}%>">
+        
+    </form>
+    <!-- 链接推广结束 -->
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="button" class="btn btn-primary" id="nextStep">下一步</button>
+        </div>
+    </div>   
+</script>
+<script type="text-x-dot-template" id="tpl-step1-package">
+    <!-- 安装包下载开始 -->
+    <div class="productsTypeCont">
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">推广产品</label>
+            <div class="btn-group col-sm-9">
+                <div style="width:100%;">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="js-ProductsMenu" class="js-ProductsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
+                        <%=it.campaignInfo.disabled%>>
+                        <span id="js-ShowName" class="js-ShowName">请选择产品</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu js-dropDownMenuApp" aria-labelledby="js-ProductsMenu" style="max-height:200px;overflow-y:auto;">
+                        <li><a href="javascript:void(0);">+新建产品</a></li>
+                        <li role="separator" class="divider"></li>
+                    </ul>
+                </div>
+                <input class="form-control" type="hidden" name="products_menu" value="<%=it.campaignInfo.products_name%>" check-type="required" required-message="请选择产品" />
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">目标平台</label>
+            <div class="col-sm-4">
+                <select class="form-control js-Platform" name="platform" check-type="required" <%=it.campaignInfo.disabled%> 
+                    check-type="required" required-message="请选择目标平台">
+                    <% if(it && it.platform) { %>
+                        <% for(var key in it.platform ) { %>     
+                            <option value="<%=key%>" <%if(it.campaignInfo.platform == key) {%>selected<%}%> ><%=it.platform[key]%></option>
+                        <% } %>     
+                    <% } %>
+                </select>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">应用名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control js-AppName" name="products_name"
+                    placeholder="请输入您要推广的应用名称" value="<%=it.campaignInfo.products_name%>"
+                    check-type="required" required-message="请输入您要推广的应用名称" >
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">应用显示名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control js-AppShowName" name="products_show_name" data-toggle="showText" id="js-AppShowName"
+                    value="<%=it.campaignInfo.products_show_name%>"
+                    check-type="required" required-message="请输入应用显示名称">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">应用图标</label>
+            <div class="col-sm-9">
+                <% if(it.campaignInfo.products_icon && it.campaignInfo.products_icon.length > 0) { %>
+                    <button id="js-UploadCampaign" class="js-UploadCampaign btn btn-primary" type="button">修改图片</button>
+                    <div class="js-CampaignIcon campaignIcon"><img src="<%=it.campaignInfo.products_icon%>" width="40" height="40"><i class="fa fa-times-circle"></i></div>
+                <% } else { %>
+                    <button id="js-UploadCampaign" class="js-UploadCampaign btn btn-primary" type="button">上传</button>
+                    <div class="js-CampaignIcon campaignIcon"></div>
+                <% } %>
+                <input type="hidden" name="products_icon" data-toggle="showImg" id="js-ProductsIcon" value="<%=it.campaignInfo.products_icon%>" 
+                    check-type="required" required-message="请上传应用图标" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+                <p class="form-control-static text-muted">
+                    请上传
+                    <span class="text-warning">512 x 512</span>
+                    的图标
+                </p>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 链接推广第一步 -->
+<script type="text-x-dot-template" id="tpl-step1-link">
+    <div class="productsTypeCont">
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">推广产品</label>
+            <div class="col-sm-4">
+                <select class="form-control js-linkProducts" name="products_menu" check-type="required" <%=it.campaignInfo.disabled%> 
+                    check-type="required" required-message="请选择推广产品">
+                    <option value="-1">+新建产品</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">推广平台</label>
+            <div class="col-sm-7">
+                <% if(it.campaignInfo.platform == 15) {%>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="" name="link_platform" value="8"  <%=it.campaignInfo.disabled%> 
+                        check-type="required" required-message="请选择推广平台" checked>Android</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="" name="link_platform" value="7" <%=it.campaignInfo.disabled%> checked>iOS</label>
+                <% } else { %>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="" name="link_platform" value="8" 
+                        check-type="required" required-message="请选择推广平台" <%=it.campaignInfo.disabled%> 
+                        <%if(it.campaignInfo.platform == 8) {%>checked<%}%>>Android</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="" name="link_platform" value="7" <%=it.campaignInfo.disabled%> 
+                        <%if(it.campaignInfo.platform == 7) {%>checked<%}%>>iOS</label>
+                <% } %>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">链接名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control"  name="link_name" value="<%=it.campaignInfo.link_name%>" maxlength="32"
+                    placeholder="请输入链接名称" check-type="required"  required-message="请输入链接名称">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">URL</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control"  name="link_url" id="js-linkUrl" data-toggle="showHref"
+                    placeholder="请输入链接URL" value="<%=it.campaignInfo.link_url%>"
+                    check-type="required link_url" required-message="请输入链接URL">
+            </div>
+            <div class="col-sm-2">
+                <a href="<%=it.campaignInfo.link_url%>" class="js-linkHref" aria-labelledby="js-linkUrl" target="_blank"><span class="text-muted">&gt;&gt;预览</span></a>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 安装包下载产品列表开始 -->
+<script type="text-x-dot-template" id="tpl-appproducts">
+    <% if(it && it.appProductsList && it.appProductsList.list && it.appProductsList.list.length > 0) { %>
+        <% for(var i = 0; i < it.appProductsList.list.length; i++) { %>
+            <li data-index="<%=i%>" <% if(it.campaignInfo.products_id === it.appProductsList.list[i].id){%>class="cur"<%}%> 
+                data-id="<%=it.appProductsList.list[i].id%>" data-name="<%=it.appProductsList.list[i].name%>" 
+                data-show_name="<%=it.appProductsList.list[i].show_name%>"
+                data-icon="<%=it.appProductsList.list[i].icon%>"
+                data-platform="<%=it.appProductsList.list[i].platform%>"
+                data-platform_label="<%=LANG.platform_group[it.appProductsList.list[i].platform]%>">
+                <a href="javascript:void(0);">
+                    <img src="<%=it.appProductsList.list[i].icon%>" width="28" height="28">
+                    <span class="text-muted"><%=LANG.platform_group[it.appProductsList.list[i].platform]%></span>
+                    <span class="text-muted"><%=it.appProductsList.list[i].name%></span>
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+        <% } %>
+    <% } %>
+</script>
+<!-- 安装包下载产品列表结束 -->
+<!-- 推广链接产品列表开始 -->
+<script type="text-x-dot-template" id="tpl-linkproducts">
+    <% if(it && it.linkProductList && it.linkProductList.list && it.linkProductList.list.length > 0) { %>
+        <% for(var i = 0, j = it.linkProductList.list.length; i < j; i++) { %>     
+            <option value="<%=it.linkProductList.list[i].id%>" <%if(it.campaignInfo.products_id === it.linkProductList.list[i].id) {%>selected<%}%>
+                data-id="<%=it.linkProductList.list[i].id%>" data-name="<%=it.linkProductList.list[i].link_name%>"
+                data-url="<%=it.linkProductList.list[i].link_url%>" data-platform="<%=it.linkProductList.list[i].platform%>">
+                <%=it.linkProductList.list[i].link_name%>
+            </option>
+        <% } %>     
+    <% } %>
+</script>
+<!-- 推广链接产品列表结束 -->
+<!-- 第二步页面 -->
+<script type="text-x-dot-template" id="tpl-step2">
+    <div class="js-PackageStep2" aria-labelledby="js-ProductsType0"  style="<%if(it.campaignInfo.products_type == '1'){%>display:none;<%}%>">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div style="width:620px;">
+                    <div class="form-group required" style="margin-bottom:0;">
+                        <label for="" class="col-sm-3 control-label">广告类型</label>
+                        <div class="col-sm-9 js-package-adtype-div">
+                            <label class="radio-inline">
+                                <input type="radio" id="js-Adtype0" data-toggle="showDiv" name="ad_type" value="0" check-type="required" data-name="ad_type"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='0') { %>checked<%}%>>应用市场</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-Adtype1" data-toggle="showDiv" name="ad_type" value="1"  data-name="ad_type"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='1' || it.campaignInfo.ad_type=='5') { %>checked<%}%>>Banner</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-Adtype2" data-toggle="showDiv" name="ad_type" value="2"  data-name="ad_type"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='2') { %>checked<%}%>>Feeds</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-adtype3" data-toggle="showDiv" name="ad_type" value="3"  data-name="ad_type"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='3' || it.campaignInfo.ad_type=='4') { %>checked<%}%>>插屏</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-adtype<%=CONSTANT.ad_type_video%>" data-toggle="showDiv" name="ad_type"
+                                    value="<%=CONSTANT.ad_type_video%>"  data-name="ad_type"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type==CONSTANT.ad_type_video) { %>checked<%}%>>视频</label>
+                            <div style="display: none;">
+                            <label class="radio-inline js-adtype-other-label" style="display:none;">
+                                <input type="radio" id="js-adtype81" data-toggle="showDiv" name="ad_type" value="81"  data-name="ad_type"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='81') { %>checked<%}%>>其他</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 应用市场开始 -->    
+        <form class="js-Adtype_app" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 0)) { %>display:none;<%}%>" 
+            aria-labelledby="js-Adtype0">
+            <div class="js-body">
+            </div>
+        </form>
+        <!-- 应用市场结束 -->    
+        <!-- Banner开始 -->    
+        <div class="js-Adtype_banner" style="<%if(!(it.campaignInfo && (it.campaignInfo.ad_type == 1 || it.campaignInfo.ad_type == 5))) { %>display:none;<%}%>" aria-labelledby="js-Adtype1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">广告尺寸</h3>
+                </div>
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="banner_type" data-name="banner_type" value="1"
+                            id="js-banner_purepic" <%=it.campaignInfo.disabled%> data-toggle="showDiv"
+                            <%if(!(it.campaignInfo && it.campaignInfo.ad_type == 5)) {%> checked <%}%>>纯图片</label>
+                </div>
+                <form class="js-form-purepic" style="<%if(it.campaignInfo && it.campaignInfo.ad_type == 5) {%>display:none;<%}%>"
+                    aria-labelledby="js-banner_purepic">
+                    <div class="panel-body js-body">
+                    </div>
+                </form>
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="banner_type" data-name="banner_type" value="5"
+                            id="js-banner_textlink" <%=it.campaignInfo.disabled%> data-toggle="showDiv"
+                            <%if(it.campaignInfo && it.campaignInfo.ad_type == 5) {%> checked <%}%>>文字链</label>
+                </div>
+                <form class="js-form-textlink" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 5)) {%>display:none;<%}%>"
+                        aria-labelledby="js-banner_textlink">
+                    <div class="panel-body js-body">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Banner结束 -->    
+        <!-- Feeds开始 -->    
+        <form class="js-Adtype_feeds" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 2)) { %>display:none;<%}%>" aria-labelledby="js-Adtype2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">广告尺寸</h3>
+                </div>
+                <div class="panel-heading" style="background-color:#fff;">
+                    <label class="radio-inline">
+                        <input type="radio" name="banner_type1" checked>大图文</label>
+                </div>
+                <div class="panel-body js-body">
+                    
+                </div>
+            </div>
+        </form>
+        <!-- Feeds结束 --> 
+        <!-- 插屏开始 -->
+        <div class="js-adtype-screen" style="<%if(!(it.campaignInfo && (it.campaignInfo.ad_type == 3 || it.campaignInfo.ad_type == 4))) { %>display:none;<%}%>" aria-labelledby="js-adtype3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="screen_type" <%if(!(it.campaignInfo && it.campaignInfo.ad_type == 4)) {%> checked <%}%> value="3"
+                            <%=it.campaignInfo.disabled%>
+                            data-toggle="showDiv" id="js-screen_half" data-name="screen_type">半屏广告</label>
+                </div>
+                <form class="js-form-screenhalf" style="<%if(it.campaignInfo && it.campaignInfo.ad_type == 4) {%>display:none;<%}%>"
+                        aria-labelledby="js-screen_half"> 
+                    <div class="panel-body js-body js-screenhalf">
+                    </div>
+                </form>
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="screen_type" <%if(it.campaignInfo && it.campaignInfo.ad_type == 4) {%> checked <%}%> value="4"
+                            <%=it.campaignInfo.disabled%>
+                            data-toggle="showDiv" id="js-screen_full" data-name="screen_type">全屏广告</label>
+                </div>
+                <form class="js-form-screenfull" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 4)) {%>display:none;<%}%>" 
+                        aria-labelledby="js-screen_full">
+                    <div class="panel-body js-body js-screenfull">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- 插屏结束 -->
+        <!-- 视频开始 -->
+        <form class="js-adtype-video" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == CONSTANT.ad_type_video)) { %>display:none;<%}%>" aria-labelledby="js-adtype<%=CONSTANT.ad_type_video%>">
+            <div class="panel panel-default">
+                <div class="panel-body js-body"> 
+                </div>
+            </div>
+        </form>
+        <!-- 视频结束 -->
+        <!-- 其他开始 -->    
+        <form class="form-horizontal js-adtype-other" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 81)) { %>display:none;<%}%>" 
+            aria-labelledby="js-adtype81">
+            <div class="js-body">
+            </div>
+        </form>
+        <!-- 其他结束 -->
+    </div>   
+</script>
+<!-- 链接推广表单页面 -->
+<script type="text-x-dot-template" id="tpl-step2-link">
+    <div class="js-linkStep2" aria-labelledby="js-productsType1"  style="<%if(it.campaignInfo.products_type != '1'){%>display:none;<%}%>">
+        <!-- 广告类型开始 -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div style="width:620px;">
+                    <div class="form-group required" style="margin-bottom:0;">
+                        <label for="" class="col-sm-3 control-label">广告类型</label>
+                        <div class="col-sm-9">
+                            <label class="radio-inline">
+                                <input type="radio" id="js-linkAdtype1" data-toggle="showDiv" name="ad_type_link" value="1"  data-name="ad_type_link"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='1' || it.campaignInfo.ad_type=='5') { %>checked<%}%>>Banner</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-linkAdtype2" data-toggle="showDiv" name="ad_type_link" value="2"  data-name="ad_type_link"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='2') { %>checked<%}%>>Feeds</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-linkadtype3" data-toggle="showDiv" name="ad_type_link" value="3"  data-name="ad_type_link"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='3' || it.campaignInfo.ad_type=='4') { %>checked<%}%>>插屏</label>
+                            <label class="radio-inline js-adtype71-label">
+                                <input type="radio" id="js-linkadtype71" data-toggle="showDiv" name="ad_type_link" value="71"  data-name="ad_type_link"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type=='71') { %>checked<%}%>>AppStore</label>
+                            <label class="radio-inline">
+                                <input type="radio" id="js-linkadtype<%=CONSTANT.ad_type_video%>" data-toggle="showDiv" name="ad_type_link"
+                                    value="<%=CONSTANT.ad_type_video%>"  data-name="ad_type_link"
+                                    <%=it.campaignInfo.disabled%> <% if(it.campaignInfo.ad_type==CONSTANT.ad_type_video) { %>checked<%}%>>视频</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 广告类型结束 -->
+        <!-- Banner开始 -->    
+        <div class="js-Adtype_banner" style="<%if(!(it.campaignInfo && (it.campaignInfo.ad_type == 1 || it.campaignInfo.ad_type == 5))) { %>display:none;<%}%>" aria-labelledby="js-linkAdtype1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">广告尺寸</h3>
+                </div>
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="link-banner_type" data-name="link-banner_type" value="1"
+                            id="js-link-banner_purepic" <%=it.campaignInfo.disabled%> data-toggle="showDiv"
+                            <%if(!(it.campaignInfo && it.campaignInfo.ad_type == 5)) {%> checked <%}%>>纯图片</label>
+                </div>
+                <form class="js-form-purepic" style="<%if(it.campaignInfo && it.campaignInfo.ad_type == 5) {%>display:none;<%}%>"
+                        aria-labelledby="js-link-banner_purepic">
+                    <div class="panel-body js-body">
+                    </div>
+                </form>
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="link-banner_type" data-name="link-banner_type" value="5"
+                            id="js-link-banner_textlink" <%=it.campaignInfo.disabled%> data-toggle="showDiv"
+                            <%if(it.campaignInfo && it.campaignInfo.ad_type == 5) {%> checked <%}%>>文字链</label>
+                </div>
+                <form class="js-form-textlink" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 5)) {%>display:none;<%}%>"
+                        aria-labelledby="js-link-banner_textlink">
+                    <div class="panel-body js-body">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Banner结束 -->    
+        <!-- Feeds开始 -->    
+        <form class="js-Adtype_feeds" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 2)) { %>display:none;<%}%>" aria-labelledby="js-linkAdtype2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">广告尺寸</h3>
+                </div>
+                <div class="panel-heading" style="background-color:#fff;">
+                    <label class="radio-inline">
+                        <input type="radio" name="banner_type3" checked>大图文</label>
+                </div>
+                <div class="panel-body js-body">
+                    
+                </div>
+            </div>
+        </form>
+        <!-- Feeds结束 --> 
+        <!-- 插屏开始 -->
+        <div class="js-adtype-screen" style="<%if(!(it.campaignInfo && (it.campaignInfo.ad_type == 3 || it.campaignInfo.ad_type == 4))) { %>display:none;<%}%>" aria-labelledby="js-linkadtype3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="link_screen_type" <%if(!(it.campaignInfo && it.campaignInfo.ad_type == 4)) {%> checked <%}%> 
+                        value="3" <%=it.campaignInfo.disabled%>
+                            data-toggle="showDiv" id="js-link_screen_half" data-name="link_screen_type">半屏广告</label>
+                </div>
+                <form class="js-form-screenhalf" style="<%if(it.campaignInfo && it.campaignInfo.ad_type == 4) {%>display:none;<%}%>" 
+                        aria-labelledby="js-link_screen_half">
+                    <div class="panel-body js-body js-screenhalf">
+                    </div>
+                </form>
+                
+                <div class="panel-heading">
+                    <label class="radio-inline" style="width:100%;">
+                        <input type="radio" name="link_screen_type" <%if(it.campaignInfo && it.campaignInfo.ad_type == 4) {%> checked <%}%> value="4"
+                            <%=it.campaignInfo.disabled%>
+                            data-toggle="showDiv" id="js-link_screen_full" data-name="link_screen_type">全屏广告</label>
+                </div>
+                <form class="js-form-screenfull" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 4)) {%>display:none;<%}%>" 
+                        aria-labelledby="js-link_screen_full">
+                    <div class="panel-body js-body js-screenfull">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- 插屏结束 -->
+        <!-- AppStore开始 -->
+        <form class="js-adtype-appstore" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == 71)) { %>display:none;<%}%>" aria-labelledby="js-linkadtype71">
+            <div class="panel panel-default">
+                <div class="panel-body js-body">
+                </div>
+            </div>
+        </form>
+        <!-- AppStore结束 -->
+        <!-- 视频开始 -->
+        <form class="js-adtype-video" style="<%if(!(it.campaignInfo && it.campaignInfo.ad_type == CONSTANT.ad_type_video)) { %>display:none;<%}%>" aria-labelledby="js-linkadtype<%=CONSTANT.ad_type_video%>">
+            <div class="panel panel-default">
+                <div class="panel-body js-body"> 
+                </div>
+            </div>
+        </form>
+        <!-- 视频结束 -->
+    </div>
+</script>
+<!-- 应用市场模板 -->
+<script type="text-x-dot-template" id="tpl-app">
+    <div class="appForm pull-left" style="width:620px;">
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">广告名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="appinfos_app_name" value="<%=it.campaignInfo.appinfos_app_name%>"
+                    check-type="required" required-message="请输入广告名称"
+                    data-name="appinfos_app_name">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">安装包</label>
+            <div class="col-sm-9">
+                <%if (it.campaignInfo && it.campaignInfo.package_file && it.campaignInfo.package_file.length > 0) {%>
+                    <%var oPackageFile = it.campaignInfo.package_file;%>
+                    <%if (oPackageFile.length == 1) {%>
+                        <%var sPackageId = '';%>
+                        <%if (it.campaignInfo.status == CONSTANT.status_draft) {%>
+                            <%sPackageId = '{"package_id":<%=oPackageFile[0].package_id%>}'; %>
+                            <a class="js-package-name text-info" href="<%=oPackageFile[0].package_download_url%>" target="_blank">
+                                <%=oPackageFile[0].real_name%></a>
+                        <%} else if (it.campaignInfo.status == CONSTANT.status_rejected) {%>
+                            <a class="js-package-name text-info" href="<%=oPackageFile[0].package_download_url%>" target="_blank">
+                            <%=oPackageFile[0].real_name%></a><span class="js-package-prompt">&nbsp;未通过审核</span>
+                        <%} else {%>
+                            <%sPackageId = '{"package_id":<%=oPackageFile[0].package_id%>}'; %>
+                            当前投放:<a class="text-info" href="<%=oPackageFile[0].package_download_url%>" target="_blank">
+                                <%=oPackageFile[0].real_name%></a>
+                            <span class="js-change-package" style="display:none;">
+                                <br/>准备替换:<a class="js-package-name text-warning" href="" target="_blank"></a>
+                            </span>
+
+                        <%}%>
+                        <button type="button" class="btn btn-primary js-upload-file"><span class="js-btn-name">替换</span></button>
+                        <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                        <input type="hidden" name="package_file" value='<%=sPackageId%>' data-name="package_file"
+                            check-type="required" required-message="请上传安装包">
+                    <%} else {%>
+                        <%
+                            var iReady = 0;
+                            var iOut = 1;
+                            if (oPackageFile[0].status == 4) {
+                                iOut = 0;
+                                iReady = 1;
+                            }
+                        %>
+                        当前投放:<a class="text-info" href="<%=oPackageFile[iReady].package_download_url%>" target="_blank">
+                                <%=oPackageFile[iReady].real_name%></a>
+                        <span class="js-change-package">
+                            <br/>准备替换:<a class="js-package-name text-warning" href="<%=oPackageFile[iOut].package_download_url%>" target="_blank">
+                                <%=oPackageFile[iOut].real_name%></a><span class="js-package-prompt">&nbsp;未通过审核</span>
+                        </span>
+                        <button type="button" class="btn btn-primary js-upload-file">
+                            <span class="js-btn-name">替换</span></button>
+                            <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                        <input type="hidden" name="package_file" value="" data-name="package_file"
+                            check-type="required" required-message="请上传安装包">
+                    <%}%>
+                <%} else {%>
+                <a class="js-package-name text-warning" href="javascript:void(0)" target="_blank"></a>
+                <button type="button" class="btn btn-primary js-upload-file"><span class="js-btn-name">上传</span></button>
+                <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                <input type="hidden" name="package_file" value="" data-name="package_file"
+                    check-type="required" required-message="请上传安装包">
+                <%}%>
+            </div>
+        </div>
+        <div class="position-form-group required js-ShortAppIcon-div">
+            <label for="" class="col-sm-3 control-label">应用截图</label>
+            <!-- 应用截图显示 -->    
+            <div class="col-sm-offset-3 col-sm-9 js-ShortAppIcon shortAppIcon">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">计费类型</label>
+            <div class="col-sm-9">
+                <div class="js-revenue-type-radio">
+                    <%##def.snippet:
+                        <%#def.tpl_revenue_type%>
+                        #%>
+                    <%#def.snippet%>
+                </div>
+            </div>
+        </div>
+        <!-- 出价、日预算 -->    
+        <div class="js-MoneyLimit"></div>
+        <div class="form-group js-keyword-div" id="package-keywords">
+            <label for="" class="col-sm-3 control-label">搜索关键字加价</label>
+            <div class="col-sm-7 js-KeyLimit"></div>
+            <div class="revenueTips">
+                <span class="js-DayLimitTips" data-toggle="tooltip" data-placement="right"
+                    title='点击"新增"按钮输入搜索关键字和加价金额。提交审核通过后，当用户搜索以上关键字并下载本推广应用时，计费价格=基础出价+关键字对应的加价金额。'> <i class="fa fa-question-circle"></i>
+                </span>
+                <br/>
+                <button type="button" class="btn btn-primary js-AddKey">+新增</button>
+                <div class="js-AddKeyInput addKeyInput form-inline" style="display:none;">
+                    <div class="">
+                        <label for="">关键字</label>
+                        <input type="text" class="form-control js-KeyWordInput" maxlength="32"></div>
+                    <div class="">
+                        <label for="">加价</label>
+                        <span class="text-muted">￥</span>
+                        <input type="number" value="0.5" step="0.1" class="form-control js-KeyPriceInput"></div>
+                    <div class="">
+                        <button class="btn btn-default js-AddConfirm" data-type="package" type="button">确定</button>
+                        <button class="btn btn-default js-AddCancel" type="button">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="description" class="col-sm-3 control-label">应用介绍</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_description" value="<%=it.campaignInfo.appinfos_description%>" data-name="appinfos_description"
+                    maxlength="1000" rows="6" check-type="required" required-message="请输入应用介绍"><%=it.campaignInfo.appinfos_description%></textarea>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="description" class="col-sm-3 control-label">一句话简介</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_profile" value="<%=it.campaignInfo.appinfos_profile%>"
+                    maxlength="25" rows="2" data-name="appinfos_profile"
+                    check-type="required" required-message="请输入一句话简介"><%=it.campaignInfo.appinfos_profile%></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="col-sm-3 control-label">更新说明</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_update_des" value="<%=it.campaignInfo.appinfos_update_des%>" data-name="appinfos_update_des"
+                    maxlength="1000" rows="6"><%=it.campaignInfo.appinfos_update_des%></textarea>
+            </div>
+        </div>
+    </div>
+    <!-- 显示应用市场预览图开始 -->    
+    <div class="preview js-AppPreview pull-right" style="margin-top:20px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">预览</div>
+            <div class="panel-body">
+                <ul>
+                    <li aria-labelledby="js-AppImg1" class="app-previewpic1">
+                        <img src="<%=it.campaignInfo.products_icon%>" aria-labelledby="js-ProductsIcon"/>
+                        <p aria-labelledby="js-AppShowName"><%=it.campaignInfo.products_show_name%></p>
+                    </li>
+                    <li aria-labelledby="js-AppImg2" class="app-previewpic2" style="display:none;">
+                        <img src="<%=it.campaignInfo.products_icon%>" aria-labelledby="js-ProductsIcon"/>
+                        <p aria-labelledby="js-AppShowName"><%=it.campaignInfo.products_show_name%></p>
+                    </li>
+                    <li aria-labelledby="js-AppImg3" class="app-previewpic3" style="display:none;">
+                        <img src="<%=it.campaignInfo.products_icon%>" aria-labelledby="js-ProductsIcon"/>
+                        <p aria-labelledby="js-AppShowName"><%=it.campaignInfo.products_show_name%></p>
+                        <div class="js-ShowShortAppIcon showShortAppIcon">
+                            <%if(it.campaignInfo.appinfos_images && typeof it.campaignInfo.appinfos_images === 'object') {%>
+                                <%var oImages = it.campaignInfo.appinfos_images;%>
+                                <% for(var key in oImages) { %>
+                                    <%if (oImages[key] && oImages[key].length > 0) {%>  
+                                        <%for(var j = 0; j < oImages[key].length; j++) {%>
+                                            <img src="<%=oImages[key][j]%>" />
+                                        <%}%>
+                                    <%}%>
+                                <% } %>    
+                            <% } %>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="panel-footer">
+                <ul>
+                    <li class="cur" id="js-AppImg1" data-toggle="showLi" data-name="js-AppImg">通用列表广告</li>
+                    <li id="js-AppImg2" data-toggle="showLi" data-name="js-AppImg">搜索广告</li>
+                    <li id="js-AppImg3" data-toggle="showLi" data-name="js-AppImg">详情页广告</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 显示应用市场预览图结束 --> 
+</script>
+<!-- Banner模板 -->
+<script type="text-x-dot-template" id="tpl-banner">
+    <div class="bannerForm pull-left" style="width:620px;">
+        <!-- banner表单开始 -->    
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">广告名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="appinfos_app_name" value="<%=it.campaignInfo.appinfos_app_name%>" data-name="appinfos_app_name"
+                    check-type="required" required-message="请输入广告名称">
+            </div>
+        </div>
+        <%if(it.products_type == CONSTANT.products_type_package) {%>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">安装包</label>
+            <div class="col-sm-9">
+                <%if (it.campaignInfo && it.campaignInfo.package_file && it.campaignInfo.package_file.length > 0) {%>
+                    <%var oPackageFile = it.campaignInfo.package_file;%>
+                    <%if (oPackageFile.length == 1) {%>
+                        <%var sPackageId = '';%>
+                        <%if (it.campaignInfo.status == CONSTANT.status_draft) {%>
+                            <%sPackageId = '{"package_id":<%=oPackageFile[0].package_id%>}'; %>
+                            <a class="js-package-name text-info" href="<%=oPackageFile[0].package_download_url%>" target="_blank">
+                                <%=oPackageFile[0].real_name%></a>
+                        <%} else if (it.campaignInfo.status == CONSTANT.status_rejected) {%>
+                            <a class="js-package-name text-info" href="<%=oPackageFile[0].package_download_url%>" target="_blank">
+                            <%=oPackageFile[0].real_name%></a><span class="js-package-prompt">&nbsp;未通过审核</span>
+                        <%} else {%>
+                            <%sPackageId = '{"package_id":<%=oPackageFile[0].package_id%>}'; %>
+                            当前投放:<a class="text-info" href="<%=oPackageFile[0].package_download_url%>" target="_blank">
+                                <%=oPackageFile[0].real_name%></a>
+                            <span class="js-change-package" style="display:none;">
+                                <br/>准备替换:<a class="js-package-name text-warning" href="" target="_blank"></a>
+                            </span>
+
+                        <%}%>
+                        <button type="button" class="btn btn-primary js-upload-file"><span class="js-btn-name">替换</span></button>
+                        <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                        <input type="hidden" name="package_file" value='<%=sPackageId%>' data-name="package_file"
+                            check-type="required" required-message="请上传安装包">
+                    <%} else {%>
+                        <%
+                            var iReady = 0;
+                            var iOut = 1;
+                            if (oPackageFile[0].status == 4) {
+                                iOut = 0;
+                                iReady = 1;
+                            }
+                        %>
+                        当前投放:<a class="text-info" href="<%=oPackageFile[iReady].package_download_url%>" target="_blank">
+                                <%=oPackageFile[iReady].real_name%></a>
+                        <span class="js-change-package">
+                            <br/>准备替换:<a class="js-package-name text-warning" href="<%=oPackageFile[iOut].package_download_url%>" target="_blank">
+                                <%=oPackageFile[iOut].real_name%></a><span class="js-package-prompt">&nbsp;未通过审核</span>
+                        </span>
+                        <button type="button" class="btn btn-primary js-upload-file">
+                            <span class="js-btn-name">替换</span></button>
+                            <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                        <input type="hidden" name="package_file" value="" data-name="package_file"
+                            check-type="required" required-message="请上传安装包">
+                    <%}%>
+                <%} else {%>
+                <a class="js-package-name text-warning" href="javascript:void(0)" target="_blank"></a>
+                <button type="button" class="btn btn-primary js-upload-file"><span class="js-btn-name">上传</span></button>
+                <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                <input type="hidden" name="package_file" value="" data-name="package_file"
+                    check-type="required" required-message="请上传安装包">
+                <%}%>
+            </div>
+        </div>
+        <%}%>
+        <%##def.snippet:
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">计费类型</label>
+            <div class="col-sm-9">
+                <div class="js-revenue-type-radio">
+                    <%#def.tpl_revenue_type%>
+                </div>
+            </div>
+        </div>
+        <!-- 出价、日预算 -->    
+        <div class="js-MoneyLimit"></div>
+        <%#def.materials%>
+        <!-- banner表单结束 --> 
+    </div>
+    <!-- 显示Banner预览图开始 -->
+        <%#def.preview%>
+        #%>
+    <%#def.snippet%>
+    <!-- 显示Banner预览图结束 -->
+</script>
+<!-- Feeds模板 -->
+<script type="text-x-dot-template" id="tpl-feeds">
+    <!-- Feeds表单开始 -->
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">星级</label>
+            <div class="col-sm-9">
+                <ul class="star-level">
+                    <% if(it.campaignInfo.star && it.campaignInfo.star > 0) { %>
+                        <% for(var i = 0; i< it.campaignInfo.star; i++) { %>    
+                            <li>
+                                <i class="fa fa-star"></i>
+                            </li>
+                        <% } %>    
+                        <% for(var i = 0; i< (5-it.campaignInfo.star); i++) { %>    
+                            <li>
+                                <i class="fa fa-star-o"></i>
+                            </li>
+                        <% } %>    
+                    <% } else { %>    
+                        <li>
+                            <i class="fa fa-star-o"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star-o"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star-o"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star-o"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star-o"></i>
+                        </li>
+                    <% } %>
+                </ul>
+                <input type="hidden" name="rate" value="<%=it.campaignInfo.star%>" check-type="required"
+                    required-message="请选择星级" data-name="star" />
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="description" class="col-sm-3 control-label">一句话描述</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_profile" value="<%=it.campaignInfo.appinfos_profile%>"
+                    maxlength="25" rows="2" data-toggle="showText" id="js-AppProfile" data-name="appinfos_profile"
+                    check-type="required" required-message="请输入一句话描述"><%=it.campaignInfo.appinfos_profile%></textarea>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">图片素材</label>
+            <div class="col-sm-9 js-feedsIcon">   
+            </div>
+        </div>
+    <!-- Feeds表单结束 -->
+</script>
+<!-- 显示Feeds预览图开始 -->
+<script type="text-x-dot-template" id="tpl-feeds-preview">
+    <div class="preview js-FeedsPreview pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">预览</div>
+            <div class="panel-body">
+                <div class="feeds-content">
+                    <img src="<%=it.campaignInfo.products_icon%>" alt="feeds" aria-labelledby="js-ProductsIcon">
+                    <div class="feeds-cont-bd">
+                        <h3 class="feeds-title" aria-labelledby="js-AppShowName"><%=it.campaignInfo.products_show_name%></h3>
+                        <div class="feeds-star">
+                            <% if(it.campaignInfo.star && it.campaignInfo.star > 0) { %>
+                                <% for(var i = 0; i< it.campaignInfo.star; i++) { %>    
+                                    <i class="fa fa-star"></i>
+                                <% } %>    
+                                <% for(var i = 0; i< (5-it.campaignInfo.star); i++) { %>    
+                                    <i class="fa fa-star-o"></i>
+                                <% } %>    
+                            <% } else { %>    
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% if(it.campaignInfo.appinfos_images && it.campaignInfo.appinfos_images.length > 0 && it.campaignInfo.appinfos_images[0].url) { %>
+                    <img src="<%=it.campaignInfo.appinfos_images[0].url%>" class="feeds-img js-feedsImg">
+                <% } else { %>
+                    <img src="" class="feeds-img js-feedsImg">
+                <% } %>
+                <div class="feeds-content">
+                    <p class="feeds-cont-desc" id="feeds-cont-desc" aria-labelledby="js-AppProfile"><%=it.campaignInfo.appinfos_profile%></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 显示Feeds预览图结束 --> 
+<!-- 链接推广feeds表单 -->
+<script type="text-x-dot-template" id="tpl-feeds-link">
+    <!-- Feeds表单开始 -->
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">图标</label>
+            <div class="col-sm-9">
+                <% if(it.campaignInfo.products_icon && it.campaignInfo.products_icon.length > 0) { %>
+                    <button id="js-uploadSmallFeeds" class="js-uploadSmallFeeds btn btn-primary" type="button">修改图片</button>
+                    <div class="js-FeedsSmallIcon campaignIcon"><img src="<%=it.campaignInfo.products_icon%>" width="40" height="40">
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                <% } else { %>
+                    <button id="js-uploadSmallFeeds" class="js-uploadSmallFeeds btn btn-primary" type="button">上传</button>
+                    <div class="js-FeedsSmallIcon campaignIcon"></div>
+                <% } %>
+                <input type="hidden" name="products_icon" data-toggle="showImg" id="js-ProductsLinkIcon" value="<%=it.campaignInfo.products_icon%>" 
+                    check-type="required" required-message="请上传图标" data-name="products_icon" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+                <p class="form-control-static text-muted">
+                    请上传
+                    <span class="text-warning">50 x 50</span>
+                    的<span class="text-warning">jpg、png</span>图标
+                </p>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">标题</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="link_title" value="<%=it.campaignInfo.link_title%>" maxlength="10"
+                    data-toggle="showText" id="js-feedsTitle" data-name="link_title"
+                    check-type="required" required-message="请输入标题">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">大图</label>
+            <div class="col-sm-9 js-feedsLinkIcon">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="description" class="col-sm-3 control-label">吸引力方案</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_profile" value="<%=it.campaignInfo.appinfos_profile%>"
+                    maxlength="25" rows="2" data-toggle="showText" id="js-LinkProfile" data-name="appinfos_profile"
+                    check-type="required" required-message="请输入吸引力方案"><%=it.campaignInfo.appinfos_profile%></textarea>
+            </div>
+        </div>
+    <!-- Feeds表单结束 -->
+</script>
+<!-- 显示Feeds预览图开始 --> 
+<script type="text-x-dot-template" id="tpl-feeds-link-preview">
+    <div class="preview js-FeedsLinkPreview pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">预览</div>
+            <div class="panel-body">
+                <div class="feeds-content">
+                    <img src="<%=it.campaignInfo.products_icon%>" alt="feeds" aria-labelledby="js-ProductsLinkIcon">
+                    <div class="feeds-cont-bd">
+                        <h3 class="feeds-title" aria-labelledby="js-feedsTitle"><%=it.campaignInfo.link_title%></h3>
+                    </div>
+                </div>
+                <% if(it.campaignInfo.appinfos_images && it.campaignInfo.appinfos_images.length > 0 && it.campaignInfo.appinfos_images[0].url) { %>
+                    <img src="<%=it.campaignInfo.appinfos_images[0].url%>" class="feeds-img js-feedsLinkImg">
+                <% } else { %>
+                    <img src="" class="feeds-img js-feedsLinkImg">
+                <% } %>
+                <div class="feeds-content">
+                    <p class="feeds-cont-desc" id="feeds-cont-desc" aria-labelledby="js-LinkProfile"><%=it.campaignInfo.appinfos_profile%></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 显示Feeds预览图结束 --> 
+<script type="text-x-dot-template" id="tpl-btn">
+     <!-- 提交推广按钮开始 -->
+     <div class="prompt-info" style="width:620px;">
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <button class="btn btn-primary js-PreviousBtn" type="button">上一步</button>
+                <% if(it.campaignInfo.status && it.campaignInfo.status == 4) { %>
+                    <button class="btn btn-primary confirm" id="confirm" type="button">提交审核</button>
+                    <button class="btn btn-primary confirm" id="draft" type="button">保存草稿</button>               
+                <% } else { %>
+                    <button class="btn btn-primary confirm" id="modify" type="button">保存修改</button>
+                <% } %>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <span class="text-warning">* 提交审核后，审核中无法修改资料，请慎重提交</span>
+            </div>
+        </div>
+     </div>
+     <!-- 提交推广按钮开始 -->
+</script>
+<!-- 出价、日预算模版 -->
+<script type="text-x-dot-template" id="tpl-moneylimit">
+    <div class="form-group required">
+        <label for="" class="col-sm-3 control-label">出价(元)</label>
+        <div class="col-sm-7 js-RevenueLimit">
+            <input type="text" class="form-control" name="revenue" oninput="if(!/[^\d.]/g.test(value)) {return}; value=value.replace(/[^\d.]/g,'')" value="<%=it.campaignInfo.revenue%>"
+                placeholder="请输入大于等于<%=it.moneyLimit.revenue_min%>，小于等于<%=it.moneyLimit.revenue_max%>的数字"
+                range="<%=it.moneyLimit.revenue_min%>~<%=it.moneyLimit.revenue_max%>" 
+                range-message="出价必须大于等于<%=it.moneyLimit.revenue_min%>小于等于<%=it.moneyLimit.revenue_max%>"
+                check-type="<%if(it.campaignInfo.revenue_type != CONSTANT.revenue_type_cps){%>required number<%}%>" required-message="请输入出价"
+                regex="^\d+(\.\d{1,<%=it.step%>})?$" regex-message="出价保留<%=it.step%>小数点"
+                data-name="revenue">    
+        </div>
+        <div class="revenueTips">
+            <span class="js-RevenueTips" data-toggle="tooltip" data-placement="right" 
+                title="对每次下载的出价，最低<%=it.moneyLimit.revenue_min%>元，最高<%=it.moneyLimit.revenue_max%>元。系统会优先推广优质、出价高的应用。如：出价4.0元，则应用每下载一次需花费4.0元。">
+                <i class="fa fa-question-circle"></i>
+            </span>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label for="" class="col-sm-3 control-label">日预算(元)</label>
+        <div class="col-sm-7 js-DayLimit">
+            <input type="text" class="form-control" name="day_limit" oninput="if(!/[^\d]/g.test(value)) {return}; value=value.replace(/[^\d]/g,'')"  value="<%=it.campaignInfo.day_limit%>"
+            placeholder="请输入大于等于<%=it.moneyLimit.day_limit_min%>，小于等于<%=it.moneyLimit.day_limit_max%>的整数" 
+            range="<%=it.moneyLimit.day_limit_min%>~<%=it.moneyLimit.day_limit_max%>" 
+            range-message="日预算必须大于等于<%=it.moneyLimit.day_limit_min%>小于等于<%=it.moneyLimit.day_limit_max%>"
+            check-type="<%if(it.campaignInfo.revenue_type != CONSTANT.revenue_type_cps){%>required number<%}%>" required-message="请输入日预算"
+            data-name="day_limit">
+        </div>
+        <div class="revenueTips">
+            <span class="js-DayLimitTips" data-toggle="tooltip" data-placement="right"
+                title="限制每天的花费，最低<%=it.moneyLimit.day_limit_min%>元，最高<%=it.moneyLimit.day_limit_max%>元，请填写整数。每天的实际花费超过本预算限制后，系统会自动停止推广，第二天如果推广任务还在有效期内则继续推广。">
+                <i class="fa fa-question-circle"></i>
+            </span>
+        </div>
+    </div>
+    <div class="form-group required form-total-limit">
+        <label for="" class="col-sm-3 control-label">总预算(元)</label>
+        <div class="col-sm-5">
+            <%var sCheck = '';%>
+            <%if(it.campaignInfo.total_limit && parseInt(it.campaignInfo.total_limit, 10) === 0) {%>
+            <%sCheck = 'checked';%>
+            <input type="text" class="form-control" name="total_limit" data-name="total_limit" oninput="if(!/[^\d]/g.test(value)) {return};value=value.replace(/[^\d]/g,'')"
+                value="" placeholder="输入大于200的整数" maxlength="32" disabled>
+            <%} else {%>
+            <input type="text" class="form-control" name="total_limit" data-name="total_limit" oninput="if(!/[^\d]/g.test(value)) {return};value=value.replace(/[^\d]/g,'')"
+                value="<%=it.campaignInfo.total_limit%>" placeholder="输入大于等于<%=it.moneyLimit.total_limit_min%>的整数" maxlength="32">
+            <%}%>
+            <input type="hidden" name="total_limit_valid"
+                check-type="<%if(it.campaignInfo.revenue_type != CONSTANT.revenue_type_cps){%>required checkTotallimit<%}%>"
+                required-message="请输入总预算" value="0"
+                checkTotallimit-message="总预算必须大于等于<%=it.moneyLimit.total_limit_min%>小于等于<%=it.moneyLimit.total_limit_max%>"
+                data-max="<%=it.moneyLimit.total_limit_max%>" data-min="<%=it.moneyLimit.total_limit_min%>">
+        </div>
+        <div class="col-sm-2">
+            <label class="checkbox-inline">
+                <input type="checkbox" name="total_limit_check" data-name="total_limit_check" <%=sCheck%>>不限
+            </label>
+        </div>
+        <div class="revenueTips">
+            <span class="js-TotalLimitTips" data-toggle="tooltip" data-placement="right"
+                title="当广告的实际消耗超过总预算时，广告自动停止推广。不限，则总预算无上限。">
+                <i class="fa fa-question-circle"></i>
+            </span>
+        </div>
+    </div>
+</script>
+<script type="text-x-dot-template" id="tpl-keylimit">
+    <table class="rechar-money-table js-KeyTable" data-minKey="<%=it.moneyLimit.key_min%>" data-maxKey="<%=it.moneyLimit.key_max%>">
+        <thead><tr><th>关键字</th><th>加价金额</th><th style="min-width:60px;max-width:60px;">状态</th><th style="min-width:60px;max-width:60px;">操作</th></tr></thead>
+        <tbody class="js-KeyBody">
+            <% if(it.campaignInfo.keywords && it.campaignInfo.keywords.length > 0 ) { %>
+                <% for(var i = 0; i < it.campaignInfo.keywords.length; i++) { %>
+                    <tr data-id="<%=it.campaignInfo.keywords[i].id%>" class="js-KeyTr" data-keyword="<%=it.campaignInfo.keywords[i].keyword%>">
+                        <td class="keyword"><%=it.campaignInfo.keywords[i].keyword%></td>
+                        <td class="price_up">
+                            ￥<input type="number" value="<%=it.campaignInfo.keywords[i].price_up%>" style="width:60px;" 
+                                min="<%=it.moneyLimit.key_min%>" max="<%=it.moneyLimit.key_max%>" step="0.1">
+                        </td>
+                        <td class="status">-</td>
+                        <td class="js-DelKey" style="cursor:pointer;">删除</td>
+                    </tr>
+                <% } %>
+                
+            <% } else { %>
+                <tr class="js-NoKey"><td colspan="4">无加价关键字，请点“新增”按钮添加</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</script>
+<!-- 应用截图  -->
+<script type="text-x-dot-template" id="tpl-app-materials">
+    <% if(it && it.demand) { %>
+        <%for(var key in it.demand) {%>
+            <%if(key == 'fnToMapset') {continue;}%>
+            <div class="form-group js-show-appimg" data-adspec="<%=it.demand[key]%>" data-key="<%=key%>" data-adType="<%=it.adType%>">
+                <div class="show-appimg">
+                <%if(it.campaignInfo.appinfos_images) {%>
+                    <%var oImages = it.campaignInfo.appinfos_images[key];%>
+                    <% if (oImages && oImages.length > 0){%>
+                    <% for(var i = 0; i < oImages.length; i++) { %>
+                        <span class="js-ImgSpan">
+                            <img src="<%=oImages[i]%>" data-key="<%=key%>" /> <i class="fa fa-times-circle"></i>
+                        </span>
+                    <% } %>
+                    <%}%>
+                <% } %>
+                </div>
+                <div class="js-upload-img" id="js-uploadicon-<%=it.adType%>-<%=key%>" data-adspec="<%=it.demand[key]%>" data-key="<%=key%>"
+                    data-mark="button"
+                    style="<%if(it.campaignInfo.appinfos_images && it.campaignInfo.appinfos_images[key] && it.campaignInfo.appinfos_images[key].length >= 5){%>display:none;<%}%>">+<br/><%=it.demand[key]%></div>
+                <p class="form-control-static text-muted">
+                    支持
+                    <span class="text-warning"> jpg、jpeg、png</span>
+                    每张不超过1MB，至少3张
+                </p>
+                <input type="hidden" check-type="checkAppIconNum" name="appinfos_num" class="form-control" data-key="<%=key%>"
+                    value="appinfos_num" checkAppIconNum-message="请上传至少3张<%=it.demand[key]%>的应用截图" />
+            </div>
+        <%}%>
+    <% } %>   
+</script>
+<!-- banner和插屏素材 -->
+<script type="text-x-dot-template" id="tpl-materials">
+    <div class="form-group required">
+        <label for="" class="col-sm-3 control-label">创意素材</label>
+        <div class="col-sm-9">
+            <div class="material-list js-BannerMaterial">
+                <div class="hd">
+                    <ul class="nav nav-pills"></ul>
+                </div>
+                <div class="bd" style="position: relative;">
+                    <div class="img_view">
+                        <a href="" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                            <img src="" style="display: none; margin: 0px auto 10px;">
+                        </a>
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                    <button id="js-UploadMaterial_<%=it.revenue_type.value%>_<%=it.ad_type%>" type="button" 
+                        class="btn btn-primary js-UploadMaterial">上传图片</button>
+                    <p class="form-control-static text-muted">
+                        请上传
+                        <span class="text-warning js-uploadmaterialtext">1000*560</span>
+                        图片，不超过80KB
+                    </p>
+                </div>
+            </div>
+            <input type="hidden" name="material_num" check-type="checkMaterialNum" class="form-control"
+                value="<%if(it.campaignInfo.appinfos_images && it.campaignInfo.appinfos_images.length > 0) {%>1<%}else{%>0<%}%>" />    
+        </div>
+    </div>
+</script>
+<!-- banner和插屏预览 -->
+<script type="text-x-dot-template" id="tpl-banner-preview">
+    <div class="preview js-BannerPreview pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">预览</div>
+            <div class="panel-body showBannerPreview <%if(it.ad_type === 3) {%>showhalfpreview<%}%> <%if(it.ad_type ===4) {%>showfullpreview<%}%>">
+                <img src="" style="display:none;"/>
+                <%if(it.ad_type === 3 || it.ad_type === 4) {%>
+                    <em></em>
+                <%}%>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- banner文字链 -->
+<script type="text-x-dot-template" id="tpl-banner-textlink">
+    <div class="form-group required">
+        <label for="" class="col-sm-3 control-label">广告文案</label>
+        <div class="col-sm-7">
+            <input type="text" class="form-control" name="appinfos_profile" value="<%=it.campaignInfo.appinfos_profile%>" 
+                data-name="appinfos_profile" check-type="required" required-message="请输入广告文案" maxlength="16"
+                data-toggle="showText" id="js-showappinfos-profile">
+        </div>
+    </div>
+</script>
+<!-- banner文字链预览 -->
+<script type="text-x-dot-template" id="tpl-banner-textlink-preview">
+    <div class="preview pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">预览</div>
+            <div class="panel-body textlink-preview">
+                <p aria-labelledby="js-showappinfos-profile"><%=it.campaignInfo.appinfos_profile%></p>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text-x-dot-template" id="tpl-materiallist">
+    <% if(it && it.demand) { %>
+        <% if($.isArray(it.demand)) {%>
+            <% for(var i = 0, j = it.demand.length; i < j; i++) {%>
+                <li data-key="<%=i%>" data-url=""><%=it.demand[i]%></li>
+            <%}%>
+        <% } else { %>
+            <% for(var key in it.demand) {%>
+                <li data-key="<%=key%>" data-url=""><%=it.demand[key]%></li>           
+            <%}%>
+        <%}%>
+    <% } %>   
+</script>
+<script type="text-x-dot-template" id="tpl-feeds-materiallist">
+    <%if(it && it.demand) {%>
+        <%for(var key in it.demand) {var lastKey=key;var adSepc=it.demand[key];}%>
+        <div class="material-list feeds-material" data-products_type="<%=it.products_type%>">
+            <div class="bd" style="position: relative;">
+                <% if(it.campaignInfo.appinfos_images && typeof it.campaignInfo.appinfos_images === 'object' 
+                    && it.campaignInfo.appinfos_images.length > 0) { %>
+                <div class="img_view">
+                    <% if(it.campaignInfo.appinfos_images && it.campaignInfo.appinfos_images.length > 0 && it.campaignInfo.appinfos_images[0].url) { %>
+                        <a href="<%=it.campaignInfo.appinfos_images[0].url%>" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                            <img src="<%=it.campaignInfo.appinfos_images[0].url%>" style="display:block; margin: 0px auto 10px; max-width: 468px;"
+                                data-key="<%=lastKey%>">
+                        </a>
+                    <% } else { %>
+                        <a href="" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                            <img src="" style="display:block; margin: 0px auto 10px; max-width: 468px;" data-key="<%=lastKey%>">
+                        </a>
+                    <% } %>
+                </div>
+                <button id="js-feedsuploadicon-<%=it.products_type%>" type="button" class="btn btn-primary"
+                    data-key="<%=lastKey%>" data-adspec="<%=adSepc%>" data-mark="button">修改素材</button>
+                <p style="text-align:center;">
+                    请上传
+                    <span class="text-warning"><%=adSepc%></span>的<%if(it.products_type==CONSTANT.products_type_link){%><span>jpg、png<%}%></span>
+                    图片，不超过80KB
+                </p>
+                <% } else { %>    
+                    <div class="img_view">
+                        <a href="" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                            <img src="" style="display: none; margin: 0px auto 10px; max-width: 468px;" data-key="<%=lastKey%>"></a>
+                    </div>
+                    <button id="js-feedsuploadicon-<%=it.products_type%>" type="button" class="btn btn-primary"
+                        data-key="<%=lastKey%>" data-adspec="<%=adSepc%>" data-mark="button">上传素材</button>
+                    <p style="text-align:center;">
+                        请上传
+                        <span class="text-warning"><%=adSepc%></span>的<%if(it.products_type==CONSTANT.products_type_link){%><span>jpg、png<%}%>
+                        图片，不超过80KB
+                    </p>
+                <% } %>
+            </div>
+        </div>
+        <input type="hidden" check-type="checkFeedsIcon" data-key="<%=lastKey%>" class="form-control" value="checkFeedsLinkIcon"/>
+    <%}%>
+</script>
+<!-- AppStore模板开始 -->
+<script type="text-x-dot-template" id="tpl-appstore">
+    <div class="appForm pull-left" style="width:620px;">
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">广告名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="appinfos_app_name" value="<%=it.campaignInfo.appinfos_app_name%>"
+                    check-type="required" required-message="请输入广告名称" placeholder="用于区分不同的广告"
+                    data-name="appinfos_app_name">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">应用ID</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="application_id" value="<%=it.campaignInfo.application_id%>"
+                    check-type="required checkAppid" required-message="请填写应用ID" placeholder="应用在AppStore的唯一标志"
+                    data-name="application_id" id="js-application-id">
+                <input type="hidden" name="check-appid" value="<%=it.campaignInfo.application_id%>">
+                <input type="hidden" name="products_show_name" value="<%=it.campaignInfo.products_show_name%>">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">应用图标</label>
+            <!-- 应用图标显示 -->    
+            <div class="col-sm-9">
+                <%if(it.campaignInfo.products_icon && it.campaignInfo.products_icon.length) {%>
+                    <%var oImages = it.campaignInfo.products_icon;%>
+                    <button class="btn btn-primary" type="button" id="js-upload-appstore-icon">修改图片</button>
+                    <div class="js-show-appstoreimg campaignIcon">
+                        <img src="<%=oImages%>" data-adspec="<%=CONSTANT.app_img_one%>" width="40" height="40" /><i class="fa fa-times-circle"></i>
+                    </div>
+                <% } else {%>
+                    <button class="btn btn-primary" type="button" id="js-upload-appstore-icon">上传</button>
+                    <div class="js-show-appstoreimg campaignIcon">
+                    </div>
+                <%}%>
+                <p class="form-control-static text-muted">
+                    支持
+                    <span class="text-warning">512*512 jpg、jpeg、png</span>
+                    , 不超过100KB
+                </p>
+                <input type="hidden" name="products_icon" id="js-appstore-products-icon" value="<%=it.campaignInfo.products_icon%>" 
+                    check-type="required" required-message="请上传应用图标" >
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="description" class="col-sm-3 control-label">应用介绍</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_description" value="<%=it.campaignInfo.appinfos_description%>" data-name="appinfos_description"
+                    maxlength="1000" rows="6" check-type="required" required-message="请输入应用介绍"><%=it.campaignInfo.appinfos_description%></textarea>
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="description" class="col-sm-3 control-label">一句话简介</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_profile" value="<%=it.campaignInfo.appinfos_profile%>"
+                    maxlength="25" rows="2" data-name="appinfos_profile"
+                    check-type="required" required-message="请输入一句话简介"><%=it.campaignInfo.appinfos_profile%></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="col-sm-3 control-label">更新说明</label>
+            <div class="col-sm-7">
+                <textarea class="form-control" name="appinfos_update_des" value="<%=it.campaignInfo.appinfos_update_des%>" data-name="appinfos_update_des"
+                    maxlength="1000" rows="6"><%=it.campaignInfo.appinfos_update_des%></textarea>
+            </div>
+        </div>
+        <div class="position-form-group required js-shortappstoreicon-div">
+            <label for="" class="col-sm-3 control-label">应用截图</label>
+            <!-- 应用截图显示 -->    
+            <div class="col-sm-offset-3 col-sm-9 js-shortappstoreicon shortAppIcon">
+            </div>
+        </div>
+        <div class="form-group required" style="<%if(it.campaignInfo.hidden){%>display:none;<%}%>">
+            <label for="" class="col-sm-3 control-label">计费类型</label>
+            <div class="col-sm-9">
+                <label class="radio-inline">
+                    <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cpc%>"
+                        data-name="revenue_type"
+                        <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cpc) {%>checked<%}%>
+                        <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPC(按点击计费)</label>
+                <label class="radio-inline js-revenue-type-cpa">
+                    <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cpa%>"
+                        data-name="revenue_type"
+                        <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cpa) {%>checked<%}%>
+                        <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPA(按激活计费)</label>
+                <label class="radio-inline js-revenue-type-cps">
+                    <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cps%>"
+                        data-name="revenue_type"
+                        <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cps) {%>checked<%}%>
+                        <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPS(按收入分成计费)</label>
+            </div>
+        </div>
+        <!-- 出价、日预算 -->
+        <div class="js-MoneyLimit"></div>
+        <!-- 关键字加价 -->
+        <div class="form-group js-keyword-div" id="appstore-keywords">
+            <label for="" class="col-sm-3 control-label">搜索关键字加价</label>
+            <div class="col-sm-7 js-KeyLimit"></div>
+            <div class="revenueTips">
+                <span class="js-DayLimitTips" data-toggle="tooltip" data-placement="right"
+                    title='点击"新增"按钮输入搜索关键字和加价金额。提交审核通过后，当用户搜索以上关键字并下载本推广应用时，计费价格=基础出价+关键字对应的加价金额。'> <i class="fa fa-question-circle"></i>
+                </span>
+                <br/>
+                <button type="button" class="btn btn-primary js-AddKey">+新增</button>
+                <div class="js-AddKeyInput addKeyInput form-inline" style="display:none;">
+                    <div class="">
+                        <label for="">关键字</label>
+                        <input type="text" class="form-control js-KeyWordInput" maxlength="32"></div>
+                    <div class="">
+                        <label for="">加价</label>
+                        <span class="text-muted">￥</span>
+                        <input type="number" value="0.5" step="0.1" class="form-control js-KeyPriceInput"></div>
+                    <div class="">
+                        <button class="btn btn-default js-AddConfirm" data-type="appstore" type="button">确定</button>
+                        <button class="btn btn-default js-AddCancel" type="button">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- AppStore模板结束 -->
+<!-- 计费类型开始 -->
+<script type="text-x-dot-template" id="tpl-revenue-type">
+    <%if (it.ad_type != CONSTANT.ad_type_other) {%>
+    <label class="radio-inline">
+        <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" data-name="revenue_type"
+            value="<%=it.revenue_type.value%>" check-type="required" required-message="请选择计费类型" 
+            <%if (it.campaignInfo.revenue_type && it.campaignInfo.revenue_type == it.revenue_type.value) {%>checked<%}%>
+            <%if(it.campaignInfo.hidden){%>disabled<%}%>>
+        <%=it.revenue_type.label%></label>
+    <%}%>
+    <%if (it.revenue_type_val && it.revenue_type_val.length > 0) {%>
+        <%if ($.inArray(CONSTANT.revenue_type_cpa, it.revenue_type_val) > -1) {%>
+        <label class="radio-inline js-revenue-type-cpa">
+            <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cpa%>"
+                data-name="revenue_type"  check-type="required" required-message="请选择计费类型"
+                <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cpa) {%>checked<%}%>
+                <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPA(按激活计费)</label>
+        <%}%>
+        <%if ($.inArray(CONSTANT.revenue_type_cpt, it.revenue_type_val) > -1) {%>
+        <label class="radio-inline js-revenue-type-cpt">
+            <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cpt%>"
+                data-name="revenue_type"  check-type="required" required-message="请选择计费类型"
+                <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cpt) {%>checked<%}%>
+                <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPT(按时间计费)</label>
+        <%}%>
+        <%if(it.ad_type != CONSTANT.ad_type_app_market && it.ad_type != CONSTANT.ad_type_app_store && it.ad_type != CONSTANT.ad_type_other){%>
+        <%if ($.inArray(CONSTANT.revenue_type_cpm, it.revenue_type_val) > -1) {%>
+        <label class="radio-inline js-revenue-type-cpm">
+            <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cpm%>"
+                data-name="revenue_type"  check-type="required" required-message="请选择计费类型"
+                <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cpm) {%>checked<%}%>
+                <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPM(按千次展示计费)</label>
+        <%}%>
+        <%}%>
+        <%if ($.inArray(CONSTANT.revenue_type_cps, it.revenue_type_val) > -1) {%>
+        <label class="radio-inline js-revenue-type-cps">
+            <input type="radio" name="revenue_type_<%=it.products_type%>_<%=it.ad_type%>" value="<%=CONSTANT.revenue_type_cps%>"
+                data-name="revenue_type"  check-type="required" required-message="请选择计费类型"
+                <%if (it.campaignInfo &&it.campaignInfo.revenue_type === CONSTANT.revenue_type_cps) {%>checked<%}%>
+                <%if(it.campaignInfo.hidden){%>disabled<%}%>>CPS(按收入分成计费)</label>
+        <%}%>
+    <%}%>
+</script>
+<!-- 计费类型结束 -->
+<!-- Other模板开始 -->
+<script type="text-x-dot-template" id="tpl-other">
+    <div class="pull-left" style="width:620px;">
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">广告名称</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="appinfos_app_name" value="<%=it.campaignInfo.appinfos_app_name%>"
+                    check-type="required" required-message="请输入广告名称"
+                    data-name="appinfos_app_name">
+            </div>
+        </div>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">计费类型</label>
+            <div class="col-sm-9 js-revenue-type-radio">
+                <%##def.snippet:
+                    <%#def.tpl_revenue_type%>
+                    #%>
+                <%#def.snippet%>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- Other模板结束 -->
+<!-- 视频模板开始 -->
+<script type="text-x-dot-template" id="tpl-video">
+    <div class="form-group required">
+        <label for="" class="col-sm-3 control-label">视频素材</label>
+        <div class="col-sm-9">
+            <%if (it.campaignInfo && it.campaignInfo.video && it.campaignInfo.video.length > 0) {%>
+                <%var oVideoFile = it.campaignInfo.video;%>
+                <%if (oVideoFile.length == 1) {%>
+                    <%var sPackageId = '';%>
+                    <%if (it.campaignInfo.status == CONSTANT.status_draft) {%>
+                        <%sPackageId = '{"id":<%=oVideoFile[0].id%>}'; %>
+                        <a class="js-video-name text-info" href="<%=oVideoFile[0].url%>" target="_blank">
+                            <%=oVideoFile[0].real_name%></a>
+                    <%} else if (it.campaignInfo.status == CONSTANT.status_rejected) {%>
+                        <a class="js-video-name text-info" href="<%=oVideoFile[0].url%>" target="_blank">
+                        <%=oVideoFile[0].real_name%></a><span class="js-video-prompt">&nbsp;未通过审核</span>
+                    <%} else {%>
+                        <%sPackageId = '{"id":<%=oVideoFile[0].id%>}'; %>
+                        当前投放:<a class="text-info" href="<%=oVideoFile[0].url%>" target="_blank">
+                            <%=oVideoFile[0].real_name%></a>
+                        <span class="js-change-video" style="display:none;">
+                            <br/>准备替换:<a class="js-video-name text-warning" href="" target="_blank"></a>
+                        </span>
+
+                    <%}%>
+                    <button type="button" class="btn btn-primary js-upload-video"><span class="js-btn-name">替换</span></button>
+                    <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                    <input type="hidden" name="video" value='<%=sPackageId%>' data-name="video"
+                        check-type="required" required-message="请上传视频素材">
+                <%} else {%>
+                    <%
+                        var iReady = 0;
+                        var iOut = 1;
+                        if (oVideoFile[0].status == 3) {
+                            iOut = 0;
+                            iReady = 1;
+                        }
+                    %>
+                    当前投放:<a class="text-info" href="<%=oVideoFile[iReady].url%>" target="_blank">
+                            <%=oVideoFile[iReady].real_name%></a>
+                    <span class="js-change-video">
+                        <br/>准备替换:<a class="js-video-name text-warning" href="<%=oVideoFile[iOut].url%>" target="_blank">
+                            <%=oVideoFile[iOut].real_name%></a><span class="js-video-prompt">&nbsp;未通过审核</span>
+                    </span>
+                    <button type="button" class="btn btn-primary js-upload-video">
+                        <span class="js-btn-name">替换</span></button>
+                        <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+                    <input type="hidden" name="video" value="" data-name="video"
+                        check-type="required" required-message="请上传视频素材">
+                <%}%>
+            <%} else {%>
+            <a class="js-video-name text-warning" href="javascript:void(0)" target="_blank"></a>
+            <button type="button" class="btn btn-primary js-upload-video"><span class="js-btn-name">上传</span></button>
+            <div class="btn-bg-div"><span class="btn-bg"></span><p>上传中，请勿关闭页面</p></div>
+            <input type="hidden" name="video" value="" data-name="video"
+                check-type="required" required-message="请上传视频素材">
+            <%}%>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-9">
+            <div class="video-scale">
+                <span>视频规格要求:</span>
+                <div class="title">
+                    <div class="video-row">
+                        <div class="col col-2">规格</div>
+                        <div class="col col-3">要求</div>
+                        <div class="col col-1">&nbsp;</div>
+                        <div class="col col-2">规格</div>
+                        <div class="col col-3">要求</div>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="video-row">
+                        <div class="col col-2">时长</div>
+                        <div class="col col-3">5 / 15 / 30 / 60秒</div>
+                        <div class="col col-1 center col-center-first">&nbsp;</div>
+                        <div class="col col-2">文件大小</div>
+                        <div class="col col-3">≤ 20MB</div>
+                    </div>
+                    <div class="video-row">
+                        <div class="col col-2">格式</div>
+                        <div class="col col-3">MP4</div>
+                        <div class="col col-1 center">&nbsp;</div>
+                        <div class="col col-2">分辨率</div>
+                        <div class="col col-3">1280 x 720px</div>
+                    </div>
+                    <div class="video-row">
+                        <div class="col col-2">视频码率</div>
+                        <div class="col col-3">≤ 800 kbit/s</div>
+                        <div class="col col-1 center">&nbsp;</div>
+                        <div class="col col-2">比例</div>
+                        <div class="col col-3">16 : 9</div>
+                    </div>
+                    <div class="video-row">
+                        <div class="col col-2">格式类型</div>
+                        <div class="col col-3">Main Profile</div>
+                        <div class="col col-1 center">&nbsp;</div>
+                        <div class="col col-2">帧率</div>
+                        <div class="col col-3">推荐 24 fps</div>
+                    </div>
+                    <div class="video-row">
+                        <div class="col col-2">音频格式</div>
+                        <div class="col col-3">AAC</div>
+                        <div class="col col-1 center">&nbsp;</div>
+                        <div class="col col-2">视频编码</div>
+                        <div class="col col-3">H.264/AVC</div>
+                    </div>
+                    <div class="video-row video-row-last">
+                        <div class="col col-2">音频采样率</div>
+                        <div class="col col-3">推荐 44.1 kHZ</div>
+                        <div class="col col-1 center">&nbsp;</div>
+                        <div class="col col-2">音频码率</div>
+                        <div class="col col-3">≤ 96 kbit/s</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 视频模板结束 -->
+<!-- 视频模板开始 -->
+<script type="text-x-dot-template" id="tpl-video-preview">
+    <div class="preview pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">预览</div>
+            <div class="panel-body videopreview">
+                <%
+                    var url = '';
+                    if(it.campaignInfo && it.campaignInfo.video && it.campaignInfo.video.length > 0){
+                        if (it.campaignInfo.video.length === 1) {
+                            url = it.campaignInfo.video[0].url;
+                        } else {
+                            var iReady = 0;
+                            if (it.campaignInfo.video[0].status == 3) {
+                                iReady = 1;
+                            }
+                            url = it.campaignInfo.video[iReady];
+                        }
+                    }
+                %>
+                <video controls
+                    src="<%=url%>"
+                    style="<%if(!(it.campaignInfo && it.campaignInfo.video && it.campaignInfo.video.length > 0)){%>display:none;<%}%>">
+                     您的浏览器不支持 HTML5 video 标签
+                </video>
+                <em></em>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 视频模板结束 -->
+<!-- template end -->
+<!-- 七牛上传   -->
+<script src="../../js/plugins/jquery.fancybox.pack.js"></script>
+<script src="../../js/plugins/plupload.full.min.js"></script>
+<script src="../../js/plugins/qiniu.js"></script>
+<script src="../../js/plugins/jquery.form.min.js"></script>
+<script src="../../js/plugins/jquery.uploadfile.min.js"></script>
+<script src="../../js/common/validate.js"></script>
+<script src="../../js/common/constant.js"></script>
+<script src="../../js/common/basemodel.js"></script>
+<script src="../model/campaignmodel.js"></script>
+<script src="../js/campaign_edit.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

@@ -1,0 +1,16 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox">
+        <ul class="nav nav-tabs" id="tab-type-wrapper">
+            <li role="recharge"><a href="index.html">手动充值明细<span data-type="recharge-num" class="badge left" style="float:none;"></span></a></li>
+            <li role="gift" class="active"><a href="gift.html">赠送明细<span data-type="gift-num" class="badge left" style="float:none;"></span></a></li>
+        </ul>
+    </div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-balance-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<script src="../js/balance-gift.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

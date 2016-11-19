@@ -1,0 +1,56 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+    <div class="widthdraw">
+        <form class="form-horizontal">
+        </form>
+    </div>
+<script type="text-x-dot-template" id="tpl-widthdraw">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">最大可提取金额：</label>
+        <div class="col-sm-9">
+            <p class="form-control-static">
+                ￥ <strong class="draw-balance text-danger"><%=it.balance%></strong> 元 <small class="text-danger">( 可提取金额 = 账户余额 - 申请中的提款 )</small>
+            </p>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-3 control-label">收款方用户名：</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" name="payee" check-type="required" required-message="请输入用户"  placeholder="请输入用户名">
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-3 control-label">收款方开户行：</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" name="bank" placeholder="请输入开户行" check-type="required" required-message="请输入开户行">
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-3 control-label">收款方账号：</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" name="bank_account"  placeholder="请输入账号" check-type="required" required-message="请收入账号" regex = "^\d{15,19}$" regex-message="请收入正确的银行卡号">
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-3 control-label">提款金额：</label>
+        <div class="col-sm-5">
+            <div class="input-group">
+                 <div class="input-group-addon">￥</div>
+                 <input type="text" class="form-control" name="money" placeholder="小于等于余额" check-type="required checkmoney" required-message="请输入小于等于余额的提款金额" >
+             </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-2">
+            <button type="button" class="btn btn-primary btn-block  js-widthdraw-submit <%if (it.balance <= 0) {%> disabled <%}%>">提交</button>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-default btn-block  js-widthdraw-reset ">重置</button>
+        </div>
+    </div>
+</script>
+
+
+
+<script src="../../js/common/validate.js"></script>
+<script src="../js/balance-withdraw.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

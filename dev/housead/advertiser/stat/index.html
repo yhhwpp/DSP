@@ -1,0 +1,88 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link href="../../../css/bootstrap-multiselect.css" rel="stylesheet">
+<link href="../../../css/kendo.common-material.min.css" rel="stylesheet">
+<link href="../../../css/kendo.material.min.css" rel="stylesheet">
+<!--STYLE_PLACEHOLDER-->
+<div class="report-tbs" style="margin-top: 30px;">
+    <label>开始时间</label>
+    <input type="text" class="report-in" id="date-start" value="">
+    <label>结束时间</label>
+    <input type="text" class="report-in" id="date-end" value="">
+    <button id="query" onclick="" class="btn btn-primary" type="button"><i class="fa fa-search-plus"></i> 查 询</button>
+    <span class="js-day-select date-select-key">
+        <a data-type="select-day" data-day-type="1" class="btn btn-default change-status" href="javascript:void(0);">今天</a>
+        <a data-type="select-day" data-day-type="2" class="btn btn-default change-status" href="javascript:void(0);">昨日</a>
+
+        <a data-type="select-day" data-day-type="3" style="display:none" class="btn btn-default change-status" href="javascript:void(0);">前一天</a>
+        <a data-type="select-day" data-day-type="4" style="display:none" class="btn btn-default change-status" href="javascript:void(0);">后一天</a>
+
+        <a data-type="select-day" data-day-type="5" class="btn btn-default change-status" href="javascript:void(0);">最近7天</a>
+        <a data-type="select-day" data-day-type="6" class="btn btn-default change-status" href="javascript:void(0);">上周</a>
+        <a data-type="select-day" data-day-type="7" class="btn btn-default change-status" href="javascript:void(0);">本月</a>
+        <a data-type="select-day" data-day-type="8" class="btn btn-default change-status" href="javascript:void(0);">历史12个月</a>
+    </span>
+</div>
+<div class="row select-wripper">
+    <div class="col-xs-2">
+        <select id="select-item" class="form-control" title="请选择">
+        </select>
+    </div>
+    <div class="col-xs-2">
+        <select id="select-campaign" class="form-control">
+        </select>
+    </div>
+    <div class="col-xs-2">
+        <select id="select-zone" class="form-control">
+        </select>
+    </div>
+    <span class="status-tip text-warning">提示：有效数据三个工作日内更新</span>
+</div>
+<div id="chart"></div>
+<div class="select-pagesize-wripper">
+    <span>每页显示
+        <select id="select-grid-pagesize">
+            <option value="2">2</option>
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        条记录
+    </span>
+    <span id="export-report-btn" class="export-excel"><a class="btn btn-primary" href="javascript:void(0);" ><i class="fa fa-file-excel-o"></i> 导出报表</a></span>
+</div>
+<div id="day-grid" class="day-grid"></div>
+
+<script id="tpl-chart-tooltip" type="text/x-kendo-template">
+    <p class="tpl-tootip-text-left">#: series.name ? (series.name + ': ' + kendo.toString(value, series.mformat)) : (series.fieldName + ':' + kendo.toString(value, series.mformat)) #</p>
+</script>
+<script src="../../../js/common/lang.js"></script>
+<script src="../../../js/plugins/bootstrap-multiselect.js"></script>
+<!-- public js -->
+<script src="../../../js/plugins/kendo.core.min.js"></script>
+<script src="../../../js/plugins/kendo.data.min.js"></script>
+
+<!-- datepicker js -->
+<script src="../../../js/plugins/kendo.popup.min.js"></script>
+<script src="../../../js/plugins/kendo.calendar.min.js"></script>
+<script src="../../../js/plugins/kendo.datepicker.min.js"></script>
+
+<!-- chart js -->
+<script src="../../../js/plugins/kendo.color.min.js"></script>
+<script src="../../../js/plugins/kendo.drawing.min.js"></script>
+<script src="../../../js/plugins/kendo.dataviz.core.min.js"></script>
+<script src="../../../js/plugins/kendo.dataviz.themes.min.js"></script>
+<script src="../../../js/plugins/kendo.dataviz.chart.min.js"></script>
+
+<!-- grid js -->
+<script src="../../../js/plugins/kendo.columnsorter.min.js"></script>
+<script src="../../../js/plugins/kendo.pager.min.js"></script>
+<script src="../../../js/plugins/kendo.grid.min.js"></script>
+
+<script src="../../../js/plugins/kendo.culture.zh-CN.min.js"></script>
+<script src="../../../js/plugins/kendo.messages.zh-CN.min.js"></script>
+
+<script src="../../../js/plugins/date.js"></script>
+<script src="../js/stat-index.js"></script>
+<!--SCRIPT_PLACEHOLDER-->
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

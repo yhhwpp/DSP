@@ -1,0 +1,393 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox">
+        <ul class="nav nav-tabs">
+            <li role="adn" class="active">
+                <a href="javascript:;">ADN媒体</a>
+            </li>
+            <li role="adx">
+                <a href="adx.html">Adx</a>
+            </li>
+        </ul>
+    </div>
+    <div class="table-ctl">
+        <button type="button" class="btn btn-primary pull-right" id="js-add-affiliate">+ 新建媒体</button>
+    </div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-affiliate-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<div class="modal fade fieldset-bd" id="js-trafficker-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新建媒体</h4>
+            </div>
+            <div class="modal-body" style="max-height:500px; overflow-y: auto;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="js-confirm">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" name="select_app_platform">
+<input type="hidden" name="select_affiliates_status">
+<input type="hidden" name="select_creator_uid">
+<input type="hidden" name="select_ad_type">
+<input type="hidden" name="select_revenue_type">
+<input type="hidden" name="curr_select_ad_type">
+<input type="hidden" name="curr_select_revenue_type">
+<input type="hidden" name="filter">
+<script type="text-x-dot-template" id="tpl-new-affiliate">
+    <form class="form-horizontal" id="js-form-basic">
+        <input type="hidden" name="affiliateid" data-name="affiliateid" value="<%=it.model.affiliateid%>">
+        <fieldset>
+            <legend>基本信息</legend>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">登录账号:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="username" data-name="username" maxlength="32"
+                        placeholder="32位以内的中英文字符" value="<%=it.model.username%>"
+                        check-type="required" required-message="请输入媒体商登录账号" <%if(it.model.isEdit){%>disabled<%}%>
+                        regex="^[a-zA-Z0-9\u4e00-\u9fa5]+$" regex-message="媒体商登录账号格式不正确">
+                </div>
+            </div>
+            <%if(!it.model.isEdit){%>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">登录密码:</label>
+                <div class="col-sm-7">
+                    <input type="password" class="form-control" data-name="password" maxlength="16"
+                        placeholder="6-16位字符" value="<%=it.model.password%>"
+                        check-type="required password" required-message="请输入密码" >
+                </div>
+            </div>
+            <%}%>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">媒体全称:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="name" data-name="name" maxlength="32"
+                        placeholder="游戏渠道建议输入代理公司名称+媒体名称(32位以内)" value="<%=it.model.name%>"
+                        check-type="required clientname" required-message="请输入媒体全称">
+                </div>
+            </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">媒体简称:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="brief_name" data-name="brief_name" maxlength="32"
+                        placeholder="游戏渠道建议输入代理公司简称+媒体简称(32位以内)" value="<%=it.model.brief_name%>"
+                        check-type="required clientname" required-message="请输入媒体简称">
+                </div>
+            </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">联系人姓名:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="contact" data-name="contact" maxlength="32"
+                        placeholder="32位以内中英文字符数字" value="<%=it.model.contact%>"
+                        check-type="required contact" required-message="请输入联系人" contact-message="联系人姓名格式不正确">
+                </div>
+            </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">手机号:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="contact_phone" data-name="contact_phone" maxlength="11"
+                        placeholder="请输入手机号码" value="<%=it.model.contact_phone%>"
+                        check-type="required mobile" required-message="请输入手机号码">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="col-sm-3 control-label">QQ:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="qq" data-name="qq" maxlength="64"
+                        placeholder="请输入QQ号" check-type="qq" value="<%=it.model.qq%>">
+                </div>
+            </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">邮箱:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" name="email" data-name="email" placeholder="请输入邮箱" value="<%=it.model.email%>"
+                        check-type="required mail" required-message="请输入邮箱" mail-message="邮箱格式不正确">
+                </div>
+            </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">下载方式:</label>
+                <div class="col-sm-9">
+                    <label class="radio-inline">
+                        <input type="radio" name="cdn" data-name="cdn" value="1"
+                            <%if(it.model.cdn !== 2) {%>checked<%}%>
+                        check-type="required" required-message="请选择下载方式">ADN
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="cdn" data-name="cdn" value="2" <%if(it.model.cdn === 2) {%>checked<%}%>>CDN
+                    </label>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">平台类型:</label>
+                <div class="col-sm-9">
+                    <%var index = 0;%>
+                    <%for(var key in LANG.platform) {%>
+                    <%if(index == 0) {%>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="app_platform" data-name="app_platform" value="<%=key%>" check-type="required" required-message="请选择平台类型"><%=LANG.platform[key]%></label>
+                    <%}else {%>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="app_platform" data-name="app_platform" value="<%=key%>" required-message="请选择平台类型"><%=LANG.platform[key]%></label>
+                    <%}%>
+                    <%index++;%>
+                    <%}%>
+                </div>
+            </div>
+            <%##def.snippet:
+                <div class="form-group required">
+                    <label for="" class="col-sm-3 control-label">支持的广告:</label>
+                    <div class="col-sm-9">
+                    <%#def.deliverytpl%>
+                    <input type="hidden" value="0" check-type="isAdtype isRevenueType isNum" name="delivery-valid">
+                    </div>
+                </div>
+            <div class="form-group required">
+                <label for="" class="col-sm-3 control-label">媒体销售:</label>
+                <div class="col-sm-4">
+                    <select class="form-control" name="creator_uid" data-name="creator_uid"
+                        check-type="required" required-message="请选择媒体销售">
+                        <% if(it && it.sales) { %>
+                            <% for(var i = 0, j = it.sales.length; i < j; i++) { %>
+                                <option value="<%=it.sales[i].value%>"
+                                    <%if(it.model.creator_uid == it.sales[i].value){%>selected<%}%>>
+                                    <%=it.sales[i].text%>
+                                </option>
+                            <% } %>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    <form class="form-horizontal" id="js-from-kind">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <input type="hidden" name="ikind" data-name="ikind" value="<%=it.model.kind == 0 ? '' : it.model.kind%>"
+                    check-type="required" required-message="联盟模式和HouseAd模式必须选择一项">
+            </div>
+        </div>
+    </form>
+    <form class="form-horizontal" id="js-form-union">
+        <fieldset>
+            <legend>联盟模式</legend>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="kind" data-name="kind" value="<%=CONSTANT.kind_union%>"
+                            <%if(it.model.kind && (it.model.kind & CONSTANT.kind_union)) {%>checked<%}%>>支持联盟模式</label>
+                </label>
+            </div>
+            <div id="js-classify-kind-<%=CONSTANT.kind_union%>"
+                <%if(it.model.kind && (it.model.kind & CONSTANT.kind_union)) {%><%}else{%>style="display:none;"<%}%>>
+                <div class="form-group required">
+                    <label for="" class="col-sm-3 control-label">收入分成:</label>
+                    <div class="col-sm-9">
+                    <%#def.incomeratetpl%>
+                    <input type="hidden" value="0" check-type="isIncomeRate isIncomeInput" name="income-rate-valid">
+                    </div>
+                </div>
+                 #%>
+                <%#def.snippet%>
+                <div class="form-group required">
+                    <label for="" class="col-sm-3 control-label">对接方式:</label>
+                    <div class="col-sm-9">
+                        <%var modeIndex = 0;%>
+                        <%for(var key in LANG.mode_traffic) {%>
+                        <%if(modeIndex == 0) {%>
+                        <label class="radio-inline">
+                            <input type="radio" name="mode" data-name="mode" value="<%=key%>" check-type="required" required-message="请选择对接方式">
+                                <%=LANG.mode[key]%></label>
+                        <%}else {%>
+                        <label class="radio-inline">
+                            <input type="radio" name="mode" data-name="mode" value="<%=key%>"><%=LANG.mode_traffic[key]%></label>
+                        <%}%>
+                        <%modeIndex++;%>
+                        <%}%>
+                    </div>
+                </div>
+                <div class="form-group required js-audit" style="display:none;">
+                    <label for="" class="col-sm-3 control-label">是否审核:</label>
+                    <div class="col-sm-9">
+                        <label class="radio-inline">
+                            <input type="radio" name="audit" data-name="audit" value="1" checked check-type="required" required-message="请选择媒体是否需要审核">否
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="audit" data-name="audit" value="2">是
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label for="" class="col-sm-3 control-label">投放类型:</label>
+                    <div class="col-sm-9">
+                        <%for(var key in LANG.delivery_type) {%>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="delivery_type" data-name="delivery_type" value="<%=key%>"
+                                <%if(it.model.delivery_type & key){%>checked<%}%>
+                                check-type="required" required-message="请选择投放类型"><%=LANG.delivery_type[key]%>
+                        </label>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    <form class="form-horizontal" id="js-form-housead">
+        <fieldset>
+            <legend>HouseAd模式</legend>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="kind" data-name="kind" value="<%=CONSTANT.kind_self%>"
+                            <%if(it.model.kind && (it.model.kind & CONSTANT.kind_self)) {%>checked<%}%>>支持自营模式</label>
+                </label>
+            </div>
+            <div id="js-classify-kind-<%=CONSTANT.kind_self%>"
+                <%if(it.model.kind && (it.model.kind & CONSTANT.kind_self)) {%><%}else{%>style="display:none;"<%}%>>
+                <div class="form-group required">
+                    <label class="col-sm-3 control-label">媒体类型:</label>
+                    <div class="col-sm-9">
+                        <label class="radio-inline">
+                            <input type="radio" name="aff_type" data-name="aff_type" value="1" checked>应用市场
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label class="col-sm-3 control-label">收款支付宝:</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" name="alipay_account" data-name="alipay_account"
+                            maxlength="32" value="<%=it.model.alipay_account%>" <%if(it.model.isEdit && it.model.alipay_account){%>disabled<%}%>
+                            check-type="required" required-message="请输入收款支付宝">
+                    </div>
+                    <div style="color:red;">※提交后不能修改</div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</script>
+<!-- 收入分成模版 -->
+<script type="text-x-dot-template" id="tpl-incomerate">
+    <div class="js-incomerate-div">
+        <label class="radio-inline"><input type="radio" value="50" name="income_rate">50%</label>
+        <label class="radio-inline"><input type="radio" value="60" name="income_rate">60%</label>
+        <label class="radio-inline"><input type="radio" value="70" name="income_rate">70%</label>
+        <label class="radio-inline"><input type="radio" value="80" name="income_rate">80%</label>
+        <label class="radio-inline"><input type="radio" value="" name="income_rate" class="income-custom">自定义</label>
+        <input type="text" name="income-custom-input" onkeyup="value=value.replace(/[^\d.]/g,'')" class="custom-input" maxlength="6">%
+    </div>
+</script>
+<!-- 支持投放模版 -->
+<script type="text-x-dot-template" id="tpl-delivery">
+    <div class="js-delivery-div">
+        <div class="adtype-checkbox">
+            <label class="checkbox-inline"><input type="checkbox" name="ad_type" value="<%=CONSTANT.ad_type_app_market%>">应用市场</label>
+            <div>
+                <div class="js-adtype0 checkbox-inline revenuetype-checkbox" data-adtype="<%=CONSTANT.ad_type_app_market%>">
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpd%>">CPD</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>">CPA</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpt%>">CPT</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>">CPS</label>
+                </div>
+            </div>
+        </div>
+        <div class="adtype-checkbox">
+            <label class="checkbox-inline"><input type="checkbox" name="ad_type" value="<%=CONSTANT.ad_type_banner%>">Banner</label>
+            <div>
+                <div class="js-adtype1 checkbox-inline revenuetype-checkbox" data-adtype="<%=CONSTANT.ad_type_banner%>">
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpd%>">CPD</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpc%>">CPC<!--,<input maxlength="4" name="num" onkeyup="value=value.replace(/[^\d]/g,'')" class="custom-input">个C转成1个D--></label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>">CPA</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpt%>">CPT</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpm%>">CPM</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>">CPS</label>
+                </div>
+            </div>
+        </div>
+        <div class="adtype-checkbox">
+            <label class="checkbox-inline"><input type="checkbox" name="ad_type" value="<%=CONSTANT.ad_type_feeds%>">Feeds</label>
+            <div>
+                <div class="js-adtype2 checkbox-inline revenuetype-checkbox" data-adtype="<%=CONSTANT.ad_type_feeds%>">
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpd%>">CPD</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpc%>">CPC<!--,<input maxlength="4" name="num" onkeyup="value=value.replace(/[^\d]/g,'')" class="custom-input">个C转成1个D--></label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>">CPA</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpt%>">CPT</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpm%>">CPM</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>">CPS</label>
+                </div>
+            </div>
+        </div>
+        <div class="adtype-checkbox">
+            <label class="checkbox-inline"><input type="checkbox" name="ad_type" value="<%=CONSTANT.ad_type_screen_half%>">插屏</label>
+            <div>
+                <div class="js-adtype3 checkbox-inline revenuetype-checkbox" data-adtype="<%=CONSTANT.ad_type_screen_half%>">
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpd%>">CPD</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpc%>">CPC<!--,<input maxlength="4" name="num" onkeyup="value=value.replace(/[^\d]/g,'')" class="custom-input">个C转成1个D--></label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>">CPA</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpt%>">CPT</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpm%>">CPM</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>">CPS</label>
+                </div>
+            </div>
+        </div>
+        <div class="adtype-checkbox js-adtype71-div">
+            <label class="checkbox-inline"><input type="checkbox" name="ad_type" value="<%=CONSTANT.ad_type_app_store%>">AppStore</label>
+            <div>
+                <div class="js-adtype71 checkbox-inline revenuetype-checkbox" data-adtype="<%=CONSTANT.ad_type_app_store%>">
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpc%>">CPC</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>">CPS</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>">CPA</label>
+                </div>
+            </div>
+        </div>
+        <div class="adtype-checkbox">
+            <label class="checkbox-inline"><input type="checkbox" name="ad_type" value="<%=CONSTANT.ad_type_other%>">其他</label>
+            <div>
+                <div class="js-adtype81 checkbox-inline revenuetype-checkbox" data-adtype="<%=CONSTANT.ad_type_other%>">
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>">CPA</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cpt%>">CPT</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>">CPS</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 对接方式模版 -->
+<script type="text-x-dot-template" id="tpl-mode">
+    <div class="js-mode-div">
+        <div class="form-group" style="display: block;">
+            <label for="" class="">对接方式:</label>
+            <select class="form-control" name="mode">
+            <%for(var key in LANG.mode) {%>
+                <option value="<%=key%>"><%=LANG.mode[key]%></option>
+            <%}%>
+            </select>
+        </div>
+        <div class="form-group js-audit" style="display:none;margin-top:10px;">
+            <label for="" class="">是否审核:</label>
+            <div class="" style="display: inline-block;">
+                <label class="radio-inline">
+                    <input type="radio" name="audit" data-name="audit" value="1">否
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="audit" data-name="audit" value="2">是
+                </label>
+            </div>
+        </div>
+    </div>
+</script>
+<script src="../../js/common/editable.js"></script>
+<script src="../../js/common/validate.js"></script>
+<script src="../../js/common/modal.js"></script>
+<script src="../../js/common/basemodel.js"></script>
+<script src="../js/trafficker-editable.js"></script>
+<script src="../model/traffickermodel.js"></script>
+<script src="../js/trafficker-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

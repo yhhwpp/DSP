@@ -1,0 +1,632 @@
+<!-- htmlcs-disable tag-pair -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BiddingOS V3.2.4</title>
+    <link rel="shortcut icon" href="/bos-front/dev/favicon.ico" >
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/bos-front/dev/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bos-front/dev/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/bos-front/dev/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="/bos-front/dev/css/admin.css" rel="stylesheet">
+    <link href="/bos-front/dev/css/style.css" rel="stylesheet">
+    <!--STYLE_PLACEHOLDER-->
+    <script src="/bos-front/dev/js/libs/jquery.min.js"></script>
+    <script src="/bos-front/dev/js/libs/bootstrap.min.js"></script>
+    <script src="/bos-front/dev/js/plugins/doT.min.js"></script>
+    <script src="/bos-front/dev/js/plugins/jquery.dataTables.min.js"></script>
+    <script src="/bos-front/dev/js/common/config.js"></script>
+    <script src="/bos-front/dev/js/common/lang.js"></script>
+    <script src="/bos-front/dev/js/common/constant.js"></script>
+    <script src="/bos-front/dev/js/common/common.js"></script>
+    <script src="/bos-front/dev/js/common/nav.js"></script>
+    <!--SCRIPT_PLACEHOLDER-->
+</head>
+<body>
+    <!-- 联系销售顾问 -->
+    <div class="modal fade" id="sales-con" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    </div>
+    <div id="wrapper">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><span class="logo"></span></a>
+                <div id="switch-type"></div>
+            </div>
+            <ul class="nav navbar-right top-nav" id="head">
+            </ul>
+            <div class="collapse navbar-collapse navbar-ex1-collapse" id="menu">
+            </div>
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="container-fluid">
+            <!-- 左侧菜单模板 -->
+            <script id="tpl-menu" type="text/x-dot-template">
+                <% if(it.res == 0 && it.obj && it.obj.operation_list){ %>
+                    <%if(+it.obj.kind === CONSTANT.kind_self){%>
+                    <ul class="nav navbar-nav side-nav">
+                        <% if (it.obj.account_type === 'ADVERTISER') {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/advertiser/index.html">
+                                    <i class="fa fa-fw fa-pie-chart"></i>推广概览
+                                </a>
+                            </li>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.advertiser_campaign) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/advertiser/campaign/index.html">
+                                    <i class="fa fa-fw fa-bullhorn"></i>我的推广
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.advertiser_stat) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/advertiser/stat/index.html">
+                                    <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.balance) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/advertiser/balance/index.html">
+                                    <i class="fa fa-fw fa-rmb"></i>账户明细
+                                </a>
+                            </li>
+                            <%}%>
+                        <%} else if (it.obj.account_type === 'TRAFFICKER') { %>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_overview) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/overview/index.html">
+                                    <i class="fa fa-fw fa-pie-chart"></i>运营概览
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_campaign) > -1) {%>
+                            <li>
+                                <a data-type="trafficker_self_campaign" href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/campaign/index.html">
+                                    <i class="fa fa-fw fa-bullhorn"></i><span class="badge left" style="right:8px;"></span>广告管理
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_advertiser) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/advertiser/index.html">
+                                    <i class="fa fa-fw fa-group"></i>广告主管理
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_zone) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/zone/index.html">
+                                    <i class="fa fa-fw fa-th-large"></i>广告位管理
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_stat) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/stat/index.html">
+                                    <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_balance) > -1) {%>
+                            <li>
+                                <a data-type="trafficker-self-balance" href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/balance/index.html">
+                                    <i class="fa fa-fw fa-rmb"></i><span class="badge left" style="right:8px;"></span>财务管理
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_self_account) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/account/index.html">
+                                    <i class="fa fa-fw fa-user-plus"></i>账号管理
+                                </a>
+                            </li>
+                            <%}%>
+                        <%} else if (it.obj.account_type === 'BROKER') { %>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/broker/index.html">
+                                    <i class="fa fa-fw fa-pie-chart"></i>运营概览
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/broker/advertiser/index.html">
+                                    <i class="fa fa-fw fa-group"></i>广告主管理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/broker/campaign/index.html">
+                                    <i class="fa fa-fw fa-bullhorn"></i>广告管理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/broker/stat/index.html">
+                                    <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/housead/broker/balance/index.html">
+                                    <i class="fa fa-fw fa-rmb"></i>账户明细
+                                </a>
+                            </li>
+                        <%}%>
+                    </ul>
+                    <%}else{%>
+                    <ul class="nav navbar-nav side-nav">
+                        <% if (it.obj.account_type === 'ADVERTISER') {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/advertiser/index.html">
+                                    <i class="fa fa-fw fa-pie-chart"></i>推广概览
+                                </a>
+                            </li>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.advertiser_campaign) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/advertiser/campaign/index.html">
+                                    <i class="fa fa-fw fa-bullhorn"></i>我的推广
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.advertiser_stat) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/advertiser/stat/index.html">
+                                    <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.balance) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/advertiser/balance/index.html">
+                                    <i class="fa fa-fw fa-rmb"></i>账户明细
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.advertiser_account) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/advertiser/account/index.html">
+                                    <i class="fa fa-fw fa-user-plus"></i>账号管理
+                                </a>
+                            </li>
+                            <%}%>
+                        <%} else if (it.obj.account_type === 'TRAFFICKER') { %>
+                            <%if(it.obj.delivery_type & CONSTANT.delivery_type_app) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/trafficker/index.html">
+                                        <i class="fa fa-fw fa-pie-chart"></i>运营概览
+                                    </a>
+                                </li>
+                                <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_campaign) > -1) {%>
+                                <li>
+                                    <a data-type="trafficker_campaign" href="<%=BOS.DOCUMENT_URI%>/trafficker/campaign/index.html">
+                                        <i class="fa fa-fw fa-bullhorn"></i>广告管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_zone) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/trafficker/zone/index.html">
+                                        <i class="fa fa-fw fa-th-large"></i>广告位管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_stat) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/trafficker/stat/index.html">
+                                        <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                    </a>
+                                </li>
+                                <%}%>
+                            <%}%>
+                                <%if (it.obj.delivery_type & CONSTANT.delivery_type_game) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/trafficker/stat-game/index.html">
+                                        <i class="fa fa-fw fa-bar-chart"></i>游戏报表
+                                    </a>
+                                </li>
+                                <%}%>
+                            <%if(it.obj.delivery_type & CONSTANT.delivery_type_app) {%>
+                                <%if (it.obj.operation_list.indexOf(OPERATION_LIST.trafficker_sdk) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/trafficker/sdk/index.html">
+                                        <i class="fa fa-fw fa-share-alt"></i>SDK下载
+                                    </a>
+                                </li>
+                                <%}%>
+                            <%}%>
+                        <%} else if (it.obj.account_type === 'BROKER') {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/broker/index.html">
+                                    <i class="fa fa-fw fa-pie-chart"></i>运营概览
+                                </a>
+                            </li>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.broker_advertiser) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/broker/advertiser/index.html">
+                                    <i class="fa fa-fw fa-group"></i>广告主管理
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.broker_campaign) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/broker/campaign/index.html">
+                                    <i class="fa fa-fw fa-bullhorn"></i>广告管理
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.broker_stat) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/broker/stat/index.html">
+                                    <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                </a>
+                            </li>
+                            <%}%>
+                            <%if (it.obj.operation_list.indexOf(OPERATION_LIST.balance) > -1) {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/broker/balance/index.html">
+                                    <i class="fa fa-fw fa-rmb"></i>账户明细
+                                </a>
+                            </li>
+                            <%}%>
+                        <%} else if (it.obj.account_type === 'MANAGER') {%>
+                            <%if (it.delivery_type != CONSTANT.delivery_type_game){%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_home) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/overview-home/index.html">
+                                        <i class="fa fa-fw fa-pie-chart"></i>运营概览
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_trafficker_overview) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/overview-medium/index.html">
+                                        <i class="fa fa-fw fa-pie-chart"></i>媒介概览
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_sale_overview) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/overview-sale/index.html">
+                                        <i class="fa fa-fw fa-pie-chart"></i>销售概览
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_campaign) > -1) {%>
+                                <li>
+                                    <a data-type="manager-campaign" href="<%=BOS.DOCUMENT_URI%>/manager/campaign/index.html">
+                                        <i class="fa fa-fw fa-bullhorn"></i><span class="badge left" style="right:8px;"></span>广告管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_advertiser) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/advertiser/index.html">
+                                        <i class="fa fa-fw fa-group"></i>广告主管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_trafficker) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/trafficker/index.html">
+                                        <i class="fa fa-fw fa-file-video-o"></i>流量管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_stat) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/stat/index.html">
+                                        <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.balance) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/balance/index.html">
+                                        <i class="fa fa-fw fa-file-text-o"></i>财务管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_audit) > -1) {%>
+                                    <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_trafficker_audit) > -1) {%>
+                                    <li>
+                                        <a href="<%=BOS.DOCUMENT_URI%>/manager/audit/index.html">
+                                            <i class="fa fa-fw fa-calculator"></i>审计管理
+                                        </a>
+                                    </li>
+                                    <%} else if (it.obj.operation_list.indexOf(OPERATION_LIST.manager_client_audit) > -1) {%>
+                                    <li>
+                                        <a href="<%=BOS.DOCUMENT_URI%>/manager/audit/advertiser.html">
+                                            <i class="fa fa-fw fa-calculator"></i>审计管理
+                                        </a>
+                                    </li>
+                                    <%} else {%>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i class="fa fa-fw fa-calculator"></i>审计管理
+                                        </a>
+                                    </li>
+                                    <%}%>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_package) > -1) {%>
+                                <li>
+                                    <a data-type="manager_package" href="<%=BOS.DOCUMENT_URI%>/manager/pack/index.html">
+                                        <i class="fa fa-fw fa-file"></i><span class="badge left" style="right:8px;"></span>渠道包管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.message) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/activity/index.html">
+                                        <i class="fa fa-fw fa-gift"></i>活动与通知
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_account) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/account/index.html">
+                                        <i class="fa fa-fw fa-user-plus"></i>账号管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_sdk) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/trafficker/sdk/index.html">
+                                        <i class="fa fa-fw fa-share-alt"></i>SDK下载
+                                    </a>
+                                </li>
+                                <%}%>
+                            <%}%>
+                            <%if(it.delivery_type == CONSTANT.delivery_type_game) {%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_game_stat) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/stat/game.html">
+                                        <i class="fa fa-fw fa-bar-chart"></i>统计报表
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_game_input) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/game/index.html">
+                                        <i class="fa fa-fw fa-gamepad"></i>游戏录数
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_advertiser) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/advertiser/index.html">
+                                        <i class="fa fa-fw fa-group"></i>广告主管理
+                                    </a>
+                                </li>
+                                <%}%>
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_trafficker) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/trafficker/index.html">
+                                        <i class="fa fa-fw fa-file-video-o"></i>流量管理
+                                    </a>
+                                </li>
+                                <%}%>
+                            <%}%>
+                        <%} else if (it.obj.account_type === 'ADMIN') {%>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/admin/index.html">
+                                    <i class="fa fa-user fa-fw"></i>账号管理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/admin/audit/index.html">
+                                    <i class="fa fa-fw fa-file-text-o"></i>提款审核
+                                </a>
+                            </li>
+                        <%}%>
+                        <%if (it.obj.account_type !== 'MANAGER' && it.obj.account_type !== 'ADMIN') {%>
+                        <li>
+                            <a href="javascript:void(0);" data-toggle="modal" data-target="#sales-con">
+                                <i class="fa fa-fw fa-phone"></i>销售顾问
+                            </a>
+                        </li>
+                        <%}%>
+                    </ul>
+                    <%}%>
+                <% }else{ %>
+                     <%=it.res %>
+                <% } %>
+            </script>
+
+            <!-- 头部导航模板 -->
+            <!-- 头部导航消息列表 -->
+            <script id="tpl-notice" type="text/x-dot-template">
+                <li class="dropdown js-notice">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-envelope">
+                        <% if(it.map && it.map.count > 0){ %>
+                            <span class="badge"><%=it.map.count%></span>
+                        <%}%>
+                    </i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu message-dropdown">
+                        <% if(!it.res){ %>
+                            <% if(it.list && it.list.length > 0){ %>
+                                <%~it.list :value:index%>
+                                    <li class="message-preview">
+                                        <% if(value.type === '2'){ %>
+                                            <a href="<%=BOS.DOCUMENT_URI%>/site/activeDetail.html?id=<%=value.id%>&from_id=<%=value.content.from_id%>" target="_black">
+                                        <% } else { %>
+                                            <a href="<%=BOS.DOCUMENT_URI%>/site/notice.html">
+                                        <% } %>
+                                            <div class="media">
+                                                <h5 class="media-heading"><strong><%=value.title%></strong></h5>
+                                                <p class="small text-muted ellipsis">
+                                                     <%=value.content.body%>
+                                                </p>
+                                                <p class="small text-muted"> <i class="fa fa-clock-o"></i>
+                                                     <%=value.create_time%>
+                                                </p>
+                                            </div>
+                                        </a>
+                                    </li>
+                                <%~%>
+                            <% } %>
+                        <% } %>
+                        <li class="message-footer">
+                            <a href="<%=BOS.DOCUMENT_URI%>/site/notice.html">查看所有&gt;&gt;</a>
+                        </li>
+                    </ul>
+                </li>
+            </script>
+            <!-- 头部导航余额信息 -->
+            <script id="tpl-top-balance" type="text/x-dot-template">
+                <li class="dropdown">
+                    <%if (it.res == 0 && it.obj) {%>
+                        <%if (it.obj.account_type === 'ADVERTISER') {%>
+                            <a id="balance-wrapper" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-rmb"></i>
+                                <span id="balance">loading...</span>
+                            </a>
+                        <%} else if (it.obj.account_type === 'TRAFFICKER' && it.obj.operation_list) {%>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-rmb"></i>
+                                <span id="balance">loading...</span>
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <%if (it.obj.operation_list.indexOf(OPERATION_LIST.balance) > -1) {%>
+                                    <% if (it.obj.kind === CONSTANT.kind_union) {%>
+                                        <li>
+                                            <a href="<%=BOS.DOCUMENT_URI%>/trafficker/balance/withdraw.html">
+                                                <i class="fa fa-fw fa-credit-card"></i>
+                                                提款
+                                            </a>
+                                        </li>
+                                        <li class="divider"></li>
+                                        <li>
+                                            <a href="<%=BOS.DOCUMENT_URI%>/trafficker/balance">
+                                                <i class="fa fa-fw fa-file-text-o"></i>
+                                                账务记录
+                                            </a>
+                                        </li>
+                                    <%} else {%>
+                                        <li>
+                                            <a href="<%=BOS.DOCUMENT_URI%>/housead/trafficker/balance">
+                                                <i class="fa fa-fw fa-file-text-o"></i>
+                                                账务记录
+                                            </a>
+                                        </li>
+                                    <%}%>
+                                <%}%>
+                            </ul>
+                        <%} else if (it.obj.account_type === 'BROKER' && it.obj.operation_list) {%>
+                            <a id="balance-wrapper" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-rmb"></i>
+                                <span id="balance">loading...</span>
+                            </a>
+                        <%} else if (it.obj.account_type === 'MANAGER' && it.obj.operation_list) {%>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-rmb"></i>
+                                <span id="balance">loading...</span>
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.balance) > -1) {%>
+                                <li>
+                                    <a href="<%=BOS.DOCUMENT_URI%>/manager/balance">
+                                        <i class="fa fa-fw fa-file-text-o"></i>
+                                        账务记录
+                                    </a>
+                                </li>
+                                <%}%>
+                            </ul>
+                        <%}%>
+                    <%}%>
+                </li>
+            </script>
+            <!-- 个人信息 -->
+            <script id="tpl-user-info" type="text/x-dot-template">
+                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-user"></i>
+                        <span id="username"><%= it.username %></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <% var divider = false; %>
+                        <% if (it.operation_list === 'all' || it.operation_list.indexOf(OPERATION_LIST.profile) > -1) { %>
+                            <% divider = true; %>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/site/profile.html">
+                                    <i class="fa fa-fw fa-edit"></i>
+                                    修改资料
+                                </a>
+                            </li>
+                        <% } %>
+                        <% if (it.operation_list === 'all' || it.operation_list.indexOf(OPERATION_LIST.password) > -1) { %>
+                            <% divider = true; %>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/site/password.html">
+                                    <i class="fa fa-fw fa-unlock-alt"></i>
+                                    修改密码
+                                </a>
+                            </li>
+                        <% } %>
+                        <% if (it.operation_list === 'all' || it.operation_list.indexOf(OPERATION_LIST.manager_setting) > -1) { %>
+                            <%if(!(it.delivery_type && +it.delivery_type === CONSTANT.delivery_type_game)) {%>
+                            <% divider = true; %>
+                            <li>
+                                <a href="<%=BOS.DOCUMENT_URI%>/manager/set/">
+                                    <i class="fa fa-fw fa-cog"></i>
+                                    系统设置
+                                </a>
+                            </li>
+                            <%}%>
+                        <% } %>
+                        <% if (divider) { %>
+                            <li class="divider"></li>
+                        <% } %>
+                        <li>
+                            <a href="javascript:" class="js-logout">
+                                <i class="fa fa-fw fa-power-off"></i>
+                                退出
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </script>
+
+            <script id="tpl-sales" type="text/x-dot-template">
+                <% if(!it.res && it.obj){ %>
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">联系销售顾问</h4>
+                          </div>
+                          <div class="modal-body">
+                            <div class="modal-body-content">
+                                <p><i class="glyphicon glyphicon-user"></i> 姓名：<strong><%=it.obj.contact_name ? it.obj.contact_name : ''%></strong></p>
+                                <p><i class="glyphicon glyphicon-earphone"></i> 电话：<%=it.obj.contact_phone ? it.obj.contact_phone : ''%></p>
+                                <p><i class="glyphicon glyphicon-envelope"></i> Email：<a href="<%=it.obj.email_address%>"><%=it.obj.email_address ? it.obj.email_address : ''%></a></p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                <% } %>
+            </script>
+            <script id="tpl-switch" type="text/x-dot-template">
+                <div class="switch">
+                    <% if(+it.kind === CONSTANT.kind_self){ %>
+                        <span class="swithlabel" data-type = <%=CONSTANT.kind_union%> >自营</span>
+                    <% } else { %>
+                        <span class="swithlabel pull-right" data-type = <%=CONSTANT.kind_self%>>联盟</span>
+                    <% } %>
+                </div>
+            </script>
+            <script id="tpl-switch-game" type="text/x-dot-template">
+                <div class="switch-game">
+                    <% if(+it.delivery_type !== CONSTANT.delivery_type_game){ %>
+                        <span class="swithlabel" data-type=<%=CONSTANT.delivery_type_game%> >应用</span>
+                    <% } else { %>
+                        <span class="swithlabel pull-right" data-type=<%=CONSTANT.delivery_type_app%>>游戏</span>
+                    <% } %>
+                </div>
+            </script>

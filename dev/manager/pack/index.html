@@ -1,0 +1,53 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div style="display: none;"><div id="js-file-up" style="display: none;">上传包</div></div>
+<!-- 推广计划渠道包使用情况列表 -->
+<table id="js-package-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+<!-- 推广计划挂载的渠道包列表模态框 -->
+<div class="modal fade package-modal" id="js-package-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    <!-- htmlcs-disable img-alt,img-src -->
+                    <img src="" alt="" id="js-app-showicon" width="30" height="30">
+                    <span id="js-appname"></span>
+                </h4>
+            </div>
+            <div class="modal-body package-body">
+                <input type="hidden" id="js-extension" value="apk,ipa"> <!-- 渠道包上传格式 根据平台决定  -->
+                <input type="hidden" id="js-campaignid">
+                <input type="hidden" id="js-clientid">
+                <input type="hidden" id="js-attachid">
+                <div class="table-ctl">
+                    <span id="js-max-version" class="text-warning"></span> <!-- 显示最新渠道包版本 -->
+                    <button type="button" class="btn btn-default pull-right js-add-package">+增加渠道包</button> 
+                </div>
+                <table id="js-campaign-package" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="js-package-set" style="display:none;" class="package-set modal">
+    <div class="confirm-backdrop">
+    </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close js-close-set">&times;</button>
+                <h4 class="modal-title">
+                    投放
+                    <span id="js-realname" class="text-warning"></span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <table id="js-packageset-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../js/plugins/jquery.form.min.js"></script>
+<script src="../../js/plugins/jquery.uploadfile.min.js"></script>
+<script src="../../js/common/editable.js"></script>
+<script src="../js/package-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

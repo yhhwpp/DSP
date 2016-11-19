@@ -1,0 +1,85 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+
+    <div class="tf-receipt">
+        <!-- 余额 -->
+        <div class="js-overall overall"></div>
+
+        <!-- 整体情况 -->
+        <div class="panel panel-default">
+            <div class="panel-heading adv-head">
+                <h4><img src="../img/biao_im.png" width="36" height="36" alt="图表">30天消耗概览
+                </h4>
+            </div>
+        </div>
+        <div>
+            <ul id="overview-chart-wripper" class="overview-chart-wripper">
+            </ul>
+        </div>
+    </div>
+
+    <script type="text/x-dot-template" id="tpl-overall">
+		<%? it && it.res === 0 && it.obj %>
+			<ul class="fl">
+				<li>
+					充值账户余额（元）：
+					<span class="balance"><%=(it.obj.balance-it.obj.gift).toFixed(2)%></span>
+				</li>
+				<li>
+					赠送账户余额（元）：
+					<span class="gift"><%=it.obj.gift%></span>
+				</li>
+			</ul>
+        <%??%>
+        	<ul class="fl">
+				<li>
+					充值账户余额（元）：
+					<span class="balance">loading...</span>
+				</li>
+				<li>
+					赠送账户余额（元）：
+					<span class="gift">loading...</span>
+				</li>
+			</ul>
+        <%?%>
+        <a href="balance/pay.html" class="btn btn-primary"><i class="fa fa-money"></i>
+			充值
+		</a>
+	</script>
+    <script id="tpl-chart-wirpper" type="text/x-dot-template">
+		<li class="chart-wripper">
+			<div class="chart-head">
+				<span><% if (it.icon) { %><img src="<%= it.icon%>" alt="广告图像" /><% } %><%= it.name%></span>
+				<span class="summary">
+					<% if (it.itemKey === 'sum_revenue') {%>
+						30天总消耗：<%= it.sum_revenue %>元
+					<% } else if (it.itemKey === 'sum_clicks') { %>
+						<%= it.type === 0 ? '30天总下载：' : '30天总点击：' %><%= it.sum_clicks %>
+					<% } %>
+				</span>
+			</div>
+		</li>
+	</script>
+
+    <script id="tpl-chart-tooltip" type="text/x-kendo-template">
+		<div class="tpl-chart-tootip">
+			<p>#: Date.parse(category).toString("yyyy-MM-dd") #</p>
+			<p>
+				#: (series.oData.type === 0 ? '下载量：' : '点击量：') +  (dataItem.sum_clicks ? dataItem.sum_clicks : 0) #
+			</p>
+			<p>消耗：#: dataItem.sum_revenue ? dataItem.sum_revenue : 0 #元</p>
+			<p>单价：#: dataItem.price ? dataItem.price : 0 #元</p>
+		</div>
+	</script>
+
+    <script type="text-x-dot-template" id="tpl-balance">
+		<ul class="nav nav-tabs jsBalanceTab">
+		  <li role="payout" <%? it == '' || it == 'payout' %> class="active" <%?%>><a href="?list=payout">推广金支出明细</a></li>
+		  <li role="recharge" <%? it == 'recharge' %> class="active" <%?%>><a href="?list=recharge">充值明细</a></li>
+		  <li role="invoice_history" <%? it == 'invoice_history' %> class="active" <%?%>><a href="?list=invoice_history">发票申请记录</a></li>
+		</ul>
+	</script>
+    <script src="../js/plugins/date.js"></script>
+    <script src="js/index.js" ></script>
+
+
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

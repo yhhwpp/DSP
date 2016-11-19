@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>预览优惠活动</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0">
+</head>
+<body>
+    <div id="act-detail" class="act-detail" style="font-family:\5FAE\8F6F\96C5\9ED1;width:1000px; margin:0 auto; padding: 30px 0 0;">
+    </div>
+    <script id="tpl-acticity" type="text/x-dot-template">
+    <% if(!it.res){ %>
+        <div class="actDetailPic">
+            <img alt="" src="<%=it.obj.imageurl%>">
+        </div>
+        <h1 style="font-weight:bold; font-size:20px; margin-top: 10px; padding: 20px 0;"><%=it.obj.title%></h1>
+        <div style="font-size: 15px; padding: 4px 0;"><strong>开始时间：</strong><%=it.obj.startdate%></div>
+        <div style="font-size: 15px; padding: 4px 0;"><strong>结束时间：</strong><%=it.obj.enddate%></div>
+        <div style="font-size: 15px; padding: 4px 0;"><strong>活动状态：</strong><% if(it.obj.status==1){%>进行中<%} else {%>已下线<%}%></div>
+        <div style="padding:4px 0; margin-top:10px;font-size:14px;line-height:25px">
+            <p><%=it.obj.content%></p>
+        </div>
+    <%}%>
+    </script>
+    <script src="../js/libs/jquery.min.js"></script>
+    <script src="../js/plugins/doT.min.js"></script>
+    <script src="../js/common/config.js"></script>
+    <script>
+    function getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+    }
+    $(function () {
+        var sId = getQueryString('id');
+        var sFromId = getQueryString('from_id');
+        var param = {
+            ids: sId,
+            status: 1
+        };
+        $.post(API_URL.notice_store, param, function (data) {});
+        $.get(API_URL.activity, {
+            id: sFromId
+        }, function (data) {
+            document.getElementsByTagName('title')[0].innerHTML = '预览优惠活动--' + data.obj.title;
+            $('#act-detail').html($.tmpl('#tpl-acticity', data));
+        });
+    });
+    </script>
+</body>
+</html>

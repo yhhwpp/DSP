@@ -1,0 +1,163 @@
+// default settings. fis3 release
+
+// Global start
+//后端接口地址
+var apiPath = '/bos-backend-api';
+//网站根目录
+var pUrl = '/bos-front/web';
+//登录url
+var loginUrl = '/bos';
+//登出url
+var logoutUrl = '/bos/logout';
+// 文件服务器域名
+var fileDomain = 'http://192.168.1.240';
+// 文件address
+var fileAddr = '/bos-fileserver';
+// 七牛域名
+var qiniuDomain = 'http://7xnoye.com1.z0.glb.clouddn.com';
+
+//head.html文件单独预处理
+fis.match('*{head.html,login.html}', {
+/**
+ * Compile 阶段插件接口
+ * @param  {string} content     文件内容
+ * @param  {File}   file        fis 的 File 对象 [fis3/lib/file.js]
+ * @param  {object} settings    插件配置属性
+ * @return {string}             处理后的文件内容
+ */
+  parser: function (content, file, settings) {
+      //引入文件路径修改
+      return content.replace(/\/bos-front\/dev/g, "..");
+  }
+});
+
+//config.js文件单独预处理
+fis.match('*config.js', {
+  /**
+ * Compile 阶段插件接口
+ * @param  {string} content     文件内容
+ * @param  {File}   file        fis 的 File 对象 [fis3/lib/file.js]
+ * @param  {object} settings    插件配置属性
+ * @return {string}             处理后的文件内容
+ */
+  parser: function (content, file, settings) {
+      //引入文件路径修改
+      var con = content.replace(/BOS.DOCUMENT_URI \+ '\/site\/login.html'/g, '"' + loginUrl + '"');
+      con = con.replace(/FILE_DOMAIN\: 'http:\/\/sandbox-adn.biddingos.com'/g, 'FILE_DOMAIN: "' + fileDomain + '"');
+      con = con.replace(/\/bos-fileserver/g, fileAddr);
+      con = con.replace(/http:\/\/7xnoye.com1.z0.glb.clouddn.com/g, qiniuDomain);
+      return con.replace(/BOS.DOCUMENT_URI \+ '\/site\/logout.html'/g, '"' + logoutUrl + '"');
+  }
+});
+
+//html文件处理
+fis.match('*.{html,js,css}', {
+  /**
+ * Compile 阶段插件接口
+ * @param  {string} content     文件内容
+ * @param  {File}   file        fis 的 File 对象 [fis3/lib/file.js]
+ * @param  {object} settings    插件配置属性
+ * @return {string}             处理后的文件内容
+ */
+  postprocessor: function (content, file, settings) {
+      //引入文件路径修改
+      var con = content.replace(/\/bos-front\/dev/g, pUrl);
+      return con.replace(/\/bos-backend-api\/public/g, apiPath);
+  }
+});
+
+//js,css hash文件名
+fis.match('*.{js,css}', {
+  useHash: true
+});
+
+//图片hash
+fis.match('::image', {
+  useHash: true
+});
+
+// 启用 fis-spriter-csssprites 插件 
+fis.match('::package', {
+  spriter: fis.plugin('csssprites')
+})
+
+// 对 CSS 进行图片合并
+fis.match('*.css', {
+  // 给匹配到的文件分配属性 `useSprite`
+  useSprite: true
+});
+
+fis.match('*.js', {
+  //js打包
+  //packTo: '/static/index.js',
+  // fis-optimizer-uglify-js 插件进行压缩，已内置
+  optimizer: fis.plugin('uglify-js')
+});
+
+fis.match('*.css', {
+  // fis-optimizer-clean-css 插件进行压缩，已内置
+  optimizer: fis.plugin('clean-css')
+});
+
+fis.match('*.png', {
+  // fis-optimizer-png-compressor 插件进行压缩，已内置
+  optimizer: fis.plugin('png-compressor')
+});
+
+fis.match('*.{js,css,png,jpg,gif,ico}', {
+  release: '/static$0',  //编译路径
+  url : pUrl + '/static$0'  //替换路径
+});
+
+fis.match('*theme/*.css', {
+  release: '$0',
+  url : pUrl + '$0',
+  useHash: false
+});
+
+fis.match('*site/domain/**/*', {
+  release: '$0',
+  url : pUrl + '$0',
+  useHash: false,
+  useSprite: false,
+  optimizer: null
+});
+
+fis.match('{ckeditor/*,ckeditor/**/*}', {
+  release: '$0',
+  url : pUrl + '$0',
+  useHash: false,
+  useSprite: false,
+  optimizer: null
+});
+
+fis.match('*.{ttf,woff,eot,woff2,svg,otf}', {
+  url : pUrl + '$0'
+});
+
+//打包
+//npm install -g fis3-postpackager-loader
+fis.match('::package', {
+  postpackager: fis.plugin('loader', {
+    allInOne: true
+  })
+});
+
+
+fis.media('debug').match('*.{js,css,png}', {
+  useHash: false
+  //useSprite: false,
+  //optimizer: null
+});
+
+// Global end
+
+// default media is `dev`
+fis.media('dev')
+  .match('*', {
+    //useHash: true
+    //optimizer: null
+  });
+
+// extends GLOBAL config
+fis.media('production');

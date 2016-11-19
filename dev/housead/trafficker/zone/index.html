@@ -1,0 +1,248 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../../css/jquery.fancybox.css">
+<!-- Tab -->
+<div class="table-ctl">
+    <span class="pull-left"><strong>温馨提示</strong>：成功新建广告位后，请将广告位ID告诉您的技术人员，并跟进落实广告位接入。</span>
+    <span class="btn btn-primary pull-right js-zones-ads">+ 新增加广告位</span>
+<span class="btn btn-primary pull-right js-list-type-manage" data-ad_type="0">广告位模块管理</span>
+<span class="btn btn-primary pull-right js-category-manage">广告位分类管理</span></div>
+<!-- table data -->
+<table id="js-zones-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+<!-- 广告位管理弹出 -->
+<div class="modal fade js-zones-modal">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">广告位管理</h4>
+            </div>
+            <div class="modal-body" style="width:680px"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary js-zones-save">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 分类管理弹出 -->
+<div class="modal fade js-category-modal">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">分类管理</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#app" aria-controls="app" role="tab" data-toggle="tab">应用分类</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#game" aria-controls="game" role="tab" data-toggle="tab">游戏分类</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <p>请确保您设置的分类名称和您平台上的分类名称一致，否则可能会降低转化率。</p>
+                    <div role="tabpanel" class="tab-pane active" id="app" data-parent="1">
+                        <div class="form-inline"></div>
+                        <button class="btn btn-primary js-category-add" type="button">+ 添加分类</button>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="game" data-parent="2">
+                        <div class="form-inline">
+                        </div>
+                        <button class="btn btn-primary js-category-add"  type="button">+ 添加分类</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模块管理弹出 -->
+<div class="modal fade js-list-type-modal">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">模块管理</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#common-zone" aria-controls="common-zone" role="tab" data-toggle="tab">通用广告位</a>
+                    </li>
+                    <li role="presentation" class="js-li-search-zone">
+                        <a href="#search-zone" aria-controls="search-zone" role="tab" data-toggle="tab">搜索广告位</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <p>已经使用的无法删除，id涉及底层对接，请找技术联系BiddingOS修改</p>
+                    <div role="tabpanel" class="tab-pane active" id="common-zone" data-zone-type="0">
+                        <div class="form-inline"></div>
+                        <button class="btn btn-primary js-list-type-add"  type="button">+ 添加模块</button>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="search-zone" data-zone-type="1">
+                        <div class="form-inline">
+                        </div>
+                        <button class="btn btn-primary js-list-type-add" type="button">+ 添加模块</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- tpl -->
+<script type="text-x-dot-template" id="tpl-zone-edit">
+    <form class="form-horizontal">
+        <% if(it.oRowData && it.oRowData.zone_id) { %><input type="hidden" name="zone_id" value="<%=it.oRowData.zone_id || '' %>"><% } %>
+
+
+        <input type="hidden" name="ad_type" value="<%=it.type%>">
+
+        <fieldset  <% if(it.oRowData && it.oRowData.zone_id) { %> disabled <% } %> >
+            <div class="form-group required js-app">
+                <label for="" class="col-sm-3 control-label">广告类型</label>
+                <div class="col-sm-9">
+                    <label class="radio-inline"><input type="radio" name="type" value="0" <% if(!it.oRowData.type) { %> checked <% } %>  readonly>通用广告位</label>
+                    <label class="radio-inline"><input type="radio" name="type" value="1" <% if(it.oRowData.type === 1) { %> checked <% } %> readonly>搜索结果广告位</label>
+                </div>
+            </div>
+            <div class="required position-form-group">
+                <label class="col-sm-3 control-label">位置：</label>
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-7 form-group" style="margin-left:0;margin-right:0;">
+                            <select class="form-control" name="listtypeid" check-type="required"  required-message="请选择模块">
+                            </select>
+                        </div>
+                        <div class="col-sm-5 form-group" style="margin-left:0;margin-right:0;">
+                            <select class="form-control" name="position" check-type="required"  required-message="请选择相对位置">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group js-list-type-name">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control js-list-type-name-input" placeholder="模块名称">
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control js-list-type-id-input" placeholder="模块id">
+                        </div>
+                        <button type="button" class="btn btn-primary js-list-type-name-ad">确定</button>
+                        <button type="button" class="btn btn-default js-list-type-name-cancel">取消</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="col-sm-3 control-label">广告位名称：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="zone_name" value="<%=it.oRowData.zone_name || '' %>"  readonly>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group des-pic">
+            <label class="col-sm-3 control-label">示意图：</label>
+            <div class="col-sm-9">
+               <button id="js-upload-des" class="js-upload-description btn btn-primary pull-left" type="button">
+                <% if(it.oRowData.description) { %>
+                    修改图片
+                <% } else { %>
+                    上传图片
+                <% } %>
+               </button>
+                <div class="js-des-thumb">
+                    <% if(it.oRowData.description) { %>
+                    <img src="<%=it.oRowData.description %>" width="120" height="auto">
+                    <i class="fa fa-times-circle"></i>
+                    <% } %>
+               </div>
+               <span class="help-block">请上传小于2M，格式为png,gif,jpg的图片。</span>
+               <input type="hidden" name="description"  value="<%=it.oRowData.description || '' %>">
+            </div>
+        </div>
+
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">等级：</label>
+            <div class="col-sm-3">
+                <select class="form-control" name="rank_limit">
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group required common-zone" >
+            <label for="" class="col-sm-3 control-label">类别：</label>
+            <div class="col-sm-4">
+                <div id="category-list"></div>
+            </div>
+        </div>
+        <%? it.kindType === CONSTANT.kind_all%>
+            <div class="form-group required common-zone" >
+                <label for="" class="col-sm-3 control-label">联盟广告展示机会：</label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input class="form-control" type="number" name="flow_percent" min=0 max=100 value=<%=parseInt(it.oRowData.flow_percent) || '50' %> check-type="required"  required-message="请输入数字" regex="^(\d|[1-9]\d|100)$" regex-message="请输入大于等于0小于等于100的整型数字">
+                        <div class="input-group-addon">%</div>
+                    </div>
+                </div>
+            </div>
+        <%?%>
+        <div class="form-group required">
+            <label for="" class="col-sm-3 control-label">所属平台：</label>
+            <div class="col-sm-4">
+                <select class="form-control" name="platform" <% if(it.oRowData.zone_id) { %> disabled <% } %>>
+                </select>
+            </div>
+        </div>
+
+    </form>
+</script>
+<!--#include virtual="/bos-front/dev/trafficker/template/category-common.html"-->
+<script type="text-x-dot-template" id="tpl-list-type">
+    <%for (var key in LANG.module_type) {%>
+        <ol class="<%if (key == 0 ) {%> common-zone-list <%}else {%> search-zone-list<%}%>">
+            <%var listTyps = it.list_type ? it.list_type[key] : null;%>
+            <%if (listTyps) {%>
+                <%for (var i = 0; i < listTyps.length; i++) {%>
+                        <li>
+                            <div class="form-group">模块名称：<input type="text" class="form-control" data-zone-list-type-id="<%=listTyps[i].id%>" data-id="<%=listTyps[i].listtypeid%>" data-name="<%=listTyps[i].name%>" data-zone-type="<%=key%>" value="<%=listTyps[i].name%>"  >
+                            </div> id：<div class="form-group"><input type="text" class="form-control list-type-id-input" value="<%=listTyps[i].listtypeid%>" disabled></div>
+                            <button class="btn btn-default js-list-type-edit" data-action="1">保存</button>
+                            <button class="btn btn-default js-list-type-edit" data-action="2" <%if (listTyps[i].already_used === 1) {%> disabled<%}%>>删除</button>
+                            <%if (listTyps[i].already_used === 1) {%><span>正在使用,无法删除</span><%}%>
+                        </li>
+                <%}%>
+            <%}%>
+        </ol>
+    <%}%>
+</script>
+<script type="text-x-dot-template" id="tpl-platform">
+<% if (it.obj && it.obj.length > 0) { %>
+    <%for (var i = 0; i < it.obj.length; i++) {%>
+        <%var v = it.obj[i];%>
+        <option value="<%=v%>"><%=LANG.platform[v]%></option>
+    <%}%>
+<%}%>
+</script>
+
+<!-- 单元测试 -->
+<!-- <script src="/bos-front/dev/data/mock.js"></script>
+<script src="/bos-front/dev/data/trafficker-campaign-json.js"></script> -->
+
+<script src="../../../js/plugins/plupload.full.min.js"></script>
+<script src="../../../js/plugins/qiniu.js"></script>
+<script src="../../../js/common/validate.js"></script>
+<script src="../../../js/common/modal.js"></script>
+<script src="../../../js/plugins/jquery.fancybox.pack.js"></script>
+<script src="../../../js/common/constant.js"></script>
+<script src="../../../js/common/editable.js"></script>
+<script src="../../../trafficker/js/trafficker-category.js"></script>
+<script src="../js/zones-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

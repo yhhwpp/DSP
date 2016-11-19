@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>BiddingOS</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <script src="../js/libs/jquery.min.js"></script>
+        <script src="../js/common/common.js"></script>
+        <script src="../js/common/config.js"></script>
+        <script>
+        $.post(API_URL.logout, function (data) {
+            // 删除cookie信息
+            Helper.fnRemoveCookie('user_id');
+            Helper.fnRemoveCookie('cur_url');
+            location.href = API_URL.login_url;
+        });
+        </script>
+    </body>
+</html>

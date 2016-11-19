@@ -1,0 +1,98 @@
+<script type="text-x-dot-template" id="tpl-category">
+<div class="common-zone">
+    <div class="form-group required">
+        <label class="col-sm-3 control-label">类别:</label>
+        <div class="col-sm-9">
+            <%if (it.categoryInfo && it.categoryInfo.parent) {%>
+                <%for (var key in it.categoryInfo.parent) {%>
+                <label class="radio-inline">
+                    <input type="radio" name="parent" value="<%=key%>" id="js-parent<%=key%>"
+                      check-type="required" required-message="请选择类别"
+                      data-toggle="showDiv" data-name="parent"><%=it.categoryInfo.parent[key]%></label>
+                <%}%>
+            <%}%>
+        </div>
+    </div>
+    <%if (it.categoryInfo && it.categoryInfo.parent) {%>
+      <%for (var key in it.categoryInfo.parent) {%>
+      <%if (key == 0) {continue;}%>
+      <div class="form-group required" aria-labelledby="js-parent<%=key%>" style="display:none;">
+          <label class="col-sm-3 control-label">分类:</label>
+          <div class="col-sm-9">
+              <%var categorys = it.categoryInfo.category ? it.categoryInfo.category[key] : null;%>
+              <select class="form-control" name="category" data-parent="<%=key%>" style="width:120px;">
+                  <option value="-1" class="js-choice-category" data-parent="<%=key%>" style="display:none;">选择分类</option>
+                  <option value="" class="js-new-category" data-parent="<%=key%>">+新建分类</option>
+                  <%if (categorys) {%>
+                    <%for (var i = 0, j = categorys.length; i < j; i++) {%>
+                      <option value="<%=categorys[i].category%>"><%=categorys[i].name%></option>
+                    <%}%>
+                  <%}%>
+              </select>
+          </div>
+      </div>
+      <%}%>
+      <div class="form-group js-category-div" style="display:none;" data-parent="0">
+        <div class="col-sm-offset-3 col-sm-9">
+        <div class="row">
+        <div class="col-sm-5"><input type="text" class="form-control" name="category-input" placeholder="请输入分类名称" maxlength="32"></div>
+          <button type="button" class="btn btn-primary" id="js-confirm-category">确定</button>
+          <button type="button" class="btn btn-default" id="js-cancel-category">取消</button>
+        </div>
+        </div>
+      </div>
+      <div class="form-group checkcategory-form-group">
+          <div class="col-sm-offset-3 col-sm-9">
+            <input type="hidden" name="category-valid" value="xx" check-type="checkcategory" checkcategory-message="请选择分类">
+          </div>
+      </div>
+    <%}%>
+</div>
+</script>
+
+<script type="text-x-dot-template" id="tpl-category-list">
+<%if (it.categoryInfo && it.categoryInfo.parent) {%>
+    <%for (var key in it.categoryInfo.parent) {%>
+    <%if (key == 0) {continue;}%>
+    <ol class="categoryall <%if (key === '1' ) {%> app-category <%}else {%> game-category<%}%>" data-parent="<%=key%>">
+        <%var categorys = it.categoryInfo.category ? it.categoryInfo.category[key] : null;%>
+        <%if (categorys) {%>
+            <%for (var i = 0; i < categorys.length; i++) {%>
+                <li>
+                    <div class="form-group">
+                        <input type="text" class="form-control" data-id="<%=categorys[i].category_id%>" data-name="<%=categorys[i].name%>" data-parent="<%=key%>" value="<%=categorys[i].name%>"  > 
+                    </div>
+                    <button class="btn btn-default js-category-edit" data-action="1" data-type="child">保存</button>
+                    <button class="btn btn-default js-category-edit" data-action="2" data-type="child" <%if (categorys[i].already_used === 1) {%> disabled title="正在使用,无法删除" <%}%>>删除</button>
+                    <%var sub = categorys[i].child; %> 
+                    <%if (sub && sub.length) {%>
+                        <span class="pull-right open-sub-category" style="cursor: pointer;">展开子分类</span>
+                        <div class="sub-category" style="display:none">
+                        <ol data-parent="<%=categorys[i].category_id%>">
+                            <%for (var j = 0; j < sub.length; j++) {%>
+                                <li>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" data-id="<%=sub[j].category_id%>" data-name="<%=sub[j].name%>" data-parent="<%=categorys[i].category_id%>" value="<%=sub[j].name%>">
+                                    </div>
+                                    <button class="btn btn-default js-category-edit" data-action="1" data-type="grandchild" >保存</button> <button class="btn btn-default js-category-edit" data-type="grandchild" data-action="2" <%if (sub[j].already_used === 1) {%> disabled title="正在使用,无法删除" <%}%>>
+                                        删除
+                                    </button>
+                                </li>
+                            <%}%>
+                        </ol>
+                        <button class="btn btn-default js-category-sub-add btn-sm" type="button" style="margin-left:40px;">+ 添加子分类</button>
+                        </div>
+                    <%} else {%>
+                        <div class="sub-category" style="padding:5px 0">
+                        <ol data-parent="<%=categorys[i].category_id%>">
+                        </ol>
+                        <button class="btn btn-default js-category-sub-add btn-sm" type="button" style="margin-left:40px;">+ 添加子分类</button>
+                        </div>
+                    <%}%>
+                </li>
+            <%}%>
+        <%}%>
+    </ol>
+    <%}%>
+<%}%>
+</script>

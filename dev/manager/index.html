@@ -1,0 +1,13 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<script>
+(function ($) {
+    /* eslint no-undef: [0]*/
+    fnIsLogin(function () {
+        var url = $('#menu a[href]').eq(0).attr('href');
+        if (url) {
+            window.location = url;
+        }
+    });
+})(jQuery);
+</script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

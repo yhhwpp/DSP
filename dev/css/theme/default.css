@@ -1,0 +1,13 @@
+/* csshint-disable "block-indent" */
+
+/* 修改按钮风格颜色 */
+.btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary:active:hover, .btn-primary:active:focus, .btn-primary.disabled.focus, .btn-primary.disabled:focus, .btn-primary.disabled:hover, .btn-primary[disabled].focus, .btn-primary[disabled]:focus, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary.focus, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:hover {background-color: #fc7603;border-color: #fc7603;}
+
+/* 修改字体风格颜色 */
+.text-warning, .text-warning a, a:hover.text-warning {color: #fc7603;}
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {background-color: #fc7603;border-color: #fc7603;}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover { color: #fc7603;}
+.top-nav > li > a:hover, .top-nav > li > a:focus, .top-nav > .open > a, .top-nav > .open > a:hover, .top-nav > .open > a:focus {background-color: #fc7603;}
+
+/* 修改主题编辑图片 */
+.table-hover td:hover .table-edit:after {background-image: url(../../img/adn_im.png);width: 13px;height: 13px;margin-top: -6px;}

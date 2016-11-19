@@ -1,0 +1,313 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link href="../../../css/bootstrap-datepicker3.min.css" rel="stylesheet">
+    <!-- 新建账号面板 -->
+    <div class="modal fade" id="add-account-panel" tabindex="-1" role="dialog" aria-labelledby="add-account-modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="add-account-modal-label">广告主编辑</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add-account-container" class="form-horizontal">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="add-account-confirm">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 充值面板 -->
+    <div class="modal fade" id="recharge-apply-panel" data-role="recharge" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="margin-bottom:0; padding-bottom:0; border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <!-- <h4 class="modal-title">充值申请</h4> -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" data-role="recharge" class="active"><a href="#">充值申请</a></li>
+                        <li role="presentation" data-role="gift"><a href="#">赠送申请</a></li>
+                    </ul>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" data-role="recharge-form" style="display:;">
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-3 control-label">名称:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="recharge-client" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-3 control-label">充值方式：</label>
+                                <div class="col-sm-7">
+                                    <select class="form-control" check-type="required" id="select-recharge-type">
+                                        <option value="0">支付宝</option>
+                                        <option value="1">对公银行卡</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-3 control-label">充值时间:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control"
+                                    id="recharge-date"
+                                    data-provide="datepicker"
+                                    data-date-format="yyyy-mm-dd"
+                                    data-date-language="zh-CN"
+                                    data-date-autoclose="true"
+                                    placeholder="请选择充值时间"
+                                    check-type="required date" required-message="请选择充值时间">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-3 control-label">充值账号:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="recharge-account"
+                                    check-type="required" required-message="请输入充值账号">
+                                    <ul id="recharge-account-auto-list" class="auto-list"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-3 control-label">充值金额:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" max="99999999" class="form-control" id="recharge-amount"
+                                    check-type="required amount" required-message="请输入充值金额">
+                                </div>
+                                <!-- <span class="col-sm-2 control-text">万元</span> -->
+                            </div>
+                        </div>
+                    </form>
+                    <form class="form-horizontal" data-role="gift-form" style="display: none;">
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-4 control-label">名称:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="gift-client" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-4 control-label">增加赠送账户推广金金额:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" max="99999999" class="form-control" id="gift-amount"
+                                    placeholder="输入的金额将累加到余额中"
+                                    check-type="required amount" required-message="请输入赠送金额">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <div class="row">
+                                <label for="" class="col-sm-4 control-label">赠送原因或规则说明:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="gift-info"
+                                    placeholder="如：活动：充80万送20万"
+                                    check-type="required" required-message="请输入赠送说明">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="recharge-apply">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 充值明细面板 -->
+    <div class="modal fade" id="recharge-apply-detail-panel" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="margin-bottom:0; padding-bottom:0; border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" data-role="recharge" class="active"><a href="#">充值明细</a></li>
+                        <li role="presentation" data-role="gift"><a href="#">赠送明细</a></li>
+                    </ul>
+                </div>
+                <div class="modal-body">
+                    <div id="recharge-detail-table-wrapper" style="display: ;">
+                        <table id="recharge-detail-table" class="table table-striped table-bordered table-hover wrap-table"></table>
+                    </div>
+                    <div id="gift-detail-table-wrapper" style="display: none;">
+                        <table id="gift-detail-table" class="table table-striped table-bordered table-hover wrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 重置密码 -->
+    <div class="modal fade bs-example-modal-sm" id="reset-passwd-wrapper" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">重置密码</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="new-passwd" placeholder="请输入新密码">
+                        <input id="reset-pw-clientid" type="hidden">
+                        <span id="show-tips" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="reset-passwd-confirm">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 表格数据 -->
+    <div id="addaccount-type-wrapper" class="table-ctl">
+    <div class="tabbox">
+        <ul class="nav nav-tabs" id="accout-type-wrapper">
+            <li data-account-type="0" data-name="广告主" class="active" ><a href="javascript:void(0);">直客广告主</a></li>
+            <li data-account-type="1" data-name="广告主"><a href="javascript:void(0);">代理获客广告主</a></li>
+            <li data-account-type="2" data-name="代理商"><a href="javascript:void(0);">代理商</a></li></ul>
+    </div>
+        <div id="addaccount-btn-wrapper"></div>
+    </div>
+    <div id="advertiser-table-wrapper">
+        <table id="advertiser-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+
+<script type="text-x-dot-template" id="tpl-editaccount">
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label"><%=it.name%>名称:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="client-name" maxlength="32"
+                    placeholder="两位以上大小写字母,数字,或者汉字"
+                    check-type="required name" required-message="请输入名称"
+                    <%if (it.type === 0) {%>
+                        value="<%=it.info.clientname%>"
+                    <%}else {%>
+                        value="<%=it.info.name%>"
+                    <%}%>
+                    >
+            </div>
+        </div>
+    </div>
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label"><%=it.name%>简称:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="brief-name" maxlength="32"
+                    placeholder="两位以上大小写字母,数字,或者汉字"
+                    check-type="required briefname" required-message="请输入简称" value="<%=it.info.brief_name%>">
+            </div>
+        </div>
+    </div>
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">登录账号:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="act-username" maxlength="32" autocomplete="off"
+                    placeholder="32位以内的中英文字符数字"
+                    check-type="required account" required-message="请输入登录账号" value="<%=it.info.username%>" <% if (it.action === 'edit') {%> readonly="readonly" <%}%>>
+            </div>
+        </div>
+    </div>
+
+    <%if(it.action === 'add') {%>
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">登录密码:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="password" onfocus="this.type='password'" maxlength="16" autocomplete="off"
+                    placeholder="6-16位字符"
+                    check-type="required password" required-message="请输入密码" >
+            </div>
+        </div>
+    </div>
+    <%}%>
+
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">联系人:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="contact-name" maxlength="20" placeholder="请输入联系人"
+                    check-type="required contact" required-message="请输入联系人" value="<%=it.info.contact || ''%>">
+            </div>
+        </div>
+    </div>
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">邮箱:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="email-address" placeholder="请输入邮箱"
+                    check-type="required mail" required-message="请输入邮箱" value="<%=it.info.email || ''%>">
+            </div>
+        </div>
+    </div>
+    <div class="form-group required">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">手机号:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="phone" maxlength="11" placeholder="请输入用于接受通知消息的手机号码"
+                    check-type="required mobile" required-message="请输入手机号码" value="<%=it.info.contact_phone%>">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">QQ:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="qq" maxlength="20"
+                     placeholder="输入QQ号"
+                    check-type="qq" value="<%=it.info.qq%>">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <label for="" class="col-sm-3 control-label">销售顾问</label>
+            <div class="col-sm-6">
+                <select class="form-control" check-type="" id="select-creator">
+                    <% if(it.allSales) { %>
+                        <% for(var key in it.allSales) {%>
+                        <option value="<%=key%>" <%= Number(key) === Number(it.info.creator_uid) ? 'selected' : ''%>><%=it.allSales[key]%></option>
+                        <%}%>
+                    <% } %>
+                </select>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text-x-dot-template" id="tpl-addaccount-btn">
+    <% if (it.type === 0) {%>
+        <span id="addaccount-btn" class="btn btn-primary pull-right">
+         + 新建广告主
+        </span>
+    <% }else if(it.type === 2) {%>
+        <span id="addaccount-btn" class="btn btn-primary pull-right">
+         + 新建代理商
+        </span>
+    <% } %>
+</script>
+
+<script src="../../../js/common/validate.js"></script>
+<script src="../../../js/common/editable.js"></script>
+<script src="../../../js/plugins/bootstrap-datepicker.min.js"></script>
+<script src="../../../js/plugins/bootstrap-datepicker.zh-CN.min.js"></script>
+<!-- <script src="../js/revenue-type-edit.js"></script> -->
+<script src="../js/advertiser-index.js"></script>
+
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

@@ -1,0 +1,386 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../../css/jquery.fancybox.css">
+<div class="table-ctl">
+    <button type="button" class="btn btn-primary pull-right" id="js-add-campaign">+ 新建推广</button>
+</div>
+
+    <!-- 推广列表 -->
+    <table id="js-campaign-table" class="table table-striped table-bordered table-hover table-fixed-header">
+    </table>
+    <div class="modal fade housead" id="js-campaign-modal" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 关键字 -->
+    <script type="text-x-dot-template" id="tpl-keyword">
+        <div id="js-keyword" class="zones-up">
+            <span  class="am-close am-close-spin floater-close" style="top:0;font-size:18px;">×</span>
+            <div class="zones-up-ct">
+                <table class="floatertb table table-striped table-bordered table-hover table-fixed-header">
+                    <thead>
+                        <tr>
+                            <th width="220" class="up-text">关键字</th>
+                            <th width="130">加价(元)</th>
+                            <th width="100">竞争力</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%for(var i = 0, j = it.keywords.length; i < j; i++) {%>
+                            <tr>
+                                <td><%=it.keywords[i].keyword%></td>
+                                <td><%=Number(it.keywords[i].price_up).toFixed(1)%></td>
+                                <td>
+                                    <%if(it.model.status === CONSTANT.CAMPAIGN_STATUS_DELIVERY) {%>
+                                        <%var rank = it.keywords[i].rank;%>
+                                        <%if(rank && !isNaN(rank)){%>
+                                            <%var star = '';%>
+                                            <%for (var ii = 0; ii !== parseInt(rank / 2, 10); ii++) {star += '<i class="fa fa-star text-warning"></i>';}%>
+                                            <%if (rank % 2) {star += '<i class="fa fa-star-half-o text-warning"></i>';}%>
+                                            <%for (var jj = 0; jj !== (5-Math.ceil(rank / 2)); jj++) {star += '<i class="fa fa-star-o text-warning"></i>';}%>
+                                            <%=star%>
+                                        <%}else{%>
+                                            10分钟后生效
+                                        <%}%>
+                                    <%}else{%>
+                                        广告未投放
+                                    <%}%>
+                                </td>
+                            </tr>
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    <!-- 广告位加价 -->
+    <script type="text-x-dot-template" id="tpl-zone-price">
+        <div id="js-zone-price" class="zones-up">
+            <span  class="am-close am-close-spin floater-close" style="top:0;font-size:18px;">×</span>
+            <div class="zones-up-ct">
+                <table class="floatertb table table-striped table-bordered table-hover table-fixed-header">
+                    <thead>
+                        <tr>
+                            <th width="220" class="up-text">广告位</th>
+                            <th width="60">示意图</th>
+                            <th width="100">日曝光</th>
+                            <th width="130">加价(元)</th>
+                            <th width="150">竞争力</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%for(var i = 0, j = it.zones.length; i < j; i++) {%>
+                            <tr>
+                                <td><%=it.zones[i].zonename%></td>
+                                <td>
+                                    <%if(it.zones[i].description){%>
+                                    <a href="<%=it.zones[i].description%>" class="fancybox">查看</a>
+                                    <%}else{%>
+                                        -
+                                    <%}%>
+                                </td>
+                                <td>
+                                    <%=Helper._fnGetImpressionsText(it.zones[i].impressions)%>
+                                </td>
+                                <td><%=Number(it.zones[i].price_up).toFixed(1)%></td>
+                                <td>
+                                    <%if(it.model.status === CONSTANT.CAMPAIGN_STATUS_DELIVERY) {%>
+                                        <%var rank = it.zones[i].rank;%>
+                                        <%if(rank && !isNaN(rank)){%>
+                                            <%var star = '';%>
+                                            <%for (var ii = 0; ii !== parseInt(rank / 2, 10); ii++) {star += '<i class="fa fa-star text-warning"></i>';}%>
+                                            <%if (rank % 2) {star += '<i class="fa fa-star-half-o text-warning"></i>';}%>
+                                            <%for (var jj = 0; jj !== (5-Math.ceil(rank / 2)); jj++) {star += '<i class="fa fa-star-o text-warning"></i>';}%>
+                                            <%=star%>
+                                        <%}else{%>
+                                            10分钟后生效
+                                        <%}%>
+                                    <%} else {%>
+                                        广告未投放
+                                    <%}%>
+                                </td>
+                            </tr>
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    <script type="text-x-dot-template" id="tpl-campaign">
+
+        <div class="form-horizontal" id="js-app-name">
+            <div class="form-group required">
+                <label for="" class="col-sm-4 control-label">目标平台:</label>
+                <div class="col-sm-4">
+                    <select name="" id="js-app-platform" class="form-control">
+
+                    </select>
+                </div>
+            </div>
+            <div class="form-group required" style="margin-bottom: 2px;">
+                <label for="" class="col-sm-4 control-label">请输入应用名称:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="appinfos_app_name"
+                        placeholder="请输入应用名称" value="" autocomplete="off"
+                        check-type="required" required-message="请输入应用名称" >
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8 app-list" id="js-app-list">
+                </div>
+            </div>
+        </div>
+        <form class="form-horizontal" style="max-length: 600px;display:none;" id="js-appinfos" autocomplete="off">
+            <div class="bd">
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <%if(it.isEdit){%>
+                    <button type="button" class="btn btn-primary" id="js-add-btn" data-handle="2" disabled>修改推广</button>
+                    <%}else{%>
+                    <button type="button" class="btn btn-primary" id="js-add-btn" data-handle="1">创建推广</button>
+                    <%}%>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script type="text-x-dot-template" id="tpl-app-list">
+        <%if(it.list && it.list.length > 0) {%>
+        <ul>
+            <%for(var i = 0, j = it.list.length; i < j; i++) {%>
+                <li data-index="<%=i%>">
+                    <div class="content">
+                        <img src="<%=it.list[i].products_icon%>"/><%=it.list[i].appinfos_app_name%>
+                    </div>
+                </li>
+            <%}%>
+        </ul>
+        <%}else{%>
+            暂无数据，请重新输入应用的<%if(+it.platform === CONSTANT.platform_type_iphone_copyright ){%>appleID<%} else if(+it.platform === CONSTANT.platform_type_iphone_jailbreak){%>包名<%} else {%>名称<%}%>
+        <%}%>
+    </script>
+    <script type="text-x-dot-template" id="tpl-appinfos">
+        <input type="hidden" name="app_list" >
+        <input type="hidden" name="campaignid" >
+        <div class="form-group">
+            <label for="" class="col-sm-3 control-label">推广应用:</label>
+            <div class="col-sm-9">
+                <img src="<%=it.model.products_icon%>" /><%=it.model.appinfos_app_name%>
+                <a href="javascript:;" class="text-warning" id="js-modify-appname" <%if(it.isEdit){%>style="display:none;"<%}%>>修改</a>
+            </div>
+        </div>
+        <%if(it.platform == CONSTANT.platform_type_iphone_copyright) {%>
+            <div class="form-group">
+            <label for="" class="col-sm-3 control-label">跟踪链接:</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" name="link_url" check-type="link_url" required-message="请输入跟踪链接"
+                    data-original="<%=it.model.link_url%>" value="<%=it.model.link_url%>" placeholder="如果不填，则投放共享包">
+            </div>
+        </div>
+        <%}%>
+        <div class="form-group required" <%if(it.revenueTypes.length === 1){%>style="display:none;"<%}%>>
+            <label for="" class="col-sm-3 control-label">计费类型:</label>
+            <div class="col-sm-9">
+                <%for(var i = 0, j = it.revenueTypes.length; i < j; i++) {%>
+                <%if($.inArray(it.revenueTypes[i], CONSTANT.housead_revenue_type_ary) > -1) {%>
+                    <label class="radio-inline">
+                        <input type="radio" name="revenue_type" value="<%=it.revenueTypes[i]%>"
+                            <%if(it.model.revenue_type == it.revenueTypes[i]){%>checked<%}%> 
+                            <%if(it.isEdit){%>disabled<%}%>
+                            check-type="required" required-message="请选择计费类型"
+                        >
+                        <%=LANG.revenue_type[it.revenueTypes[i]]%></label>
+                <%}%>
+                <%}%>
+            </div>
+        </div>
+        <div class="form-group required js-revenue-div" <%if(it.model.revenue_type==CONSTANT.revenue_type_cps){%>style="display:none;"<%}%>>
+            <label for="" class="col-sm-3 control-label js-revenue-label">
+                <%if(it.model.revenue_type==CONSTANT.revenue_type_cpa){%>
+                    CPA出价:
+                <%}else{%>
+                    CPD出价:
+                <%}%>
+            </label>
+            <div class="col-sm-4 input-number">
+                <input type="text" class="form-control" name="revenue"
+                    value="<%=it.model.revenue ? Number(it.model.revenue).toFixed(1) : it.moneyLimits[it.model.revenue_type].revenue_min%>"
+                    data-original="<%=it.model.revenue ? Number(it.model.revenue).toFixed(1) : it.moneyLimits[it.model.revenue_type].revenue_min%>"
+                    check-type="<%if(it.model.revenue_type==CONSTANT.revenue_type_cpd || it.model.revenue_type==CONSTANT.revenue_type_cpa){%>required rangen decimaln stepn<%}%>"
+                    required-message="请输入CPD出价"
+                    rangen-message="出价大于等于<%=it.moneyLimits[it.model.revenue_type].revenue_min%>小于等于<%=it.moneyLimits[it.model.revenue_type].revenue_max%>"
+                    decimaln-message="出价保留1位小数点"
+                    stepn-message="最小幅度必须大于等于<%=it.moneyLimits[it.model.revenue_type].revenue_step%>"
+                    min="<%=it.moneyLimits[it.model.revenue_type].revenue_min%>"
+                    max="<%=it.moneyLimits[it.model.revenue_type].revenue_max%>"
+                    step="<%=it.moneyLimits[it.model.revenue_type].revenue_step%>"
+                    decimal="<%=CONSTANT.revenue_type_conf[it.model.revenue_type].decimal%>"
+                    oninput="if(!/[^\d.]/g.test(value)) {return}; value=value.replace(/[^\d.]/g,'')"
+                    >
+                    <div class="spin-wrap">
+                        <div class="spin" data-handle="up"><i class="fa fa-caret-up"></i></div>
+                        <div class="spin" data-handle="down"><i class="fa fa-caret-down"></i></div>
+                    </div>
+            </div>
+            <div class="col-sm-5 text-muted tips">不低于<%=it.moneyLimits[it.model.revenue_type].revenue_min%>元，最小加<%=it.moneyLimits[it.model.revenue_type].revenue_step%>元</div>
+        </div>
+        <div class="form-group required js-totallimit-div"
+            <%if(it.model.revenue_type==CONSTANT.revenue_type_cps || it.model.revenue_type==CONSTANT.revenue_type_cpa){%>style="display:none;"<%}%>>
+            <label for="" class="col-sm-3 control-label">总预算:</label>
+            <div class="col-sm-4 input-number">
+                <input type="text" class="form-control" name="total_limit"
+                    value="<%=it.model.total_limit ? parseInt(it.model.total_limit, 10) : it.moneyLimits[it.model.revenue_type].total_limit_min%>"
+                    data-original="<%=it.model.total_limit ? parseInt(it.model.total_limit, 10) : it.moneyLimits[it.model.revenue_type].total_limit_min%>"
+                    check-type="<%if(it.model.revenue_type==CONSTANT.revenue_type_cpd){%>required rangen stepn<%}%>"
+                    required-message="请输入总预算"
+                    rangen-message="总预算大于等于<%=it.moneyLimits[it.model.revenue_type].total_limit_min%>小于等于<%=it.moneyLimits[it.model.revenue_type].total_limit_max%>"
+                    stepn-message="最小幅度必须大于等于<%=it.moneyLimits[it.model.revenue_type].total_limit_step%>"
+                    min="<%=it.moneyLimits[it.model.revenue_type].total_limit_min%>"
+                    max="<%=it.moneyLimits[it.model.revenue_type].total_limit_max%>"
+                    step="<%=it.moneyLimits[it.model.revenue_type].total_limit_step%>"
+                    decimal="0"
+                    oninput="if(!/[^\d]/g.test(value)) {return}; value=value.replace(/[^\d]/g,'')"
+                >
+                <div class="spin-wrap">
+                    <div class="spin" data-handle="up"><i class="fa fa-caret-up"></i></div>
+                    <div class="spin" data-handle="down"><i class="fa fa-caret-down"></i></div>
+                </div>
+            </div>
+            <div class="col-sm-5 text-muted">不低于<%=it.moneyLimits[it.model.revenue_type].total_limit_min%>元，最小加<%=it.moneyLimits[it.model.revenue_type].total_limit_step%>元</div>
+        </div>
+        <div class="form-group required js-daylimit-div"
+            <%if(it.model.revenue_type==CONSTANT.revenue_type_cps || it.model.revenue_type==CONSTANT.revenue_type_cpa){%>style="display:none;"<%}%>>
+            <label for="" class="col-sm-3 control-label">日预算:</label>
+            <div class="col-sm-4 input-number">
+                <input type="text" class="form-control" name="day_limit"
+                    value="<%=it.model.day_limit ? parseInt(it.model.day_limit) : it.moneyLimits[it.model.revenue_type].day_limit_min%>"
+                    data-original="<%=it.model.day_limit ? parseInt(it.model.day_limit) : it.moneyLimits[it.model.revenue_type].day_limit_min%>"
+                    check-type="<%if(it.model.revenue_type==CONSTANT.revenue_type_cpd){%>required rangen stepn<%}%>" required-message="请输入日预算"
+                    rangen-message="日预算大于等于<%=it.moneyLimits[it.model.revenue_type].day_limit_min%>小于等于<%=it.moneyLimits[it.model.revenue_type].day_limit_max%>"
+                    stepn-message="最小幅度必须大于等于<%=it.moneyLimits[it.model.revenue_type].day_limit_step%>"
+                    min="<%=it.moneyLimits[it.model.revenue_type].day_limit_min%>"
+                    max="<%=it.moneyLimits[it.model.revenue_type].day_limit_max%>"
+                    step="<%=it.moneyLimits[it.model.revenue_type].day_limit_step%>"
+                    decimal="0"
+                    oninput="if(!/[^\d]/g.test(value)) {return}; value=value.replace(/[^\d]/g,'')"
+                >
+                <div class="spin-wrap">
+                    <div class="spin" data-handle="up"><i class="fa fa-caret-up"></i></div>
+                    <div class="spin" data-handle="down"><i class="fa fa-caret-down"></i></div>
+                </div>
+            </div>
+            <div class="col-sm-5 text-muted">不低于<%=it.moneyLimits[it.model.revenue_type].day_limit_min%>元，最小加<%=it.moneyLimits[it.model.revenue_type].day_limit_step%>元</div>
+        </div>
+        <div class="form-group js-keyword-div"
+            <%if(it.model.revenue_type==CONSTANT.revenue_type_cps || it.model.revenue_type==CONSTANT.revenue_type_cpa){%>style="display:none;"<%}%>>
+            <label for="" class="col-sm-3 control-label">搜索关键字:</label>
+            <div class="col-sm-9">
+                <div class="col-sm-12 js-keyword-content" style="padding-left:0;">
+                    <%if(it.model.keywords && it.model.keywords.length > 0) {%>
+                        <%for(var i = 0, j = it.model.keywords.length; i < j; i++){%>
+                            <div class="js-tr tr" data-listener="1">
+                                <div class="col-sm-5" style="padding-left:0;">
+                                    <input class="form-control" name="keyword" placeholder="输入关键字" maxlength="10" value="<%=it.model.keywords[i].keyword%>" disabled>
+                                </div>
+                                <div class="col-sm-4 input-number">
+                                    <input class="form-control" type="text" name="price_up" placeholder="输入加价" value="<%=Number(it.model.keywords[i].price_up).toFixed(1)%>"
+                                        oninput="if(!/[^\d.]/g.test(value)) {return}; value=value.replace(/[^\d.]/g,'')"
+                                        step="0.1"
+                                        decimal="1"
+                                        min="<%=it.moneyLimits[it.model.revenue_type].key_min%>"
+                                        max="<%=it.moneyLimits[it.model.revenue_type].key_max%>"
+                                        data-original="<%=Number(it.model.keywords[i].price_up).toFixed(1)%>"
+                                        data-listener="1">
+                                    <div class="spin-wrap">
+                                        <div class="spin" data-handle="up"><i class="fa fa-caret-up"></i></div>
+                                        <div class="spin" data-handle="down"><i class="fa fa-caret-down"></i></div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-1 js-close close" data-listener="1">x</div>
+                                <div class="col-sm-2" style="display:none;"><input type="hidden" name="id" value="<%=it.model.keywords[i].id%>"></div>
+                            </div>
+                        <%}%>
+                    <%}%>
+                </div>
+                <div class="col-sm-12" style="padding-left:0;">
+                    <button type="button" class="btn btn-default js-add-keyword">添加</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group js-zone-div"
+            <%if(it.model.revenue_type==CONSTANT.revenue_type_cps || it.model.revenue_type==CONSTANT.revenue_type_cpa){%>style="display:none;"<%}%>>
+            <label for="" class="col-sm-3 control-label">广告位加价:</label>
+            <div class="col-sm-9">
+                <table class="floatertb table table-striped table-bordered table-hover table-fixed-header" id="js-zone-table">
+                    <thead>
+                        <tr>
+                            <th style="display:none;">加价id</th>
+                            <th style="display:none;">广告位ID</th>
+                            <th width="200" class="up-text">广告位</th>
+                            <th width="60">示意图</th>
+                            <th width="100">日曝光</th>
+                            <th width="100">加价(元)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%if(it.model.zones && it.model.zones.length > 0) {%>
+                            <%for(var i = 0, j = it.model.zones.length; i < j; i++) {%>
+                            <tr>
+                                <td class="js-id" style="display:none;"><%=it.model.zones[i].id ? it.model.zones[i].id : ''%></td>
+                                <td class="js-zoneid" style="display:none;"><%=it.model.zones[i].zoneid%></td>
+                                <td><%=it.model.zones[i].zonename%></td>
+                                <td>
+                                    <%if(it.model.zones[i].description){%>
+                                    <a href="<%=it.model.zones[i].description%>" class="fancybox">查看</a>
+                                    <%}else{%>
+                                        -
+                                    <%}%>
+                                </td>
+                                <td><%=Helper._fnGetImpressionsText(it.model.zones[i].impressions)%></td>
+                                <td class="input-number">
+                                    <input type="text" name="price_up" step="0.1" style="width: 100px;border-radius:4px;"
+                                        data-zoneid="<%=it.model.zones[i].zoneid%>"
+                                        value="<%=(it.model.zones[i].price_up && Number(it.model.zones[i].price_up) > 0) ? Number(it.model.zones[i].price_up).toFixed(1) : 0%>"
+                                        data-original="<%=(it.model.zones[i].price_up && Number(it.model.zones[i].price_up) > 0) ? Number(it.model.zones[i].price_up).toFixed(1) : 0%>"
+                                        step="0.1" decimal="1" min="0" class="form-control"
+                                        >
+                                    <div class="spin-wrap">
+                                        <div class="spin" data-handle="up"><i class="fa fa-caret-up"></i></div>
+                                        <div class="spin" data-handle="down"><i class="fa fa-caret-down"></i></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <%}%>
+                        <%}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+
+    <script type="text-x-dot-template" id="tpl-platform">
+    <% if (it.obj && it.obj.length > 0) { %>
+        <%for (var i = 0; i < it.obj.length; i++) {%>
+            <%var v = it.obj[i];%>
+            <option value="<%=v%>"><%=LANG.platform[v]%></option>
+        <%}%>
+    <%}%>
+    </script>
+
+    <script src="../../../js/plugins/jquery.fancybox.pack.js"></script>
+    <script src="../../../js/common/basemodel.js"></script>
+    <script src="../../../js/common/validate.js"></script>
+    <script src="../../../js/common/sensitive-word.js"></script>
+    <script src="../js/campaign-index.js"></script>
+
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

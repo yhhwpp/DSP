@@ -1,0 +1,102 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div id="js-admin-acount">
+    正在加载中……
+</div>
+
+<script type="text-x-dot-template" id="tpl-admin-agency">
+    <ul class="admin-account-list">
+        <% for(var i = 0 ; i < it.list.length ; i++) { %>
+            <li>联盟账号：<%=it.list[i].name%>　　联系人 ： <%=it.list[i].contact%>　　邮箱 ： <%=it.list[i].email%>
+                <% for( key in it.list[i].child) { %>
+                    <% if(it.list[i].child[key]) { %>
+                        <%   var account ;
+                            if (key === 'admin'){
+                                account = '管理员'
+                            }
+                            else if (key === 'manager') {
+                                account = '联盟'
+                            }
+                            else if (key === 'trafficker') {
+                                account = '媒体商'
+                            }
+                            else if (key === 'advertiser') {
+                                account = '广告主'
+                            }
+                            else if (key === 'broker') {
+                                account = '代理商'
+                            }
+                        %>
+
+                        <h4><%=account%>账号</h4>
+                        <ul class="account-child-list">
+                            <% for(var j = 0 ; j < it.list[i].child[key].length ; j++) { %>
+                                <li>
+                                <%var _account = it.list[i].child[key][j];%>
+                                <%var _id = _account.affiliateid; %>
+                                <%if (key === 'trafficker'){%>
+                                    <span style="min-width:160px"> 媒体ID：<%=_id%></span>
+                                <%}%>
+                                <%var _name = _account.username; %>
+                                <%var _contact = _account.contact_name; %>
+                                <%var _email = _account.email_address; %>
+                                <%var _user_id = _account.user_id; %>
+                                <%var self = _account.child;%>
+                                <%var _kind = _account.kind || '' ;%>
+                                <%var subtrafficker;%>
+
+                                <%if (key === 'advertiser' || key === 'broker' ){%>
+                                    <% _name = _account.name;%>
+                                <%}%>
+
+
+                                <%if (key === 'trafficker' && self ){%>
+                                    <%for (var m in self) {%>
+                                        <% if(m === 'trafficker' || m === 'advertiser') {%>
+                                            <%for (var n = 0; n < self[m].length; n++) {%>
+                                                <% if(self[m][n].user_id == _account.manager_userid) {%>
+                                                    <% _name = self[m][n].username; %>
+                                                    <% _contact = self[m][n].contact_name; %>
+                                                    <% _email = self[m][n].email_address; %>
+                                                    <% _user_id = self[m][n].user_id; %>
+                                                    <% _kind = self[m][n].kind; %>
+                                                <%}%>
+                                            <%}%>
+                                        <%}%>
+                                    <%}%>
+                                <%}%>
+
+                                <span><%=account%>账号：<%=_name%></span><span>联系人： <%=_contact%></span><span>邮箱： <%=_email%></span><button class="btn btn-default switch-account" data-role=<%=key%> data-user=<%=_user_id%> data-kind=<%=_kind%>>切换此账号</button></li>
+
+                                <%if (key === 'trafficker' && self ){%>
+                                    <%for (var m in self) {%>
+                                        <% if(m === 'trafficker' || m === 'advertiser') {%>
+                                            <h5>
+                                            <%if(m === 'trafficker') {%>
+                                                <%if(self[m].length > 1) {%>
+                                                    媒体商内部账号
+                                                <%}%>
+                                            <%} else if (m === 'advertiser') {%>
+                                                直销广告主
+                                            <%}%>
+                                            </h5>
+                                        <ul>
+                                            <%for (var n = 0; n < self[m].length; n++) {%>
+                                                <% if(self[m][n].user_id != _account.manager_userid) {%>
+                                                <% var _showname = m === 'advertiser' ? self[m][n].name : self[m][n].username; %>
+                                                <li><span>账号：<%=_showname%></span><span>联系人： <%=self[m][n].contact_name%></span><span>邮箱： <%=self[m][n].email_address%></span><button class="btn btn-default switch-account" data-kind=<%=_kind%> data-role=<%=m%> data-user=<%=self[m][n].user_id%> >切换此账号</button></li>
+                                                <%}%>
+                                            <%}%>
+                                        </ul>
+                                        <%}%>
+                                    <%}%>
+                                <%}%>
+                            <% } %>
+                        </ul>
+                    <% } %>
+                <% } %>
+            </li>
+        <% } %>
+    </ul>
+</script>
+<script src="js/agency_index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

@@ -1,0 +1,1782 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../css/jquery.fancybox.css">
+<link href="../../css/bootstrap-multiselect.css" rel="stylesheet">
+<link href="../../css/bootstrap-slider.min.css" rel="stylesheet">
+<link href="../../css/bootstrap-datepicker3.min.css" rel="stylesheet">
+<!-- Tab项 -->
+<div class="tabbox">
+    <ul class="nav nav-tabs" id="tab-type-wrapper">
+        <li data-tab-type="campaign"><a style="padding-right: 35px;" href="javascript:void(0);">广告管理<span data-type="campaign-num" class="badge left" style="float:none;"></span></a></li>
+        <li data-tab-type="materials"><a style="padding-right: 35px;" href="javascript:void(0);">更新管理<span data-type="materials-num" class="badge left" style="float:none;"></span></a></li>
+    </ul>
+</div>
+<!-- 搜索区 -->
+<div id="js-search-field" class="search-field">
+</div>
+<!-- 新建A/T广告 -->
+<div id="addad-btn-wrapper" class="table-ctl"></div>
+<!-- 主表格数据 -->
+<div id="tab-table-wrapper">
+    <table id="tab-table" class="table table-striped table-bordered table-hover table-fixed-header wrap-table log-set"></table>
+</div>
+
+<!-- <div id="materials-wrapper">
+    <table id="materials-table" class="table table-striped table-bordered table-hover table-fixed-header wrap-table"></table>
+</div> -->
+<!-- 广告审核 -->
+<div class="modal fade" id="approve-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:920px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">广告审核</h4>
+            </div>
+            <div class="modal-body" style="max-height:500px; overflow-y: auto;">
+                <form class="form-horizontal" id="approve-tpl-wrapper"></form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="approve-accept">通过审核</button>
+                <button type="button" class="btn btn-default" id="approve-reject">不通过审核</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="approve-reject-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close js-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">不通过审核原因（必须填写）</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <textarea id="reject-content" style="height:200px; width:100%;"></textarea>
+                    <span id="reject-msg" class="text-warning"></span>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="approve-reject-accept">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 广告详细信息 -->
+<div class="modal fade" id="product-info-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:920px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">查看广告</h4>
+            </div>
+            <div class="modal-body" style="max-height:500px; overflow-y: auto;">
+                <form class="form-horizontal" id="info-tpl-wrapper"></form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 广告设定弹出 -->
+<div class="modal fade js-affset-modal log-set" id="js-affset-modal">
+    <div class="modal-dialog" style="width: 90%; min-width:820px; position:relative;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body height-table">
+                <div class="tabbox"></div>
+                <p class="day-limit-program" style="width:300px;position:relative; z-index:3">
+                </p>
+                <span class="js-word2vec text-warning cursor"
+                    style="position:absolute;left: 300px;height:30px;line-height:30px;display:none;z-index:4;">
+                    word2vec
+                </span>
+                <table id="js-affset-table" class="table table-striped table-bordered table-hover table-fixed-header wrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 等价广告弹出 -->
+<div class="modal fade js-equivalence-modal" id="js-equivalence-modal">
+    <div class="modal-dialog" style="width: 80%; min-width:700px; position:relative;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">等价广告</h4>
+            </div>
+            <div class="modal-body height-table">
+                <div class="equivalence-type"></div>
+                <table id="js-equivalence-table" class="table table-striped table-bordered table-hover table-fixed-header wrap-table">
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 广告设定渠道包 -->
+<div id="package-select-modal" class="modal fade package-select-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close js-close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">选择渠道包</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default js-close" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="package-select-confirm">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索关键字 -->
+<div id="zones-up" class="zones-up" style="display:none;">
+    <div class="zones-up-ct">
+        <span  class="am-close am-close-spin floater-close" id="zones-up-close">×</span>
+        <table class="floatertb table table-striped table-bordered table-hover table-fixed-header" id="floatertb">
+            <thead>
+                <tr>
+                    <th width="220" class="up-text">搜索关键字</th>
+                    <th width="130">加价金额<span style="font-weight: normal">(元)</span></th>
+                    <th width="150">竞争力</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- wordvec -->
+<div class="zones-up" id="word2vec-manage" style="display:none;width: 800px">
+    <div class="zones-up-ct">
+        <span  class="am-close am-close-spin floater-close" id="word2vec-manage-close">×</span>
+        <table class="floatertb table table-striped table-bordered table-hover table-fixed-header">
+            <thead>
+                <tr>
+                    <th width="">广告文本</th>
+                    <th width="100">阈值（%）</th>
+                    <th width="100">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<!-- 素材更新审核 -->
+<div class="modal fade" id="material-approve-panel" tabindex="-1" role="dialog" aria-labelledby="material-approve-panel-label">
+    <div class="modal-dialog" role="document" style="width:1200px;">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<!-- 创建CPA / CPT广告 -->
+<div class="modal fade" id="add-advertiser-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">创建CPA / CPT / CPS广告</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal add-advertiser-form">
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="add-advertiser-confirm">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 查看历史出价 -->
+<div class="modal fade js-revenue-history-modal" id="js-revenue-history-modal">
+    <div class="modal-dialog" style="width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">历史出价</h4>
+            </div>
+            <div class="modal-body">
+                <table id="js-revenue-history" class="table table-striped table-bordered table-hover table-fixed-header wrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 查看定向投放 -->
+<div class="modal fade" id="modal-directional-delivery" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">定向投放</h4>
+            </div>
+            <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+                <input type="hidden" id="directional-campaignid">
+                <form class="form-horizontal" id="js-directional-delivery">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="js-modify-directional">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 查看bannerid定向投放 -->
+<div class="modal fade" id="modal-direct-delivery-banner" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width:800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">定向投放</h4>
+            </div>
+            <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+                <form class="form-horizontal" id="js-directional-delivery-banner">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="js-save-directional-banner">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- log -->
+<div class="modal fade" id="modal-log" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"><span></span> -- 备忘录</h4>
+                <div class="row" style="border-top:1px solid #e5e5e5;padding-top:10px; margin-top:10px">
+                    <div class="col-sm-4">
+                        <select class="form-control input-sm" name="log-filter" >
+                            <option value="2">人工添加</option>
+                            <option value="">全部</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" style="max-height: 700px; overflow-y: auto;">
+                <table id="tb-log" class="table "></table>
+            </div>
+            <div class="modal-footer">
+                <form class="form-inline">
+                    <textarea name="" cols="30" class="form-control js-log-txt" maxlength="300" placeholder="请输入文字（不超过300字）"></textarea>
+                    <button type="button" class="btn btn-primary js-log-add">添加</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 30天消耗趋势 -->
+<div class="modal fade" id="trend-detail-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:720px;">
+        <div class="modal-content">
+            <div class="modal-header" style="margin-bottom:0; padding-bottom:0; border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div id="trend-header">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="trend-body" style="width: 100%; height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 30天消耗趋势 banner-->
+<div class="modal fade" id="trend-banner-detail-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:720px;">
+        <div class="modal-content">
+            <div class="modal-header" style="margin-bottom:0; padding-bottom:0; border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div id="trend-banner-header">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="trend-banner-body" style="width: 100%; height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text-x-dot-template" id="tpl-affset-title">
+
+    <%if (it.icon) {%>
+        <img src="<%=it.icon%>" width="30" height="30" >
+    <%}%>
+    <%=it.appinfos_app_name%>
+    <h5>
+
+        （平台：<%=LANG.platform_group[it.platform]%>&nbsp;，
+        <% if(it.ad_type != CONSTANT.ad_type_other) {%>
+            广告主&nbsp;<span class="text-warning"><%=it.revenue_type_label%></span>&nbsp;投放&nbsp;，
+            <% if(it.revenue_type != CONSTANT.revenue_type_cps) {%>
+                出价&nbsp;<span class="text-warning"><%=Helper.fnFormatMoney(it.revenue, (it.revenue_type === CONSTANT.revenue_type_cpc ? 2 : 1))%></span>&nbsp;元，
+                日预算&nbsp;<span class="text-warning"><%=Helper.fnFormatMoney(it.day_limit,0)%></span>&nbsp;元（今日已消耗<span class="text-warning js-day-consume"><i class="fa fa-spinner fa-spin"></i></span>元 ），
+                总预算&nbsp;<%=(!it.total_limit || it.total_limit === '0.00' || it.total_limit === 0.00) ? '<span class="text-warning">不限</span>' : '<span class="text-warning">' + Helper.fnFormatMoney(it.total_limit,0) + '</span>&nbsp;元'%>
+            <%}%>
+        <%}%>
+        <% if(it.revenue_type != CONSTANT.revenue_type_cps) {%>
+            （已消耗<span class="text-warning js-total-consume"><i class="fa fa-spinner fa-spin"></i></span>元），
+        <%}%>
+        广告id：<%=it.campaignid%>）
+        <%=(it.status === CONSTANT.CAMPAIGN_STATUS_PAUSE ? '<span class="text-danger" style="font-size:18px;"><i class="fa fa-exclamation-circle text-warning"></i>' + LANG.CAMPAIGN_PAUSE_STATUS[it.pause_status] + '</span>' : '')%>
+    </h5>
+</script>
+
+<script type="text-x-dot-template" id="tpl-log-title">
+<input type="hidden" name="category" value="<%=it.category%>" />
+<%if (it.category === 110) {%>
+    <%if (it.icon) {%>
+        <img src="<%=it.icon%>" width="30" height="30" >
+    <%}%>
+    <%=it.appinfos_app_name%>
+    <input type="hidden" name="targetid" value="<%=it.campaignid%>" />
+<%} else { %>
+    <%=it.affiliates_name%>
+    <input type="hidden" name="targetid" value="<%=it.bannerid%>" />
+<%}%>
+
+</script>
+
+<script type="text-x-dot-template" id="tpl-tab">
+    <ul class="nav nav-tabs">
+        <%if (it.ad_type != CONSTANT.ad_type_other && it.ad_type != CONSTANT.ad_type_video) {%>
+            <li data-mode=<%=CONSTANT.mode_storage_no%>>
+                媒体不入库
+            </li>
+            <%if (it.ad_type === CONSTANT.ad_type_app_market) {%>
+                <li data-mode=<%=CONSTANT.mode_storage_yes%>>
+                    媒体入库
+                </li>
+            <%}%>
+        <%}%>
+        <%if (it.ad_type != CONSTANT.ad_type_app_store && it.revenue_type != CONSTANT.revenue_type_cpm && it.ad_type != CONSTANT.ad_type_video) {%>
+            <li data-mode=<%=CONSTANT.mode_artif%>>
+                人工投放
+            </li>
+        <%}%>
+        <%if (it.ad_type != CONSTANT.ad_type_app_market && it.ad_type != CONSTANT.ad_type_app_store && it.ad_type != CONSTANT.ad_type_other) {%>
+            <li data-mode=<%=CONSTANT.mode_adx%>>
+                Adx
+            </li>
+        <%}%>
+    </ul>
+</script>
+
+<script type="text-x-dot-template" id="tpl-app-search">
+    <div class="app-search-list container">
+        <div class="row">
+            <div class="modal-header">
+                <button type="button" class="close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="input-group">
+                <input type="text" class="form-control app-search-text" placeholder="搜索" value='<%=it.appinfos_app_name%>' >
+                <span class="input-group-btn app-words-search">
+                    <button class="btn btn-default" type="button"> <i class="fa fa-search"></i></button>
+                </span>
+            </div>
+            <div class="tb-list"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text-x-dot-template" id="tpl-app-tb-list">
+    <table class="table table-hover">
+        <tbody>
+        <% if (it.list) {%>
+            <% for(var i = 0; i < it.list.length; i++) {%>
+                <tr data-appid="<%=it.list[i].app_id%>" data-icon = <%=it.list[i].app_icon%> data-appname="<%=it.list[i].app_name%>">
+                    <td><img width="30" height="30" src="<%=it.list[i].app_icon%>"></td>
+                    <td><%=it.list[i].app_name%></td>
+                    <td><%=it.list[i].app_vendor%></td>
+                </tr>
+            <%}%>
+        <%} else { %>
+            无数据
+        <%}%>
+        </tbody>
+    </table>
+</script>
+
+<script type="text-x-dot-template" id="tpl-package-list">
+    <select class="form-control" id="select-app-package">
+        <% if(!it.attach_id){%>
+            <option value="">请选择渠道包</option>
+        <% }%>
+        <% if ($.isArray(it.list)) {%>
+            <% for(var i = 0; i < it.list.length; i++) {%>
+                <option value="<%=it.list[i].attach_id%>" <% if(it.attach_id === it.list[i].attach_id){%> selected= <% }%>><%=it.list[i].channel%> &nbsp;&nbsp;&nbsp; <%=it.list[i].created_at%> &nbsp;&nbsp;&nbsp; <%=it.list[i].real_name%></option>
+            <%}%>
+        <%}%>
+    </select>
+</script>
+
+<script type="text-x-dot-template" id="tpl-campaign-info">
+    <input type="hidden" value="<%=it.campaignid%>" id="approve-campaignid">
+    <input type="hidden" value="<%=it.product_type%>" id="approve-product-type">
+    <div class="campaign-modal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">广告主:</label>
+            <div class="col-sm-10">
+                <p class="form-control-static"><%=it.clientname%></p>
+            </div>
+        </div>
+        <% if (+it.product_type === CONSTANT.products_type_package || +it.ad_type === CONSTANT.ad_type_app_store) { %>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">应用:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=it.app_name%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    <% if (+it.product_type === CONSTANT.products_type_package) { %>
+                        应用包:
+                    <%} else {%>
+                        推广链接:
+                    <%}%>
+                </label>
+                <div class="col-sm-10">
+                    <% if (+it.product_type === CONSTANT.products_type_package) { %>
+                        <%if (it.download_url) {%>
+                        <p class="form-control-static text-warning"><a href="<%=it.download_url%>" target="_blank" style="word-break: break-all;"><%=it.real_name%></a></p>
+                        <%} else {%>
+                            <p class="form-control-static text-warning">未传包</p>
+                        <%}%>
+                    <%} else {%>
+                        <p class="form-control-static text-warning"><a href="<%=it.link_url%>" target="_blank" style="word-break: break-all;"><%=it.link_url%></a></p>
+                    <%}%>
+                </div>
+            </div>
+            <% if (it.info_type === 'approve' && it.ad_type != CONSTANT.ad_type_app_store) {%>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">渠道号:</label>
+                    <div class="col-sm-10">
+                        <input id="approve-channel" type="text" class="form-control" style="width:250px; display:inline"> <span id="channel-err-msg" class="text-warning"></span>
+                    </div>
+                </div>
+            <%}%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">图标:</label>
+                <div class="col-sm-10">
+                <%if (it.icon) {%>
+                    <p class="form-control-static icon-w text-warning">
+                        <a href="<%=it.icon%>" class="fancybox" alt="点击预览大图" title="点击预览大图"><img src="<%=it.icon%>"/></a>
+                    </p>
+                <%}%>
+                </div>
+            </div>
+        <%} else {%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">推广站点名称:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=it.link_name%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">推广链接:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><a class="text-success" href="<%=it.link_url%>" target="_blank" style="word-break: break-all;"><%=it.link_url%></a></p>
+                </div>
+            </div>
+        <%}%>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">平台:</label>
+            <div class="col-sm-10">
+                <p class="form-control-static">
+                <% if (it.platform === 3) {%>
+                    <%=LANG.platform_group['7']%>
+                <%} else {%>
+                    <%=LANG.platform_group[it.platform]%>
+                <%}%>
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">计费类型:</label>
+            <div class="col-sm-10">
+                <p class="form-control-static"><%=LANG.revenue_type[it.revenue_type]%></p>
+            </div>
+        </div>
+
+        <% if (it.revenue_type != CONSTANT.revenue_type_cps) {%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">基础出价:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=Helper.fnFormatMoney(it.revenue)%>&nbsp;元</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">日预算:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=Helper.fnFormatMoney(it.day_limit,0)%>&nbsp;元</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">总预算:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=(!it.total_limit || it.total_limit === '0.00' || it.total_limit === 0.00) ? '不限' : Helper.fnFormatMoney(it.total_limit) + ' 元'%></p>
+                </div>
+            </div>
+        <%}%>
+
+        <%if (+it.ad_type === CONSTANT.ad_type_app_market || +it.ad_type === CONSTANT.ad_type_app_store) {%>
+            <% if (it.revenue_type != CONSTANT.revenue_type_cps) {%>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">关键字加价:</label>
+                    <div class="col-sm-4">
+                        <%if (it.keywords && it.keywords.length > 0) {%>
+                        <table class="floatertb table table-striped table-bordered table-hover table-fixed-header" id="floatertb">
+                            <thead>
+                                <tr>
+                                    <th width="150">关键字</th>
+                                    <th width="130">加价金额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%for (var i = 0, j = it.keywords.length; i < j; i++) {%>
+                                    <tr><td><%=it.keywords[i].keyword%></td><td><%=it.keywords[i].price_up%></td></tr>
+                                <%}%>
+                            </tbody>
+                        </table>
+                        <%}%>
+                    </div>
+                </div>
+            <%}%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">应用介绍:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=it.description%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">一句话简介:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=it.profile%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">更新说明:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=it.update_des%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">应用截图:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static material-w">
+                        <%if (it.images) {%>
+                            <% var oImages = it.images;%>
+                            <% for(var key in oImages) { %>
+                                <% if (oImages[key]) { %>
+                                    <span class="text-warning" style="display:block;margin-bottom:4px;"><%=oImages[key].width + '*' + oImages[key].height%></span>
+                                    <% if (oImages[key].url && oImages[key].url.length) {%>
+                                    <%for(var j = 0; j < oImages[key].url.length; j++) {%>
+                                        <span>
+                                            <a href="<%=oImages[key].url[j]%>" class="fancybox" rel="gallery1" alt="点击预览大图" title="点击预览大图">
+                                                <img src="<%=oImages[key].url[j]%>" alt="点击预览大图" />
+                                            </a>
+                                        </span>
+                                    <%}%>
+                                    <%}%>
+                                <%}%>
+                            <% } %>
+                        <%}%>
+                    </p>
+                </div>
+            </div>
+        <%} else if (+it.ad_type === CONSTANT.ad_type_banner || +it.ad_type === CONSTANT.ad_type_screen_half || +it.ad_type === CONSTANT.ad_type_screen_full || +it.ad_type === CONSTANT.ad_type_video) {%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">素材样式:</label>
+                <div class="col-sm-10">
+
+                    <% if (+it.ad_type != CONSTANT.ad_type_video) { %>
+
+                    <div class="material-list js-banner-material material-list-wrapper">
+                        <div class="hd">
+                            <ul class="nav nav-pills">
+                                <%if (it.images && it.images.length > 0) {%>
+                                <% for (var i = 0, l = it.images.length; i < l; i++) {%>
+                                    <li class="js-img-tab <%= (it.images[i].url ? 'has' : '') + (i === 0 ? ' cur' : '')%>" data-key="<%=it.images[i].ad_spec%>" data-url="<%=it.images[i].url%>"><%=it.images[i].width + '*' + it.images[i].height%></li>
+                                <%}%>
+                                <%}%>
+                            </ul>
+                        </div>
+                        <div class="bd" style="position: relative;">
+                            <div class="img_view">
+                                <% if (it.images && it.images[0] && it.images[0].url) {%>
+                                    <a id="approve-img" href="<%=it.images[0].url%>" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                                        <img src="<%=it.images[0].url%>" style="margin: 0px auto 10px;" alt="广告主尚未上传对应素材">
+                                    </a>
+                                    <p id="approve-img-none" style="display: none;">广告主尚未上传对应素材</p>
+                                <%} else {%>
+                                    <a id="approve-img" href="" class="fancybox" title="点击预览大图" alt="点击预览大图" style="display: none;">
+                                        <img src="" style="margin: 0px auto 10px;" alt="广告主尚未上传对应素材">
+                                    </a>
+                                    <p id="approve-img-none">广告主尚未上传对应素材</p>
+                                <%}%>
+                            </div>
+                        </div>
+                    </div>
+                    <%} else if (it.url) { %>
+                        <video src="<%=it.url%>" controls="controls" width="400">
+                            您的浏览器不支持 video 标签
+                        </video>
+                    <%}%>
+                </div>
+            </div>
+        <%} else if (+it.ad_type === CONSTANT.ad_type_banner_textlink) {%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">广告文案:</label>
+                <div class="col-sm-10">
+                    <p class="form-control-static"><%=it.profile%></p>
+                </div>
+            </div>
+        <%} else if (+it.ad_type === CONSTANT.ad_type_feeds) {%>
+            <% if (+it.product_type === CONSTANT.products_type_package) {%>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">星级:</label>
+                    <div class="col-sm-10">
+                        <%for (var i = 0; i < 5; i ++) {%>
+                            <i class="fa text-warning <%= i < it.rank ? 'fa-star' : 'fa-star-o'%>"></i>
+                        <%}%>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">一句话描述:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><%=it.profile%></p>
+                    </div>
+                </div>
+            <%} else {%>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">图标:</label>
+                    <div class="col-sm-10">
+                        <a href="<%=it.app_show_icon%>" class="fancybox" alt="点击预览大图" title="点击预览大图"><img src="<%=it.app_show_icon%>"/></a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">标题:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><%=it.title%></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">吸引力文案:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><%=it.profile%></p>
+                    </div>
+                </div>
+            <%}%>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">广告图:</label>
+                <div class="col-sm-10">
+                    <% if (it.images && it.images[0]) { %>
+                        <a href="<%=it.images[0].url%>" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                            <img src="<%=it.images[0].url%>" style="margin: 0px auto 10px; max-height:100px; max-width: 470px;" alt="广告主尚未上传对应素材">
+                        </a>
+                   <%}%>
+                </div>
+            </div>
+        <%}%>
+        <% if (it.info_type === 'approve') {%>
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="col-sm-2 control-label">广告折扣：</label>
+                <div class="col-sm-10">
+                    <input id="approve-rate" type="text" class="form-control" style="width:80px; display:inline"> % <span id="rate-err-msg" class="text-warning js-err-msg"></span>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:10px">
+                <label class="col-sm-2 control-label">业务类型：</label>
+                <div class="col-sm-2">
+                    <select class="form-control" name="business-type">
+                        <% for(var k in it.business) {%>
+                            <option value="<%=k%>"><%=it.business[k]%></option>
+                        <%}%>
+                    </select>
+                </div>
+            </div>
+
+        <%}%>
+
+    </div>
+</script>
+<script type="text-x-dot-template" id="tpl-material-info">
+    <% if (it.status && it.status === CONSTANT.MATERIALS_STATUS_EFFECT && it.oldData === null) { %>
+        <p>版本升级前，未存储修改前的素材</p>
+    <% }else{ %>
+        <% if (+it.products_type === CONSTANT.products_type_package || +it.ad_type === CONSTANT.ad_type_app_store) { %>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">应用显示名称:
+                    <% if (it.isNew && it.oldData && it.oldData.app_show_name !== it.app_show_name) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">
+                    <%=it.app_show_name%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <% if (+it.products_type === CONSTANT.products_type_package) { %>
+                        <% if (it.isNew && it.oldData && it.oldData.download_url !== it.download_url) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                        应用包:
+                    <%} else {%>
+                        推广链接:
+                        <% if (it.isNew && it.oldData && it.oldData.link_url !== it.link_url) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <% if (+it.products_type === CONSTANT.products_type_package) { %>
+                        <%if (it.download_url) {%>
+                        <p class="form-control-static text-warning"><a href="<%=it.download_url%>" target="_blank" style="word-break: break-all;"><%=it.real_name%></a></p>
+                        <%} else {%>
+                            <p class="form-control-static text-warning">未传包</p>
+                        <%}%>
+                    <%} else {%>
+                        <p class="form-control-static text-warning"><a href="<%=it.link_url%>" target="_blank" style="word-break: break-all;"><%=it.link_url%></a></p>
+                    <%}%>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">图标:
+                    <% if (it.isNew && it.oldData && it.oldData.icon !== it.icon) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <%if (it.icon) {%>
+                        <p class="form-control-static icon-w text-warning">
+                            <a href="<%=it.icon%>" class="fancybox" alt="点击预览大图" title="点击预览大图"><img src="<%=it.icon%>"/></a>
+                        </p>
+                    <%}%>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">推广站点名称:
+                    <% if (it.isNew && it.oldData && it.oldData.link_name !== it.link_name) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.link_name%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">推广链接:
+                    <% if (it.isNew && it.oldData && it.oldData.link_url !== it.link_url) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><a class="text-success" href="<%=it.link_url%>" target="_blank" style="word-break: break-all;"><%=it.link_url%></a></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">推广平台:
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">
+                    <% if (it.platform === 3) {%>
+                        <%=LANG.platform_group['7']%>
+                    <%} else {%>
+                        <%=LANG.platform_group[it.platform]%>
+                    <%}%> </p>
+                </div>
+            </div>
+        <% } %>
+
+        <% if (it.revenue_type != CONSTANT.revenue_type_cps) {%>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">出价（元）:
+                    <% if (it.isNew && it.oldData && it.oldData.revenue !== it.revenue) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.revenue%></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">日预算（元）:
+                    <% if (it.isNew && it.oldData && it.oldData.day_limit !== it.day_limit) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.day_limit%></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">总预算（元）:
+                    <% if (it.isNew && it.oldData && it.oldData.total_limit !== it.total_limit) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.total_limit%>（<small>已消耗：<span class="text-danger"><%=it.total_consume%></span></small>）</p>
+                </div>
+            </div>
+        <% } %>
+
+
+        <% if (+it.ad_type === CONSTANT.ad_type_app_market || +it.ad_type === CONSTANT.ad_type_app_store) {%>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">应用介绍:
+                    <% if (it.isNew && it.oldData && it.oldData.description !== it.description) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.description%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">一句话简介:
+                    <% if (it.isNew && it.oldData && it.oldData.profile !== it.profile) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.profile%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">更新说明:
+                    <% if (it.isNew && it.oldData && it.oldData.update_desc !== it.update_desc) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.update_desc%></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">应用截图:
+                    <% if (it.isNew && it.oldData && JSON.stringify(it.oldData.images) !== JSON.stringify(it.images)) {%>
+                            <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static material-w">
+                        <%if (it.images) {%>
+                            <% var oImages = it.images;%>
+                            <% for(var key in oImages) { %>
+                                <% if (oImages[key]) { %>
+                                    <span class="text-warning" style="display:block;margin-bottom:4px;"><%=oImages[key].width + '*' + oImages[key].height%></span>
+                                    <% if (oImages[key].url && oImages[key].url.length) {%>
+                                    <%for(var j = 0; j < oImages[key].url.length; j++) {%>
+                                        <span>
+                                            <a href="<%=oImages[key].url[j]%>" class="fancybox" rel="gallery1" alt="点击预览大图" title="点击预览大图">
+                                                <img src="<%=oImages[key].url[j]%>" alt="点击预览大图" />
+                                            </a>
+                                        </span>
+                                    <%}%>
+                                    <%}%>
+                                <%}%>
+                            <% } %>
+                        <%}%>
+                    </p>
+                </div>
+            </div>
+        <% } else if (+it.ad_type === CONSTANT.ad_type_banner || +it.ad_type === CONSTANT.ad_type_screen_half || +it.ad_type === CONSTANT.ad_type_screen_full) { %>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">素材:
+                    <% if (it.isNew && it.oldData && JSON.stringify(it.oldData.images) !== JSON.stringify(it.images)) {%>
+                            <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <% if (it.images && $.isArray(it.images)) {%>
+                        <% for (var i = 0; i < it.images.length; i++) {%>
+                            <p class="form-control-static"><%=it.images[i].width + '*' + it.images[i].height%></p>
+                            <img style="max-width: 100%; display:block;" src="<%=it.images[i].url%>" />
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        <% } else if (+it.ad_type === CONSTANT.ad_type_banner_textlink) { %>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">广告文案:
+                    <% if (it.isNew && it.oldData && it.oldData.profile !== it.profile) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"><%=it.profile%></p>
+                </div>
+            </div>
+        <% } else if (+it.ad_type === CONSTANT.ad_type_feeds) { %>
+            <% if (+it.products_type === CONSTANT.products_type_package) {%>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">星级:
+                        <% if (it.isNew && it.oldData && it.oldData.rank !== it.rank) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                    </label>
+                    <div class="col-sm-9">
+                        <%for (var i = 0; i < 5; i ++) {%>
+                            <i class="fa text-warning <%= i < it.rank ? 'fa-star' : 'fa-star-o'%>"></i>
+                        <%}%>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">一句话描述:
+                        <% if (it.isNew && it.oldData && it.oldData.profile !== it.profile) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                    </label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static"><%=it.profile%></p>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">图标:
+                        <% if (it.isNew && it.oldData && it.oldData.icon !== it.icon) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                    </label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <a href="<%=it.icon%>" class="fancybox" alt="点击预览大图" title="点击预览大图"><img src="<%=it.icon%>"/></a>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">标题:
+                        <% if (it.isNew && it.oldData && it.oldData.title !== it.title) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                    </label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static"><%=it.title%></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">吸引力文案:
+                        <% if (it.isNew && it.oldData && it.oldData.profile !== it.profile) {%>
+                            <span class="badge">新</span>
+                        <%}%>
+                    </label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static"><%=it.profile%></p>
+                    </div>
+                </div>
+            <% } %>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">广告图:
+                    <% if (it.isNew && it.oldData && JSON.stringify(it.oldData.images) !== JSON.stringify(it.images)) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">
+                        <% if (it.images && it.images[0]) { %>
+                            <a href="<%=it.images[0].url%>" class="fancybox" title="点击预览大图" alt="点击预览大图">
+                                <img src="<%=it.images[0].url%>" style="margin: 0px auto 10px; max-height:100px; max-width: 470px;" alt="广告主尚未上传对应素材">
+                            </a>
+                       <%}%>
+                    </p>
+                </div>
+            </div>
+        <% } else if (+it.ad_type === CONSTANT.ad_type_video) { %>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">视频素材:
+                    <% if (it.isNew && it.oldData && it.oldData.url !== it.url) {%>
+                        <span class="badge">新</span>
+                    <%}%>
+                </label>
+                <div class="col-sm-9">
+                    <% if (it.url) { %>
+                    <video src="<%=it.url%>" controls="controls" width="400">
+                        您的浏览器不支持 video 标签
+                    </video>
+                    <%} %>
+                </div>
+            </div>
+        <% } %>
+    <% }%>
+</script>
+<script type="text-x-dot-template" id="tpl-material-approve-panel">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="material-approve-panel-label">
+            <% if (it.ischecked) {%>
+            素材更新审核
+            <% }else {%>
+            查看更新
+            <% }%>
+            </h4>
+        </div>
+        <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+            <form class="form-horizontal" id="material-approve-tpl-wrapper">
+                <div class="row">
+                    <div class="col-sm-6" style="border-right: 1px solid #ccc;">
+                        <div style="text-align:center;"><label>
+                        <% if (it.status === CONSTANT.MATERIALS_STATUS_APPROVE_WAITING) {%>
+                            当前素材
+                        <% }else if(it.status === CONSTANT.MATERIALS_STATUS_EFFECT) {%>
+                            修改当前素材
+                        <%}else if(it.status === CONSTANT.MATERIALS_STATUS_APPROVE_REJECT) {%>
+                            当前投放
+                        <% }%>
+                        </label></div>
+                        <div id="material-old-tpl-container"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div style="text-align:center;"><label>
+                        <% if (it.status === CONSTANT.MATERIALS_STATUS_APPROVE_WAITING) {%>
+                            修改为
+                        <% }else if(it.status === CONSTANT.MATERIALS_STATUS_EFFECT) {%>
+                            当前投放
+                        <%}else if(it.status === CONSTANT.MATERIALS_STATUS_APPROVE_REJECT) {%>
+                            未通过审核素材
+                        <% }%>
+                        </label></div>
+                        <div id="material-new-tpl-container"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <% if (it.ischecked) {%>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" id="material-approve-accept">通过审核</button>
+            <button type="button" class="btn btn-default" id="material-approve-reject">不通过审核</button>
+        </div>
+        <% }%>
+</script>
+
+<script type="text-x-dot-template" id="tpl-add-advertiser-advertiser">
+    <option value=''>请选择广告主</option>
+    <%for (var i=0; i <it.obj.length; i ++) {%>
+        <option value=<%=it.obj[i].clientid%> ><%=it.obj[i].clientname%></option>
+    <%}%>
+</script>
+<script type="text-x-dot-template" id="tpl-add-advertiser-product">
+    <%if (it.obj && it.obj.length > 0) {%>
+        <li class="add-advertiser-product-news" data-id="0"><a href="javascript:;"><strong>+ 新建产品</strong></a></li>
+    <%for (var i=0; i <it.obj.length; i ++) {%>
+        <li class="add-advertiser-product-list" data-icon="<%=it.obj[i].icon%>" data-id="<%=it.obj[i].id%>" data-platform="<%=it.obj[i].platform%>" data-name="<%=it.obj[i].name%>">
+            <a href="javascript:;">
+                <img src="<%=it.obj[i].icon%>" width="30" height="30"><span><%=LANG.platform[it.obj[i].platform]%></span><%=it.obj[i].name%>
+            </a>
+        </li>
+    <%}%>
+    <%}%>
+
+</script>
+<script type="text-x-dot-template" id="tpl-add-platform">
+    <%for(key in it) {%>
+        <option value=<%=key%>><%=it[key]%></option>
+    <%}%>
+</script>
+
+<script type="text-x-dot-template" id="tpl-equivalence-type">
+    <select class="form-control" disabled>
+        <option value=<%=it.platform%>><%=LANG.platform_group[it.platform]%></option>
+    </select>
+    <select class="form-control" disabled>
+         <option value=<%=it.ad_type%>><%=LANG.ad_type[it.ad_type]%></option>
+    </select>
+    <select class="form-control" disabled>
+        <option value=<%=it.revenue_type%>><%=LANG.revenue_type[it.revenue_type]%></option>
+    </select>
+</script>
+
+<script type="text-x-dot-template" id="tpl-add-advertiser-form">
+        <div class="form-group add-advertiser-form-tips">
+            <div class="row">
+                <div class="col-sm-11 col-sm-offset-1" style="margin-left: 25px;width:460px">
+                    <p class="add-advertiser-form-tips-txt"><span>※</span>仅创建只投放人工媒体的CPA或CPT广告，若要程序化投放，请用广告主账号创建。
+                    <button type="button" class="close"><span aria-hidden="true">×</span></button></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">计费类型:</label>
+                <div class="col-sm-8 add-advertiser-revenue-type">
+                    <label class="radio-inline">
+                        <input type="radio" name="revenue_type" value="<%=CONSTANT.revenue_type_cpa%>"> CPA
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="revenue_type" value="<%=CONSTANT.revenue_type_cpt%>"> CPT
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="revenue_type" value="<%=CONSTANT.revenue_type_cps%>"> CPS
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">广告主:</label>
+                <div class="col-sm-8 add-advertiser-client-select">
+                    <select class="form-control" id="add-advertiser-advertiser"></select>
+                    <input type="hidden" name="clientid" check-type="required" required-message="请选择广告主">
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">广告产品:</label>
+                <div class="col-sm-8">
+                    <div class="dropdown add-advertiser-product-dropdown">
+                        <button class="btn btn-default dropdown-toggle" style="width:100%" type="button" id="add-advertiser-product-select" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="add-advertiser-product-selected">请选择广告产品</span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu add-advertiser-product-select-list" aria-labelledby="add-advertiser-product-select" style="width:100%"></ul>
+                    </div>
+                    <input type="hidden" name="products_id" value="" check-type="required" required-message="请选择广告产品" >
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">目标平台:</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="add-advertiser-platform" name="platform" check-type="required" required-message="请选择平台"></select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">应用名称:</label>
+                <div class="col-sm-8">
+                    <input type="text" name="products_name" class="form-control" check-type="required" required-message="请输入应用名称">
+                </div>
+            </div>
+        </div>
+        <div class="form-group required des-pic">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">应用图标:</label>
+                <div class="col-sm-8">
+                    <button id="js-upload-des" class="js-upload-description btn btn-primary pull-left" type="button">上传</button>
+                    <div class="js-des-thumb"></div>
+                    <span class="help-block">请上传<span class="text-warning">512 x 512</span>的图标</span>
+                    <input type="hidden" name="products_icon"  value="" check-type="required" required-message="请上传应用图标">
+                </div>
+            </div>
+        </div>
+        <div class="form-group required">
+            <div class="row">
+                <label for="" class="col-sm-3 control-label">广告名称:</label>
+                <div class="col-sm-8">
+                    <input type="text" name="appinfos_app_name" class="form-control" check-type="required" required-message="请输入广告名称">
+                </div>
+            </div>
+        </div>
+</script>
+
+<script id="tpl-directional-delivery" type="text/x-dot-template">
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">性别定向</h2>
+            <div class="classify-bd">
+                <div class="classify-gender col-sm-12">
+                    <label class="checkbox-inline"><input type="checkbox" name="gender" value="1"
+                        <%if ($.inArray("1", it.gender) > -1) {%>checked<%}%>>男
+                    </label>
+                    <label class="checkbox-inline"><input type="checkbox" name="gender" value="2"
+                        <%if ($.inArray("2", it.gender) > -1) {%>checked<%}%>>女
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">年龄定向</h2>
+            <div class="classify-bd">
+                <div class="classify-age col-sm-12" id="js-classify-age-text" style="padding-left:100px;">
+                    <%if(it.age=='10,50'){%>
+                        不限
+                    <%}else{%>
+                        <%=it.age%>
+                    <%}%>
+                </div>
+                <div class="classify-age col-sm-12">
+                    <input id="age" type="text"
+                        data-slider-ticks="[10, 30, 50]"
+                        data-slider-ticks-labels='["10", "30", "50"]'
+                        data-slider-id='ageSlider' data-slider-step="1" data-slider-value="[<%=it.age%>]"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">城市定向</h2>
+            <div class="classify-bd">
+                <div class="region-select col-sm-12">
+                    <div id="region-select"><span>全部地区</span></div>
+                    <div class="region-select-layer dropdown-menu" aria-labelledby="js-choose-region">
+                        <div class="region-select-content">
+                            <div class="region-group">
+                                <label class="radio-inline">
+                                    <input type="radio" value="0" name="region-group" checked> 全部地区
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" value="1" name="region-group"> 部分地区
+                                </label>
+                            </div>
+                            <div class="region-select-data">
+                            </div>
+                        </div>
+                        <div class="region-select-footer">
+                            <button type="button" class="btn btn-primary btn-sm" id="region-select-confirm">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">运营商</h2>
+            <div class="classify-bd">
+                <div class="col-sm-3">
+                    <label class="radio-inline"><input type="radio" name="carrier-radio" value="0" data-handle="choose-radio"
+                        <%if (it.carrier.length === 0){%>checked<%}%> />不限</label>
+                </div>
+                <%for(var key in carriers){%>
+                <div class="col-sm-3">
+                    <label class="checkbox-inline"><input type="checkbox" name="carrier" value="<%=key%>" data-handle="choose"
+                        <%if ($.inArray(key, it.carrier) > -1) {%>checked<%}%>><%=carriers[key]%></label>
+                </div>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">网络类型</h2>
+            <div class="classify-bd">
+                <div class="col-sm-3">
+                    <label class="radio-inline"><input type="radio" name="connectiontype-radio" value="0" data-handle="choose-radio"
+                        <%if (it.connectiontype.length === 0){%>checked<%}%> />不限</label>
+                </div>
+                <%for(var key in connectiontypes){%>
+                <div class="col-sm-3">
+                    <label class="checkbox-inline"><input type="checkbox" name="connectiontype" value="<%=key%>" data-handle="choose"
+                        <%if ($.inArray(key, it.connectiontype) > -1) {%>checked<%}%>><%=connectiontypes[key]%></label>
+                </div>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify" id="js-classify-model">
+        <div class="col-sm-12">
+            <h3 class="classify-title">品牌类型</h2>
+            <div class="classify-bd">
+                <div class="col-sm-3">
+                    <label class="radio-inline">
+                        <input type="radio" value="0" name="make-radio" data-handle="choose-radio" <%if (it.make.length === 0){%>checked<%}%> >不限
+                    </label>
+                </div>
+                <%for(var key in models){%>
+                <div class="col-sm-3">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="make" value="<%=key%>" data-handle="choose"
+                            <%if ($.inArray(key, it.make) > -1) {%>checked<%}%>><%=models[key]%>
+                    </label>
+                </div>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">机型价格</h2>
+            <div class="classify-bd">
+                <div class="col-sm-3">
+                    <label class="radio-inline">
+                        <input type="radio" value="0" name="imei_price-radio" data-handle="choose-radio"
+                            <%if (it.imei_price.length === 0){%>checked<%}%> >不限
+                    </label>
+                </div>
+                <%for(var key in imei_prices){%>
+                <div class="col-sm-3">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="imei_price" value="<%=key%>" data-handle="choose"
+                            <%if ($.inArray(key, it.imei_price) > -1) {%>checked<%}%>><%=imei_prices[key]%>
+                    </label>
+                </div>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <%var osVersion = '';var iosVersion = '';%>
+            <%if(it.os){osVersion=it.os['Android'];iosVersion=it.os['iOS'];}%>
+            <h3 class="classify-title">操作系统</h2>
+            <div class="classify-bd">
+                <div class="col-sm-12" style="padding-bottom: 2px;" id="js-os-android">
+                    <label class="checkbox-inline col-sm-3">
+                        <input type="checkbox" value="Android" name="os" checked disabled>Android
+                        <span style="display:inline-block;float:right;">最低</span>
+                    </label>
+                    <div class="col-sm-4" style="padding-left:2px;">
+                        <select name="os_version_android" class="form-control">
+                            <option value="">不限</option>
+                            <%for(var i = 0, j = android_versions.length; i < j; i++){%>
+                                <option value="<%=android_versions[i]%>" <%if(osVersion == android_versions[i]){%>selected<%}%>>
+                                    <%=android_versions[i]%>
+                                </option>
+                            <%}%>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-12" id="js-os-ios">
+                    <label class="checkbox-inline col-sm-3">
+                        <input type="checkbox" value="iOS" name="os" checked disabled>iOS
+                        <span style="display:inline-block;float:right;">最低</span>
+                    </label>
+                    <div class="col-sm-4" style="padding-left:2px;">
+                        <select name="os_version_ios" class="form-control">
+                            <option value="">不限</option>
+                            <%for(var i = 0, j = ios_versions.length; i < j; i++){%>
+                                <option value="<%=ios_versions[i]%>" <%if(iosVersion == ios_versions[i]){%>selected<%}%>>
+                                    <%=ios_versions[i]%>
+                                </option>
+                            <%}%>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">频次控制</h2>
+            <div class="classify-bd">
+                <div class="classify-frequency col-sm-12" id="js-classify-frequency-text" style="padding-left:110px;">
+                    <%if (!it.imei_imp) {%>
+                        不限
+                    <%}else{%>
+                        <%=it.imei_imp%>
+                    <%}%>
+                </div>
+                <div class="classify-frequency col-sm-12">
+                    <input id="frequency" type="text"
+                        data-slider-ticks="[0, 10]"
+                        data-slider-ticks-labels='["0", "10"]'
+                        data-slider-id='frequencySlider' data-slider-step="1" data-slider-value="<%=it.imei_imp ? it.imei_imp : 0%>"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">投放时间</h2>
+            <div class="classify-bd">
+                <div class="classify-time col-sm-12">
+                    <div class="classify-level2">
+                        <table>
+                            <%for(var key in times){%>
+                            <tr>
+                                <td><label><input type="checkbox" name="times_classify" value="<%=key%>"></label>
+                                </td>
+                                <%for(var time in times[key]){%>
+                                    <td><label class=""><%=times[key][time]%>
+                                    <input type="checkbox" name="time" value="<%=time%>" data-group=<%=key%>
+                                        <%if ($.inArray(time, it.time) > -1) {%>checked<%}%>></label></td>
+                                <%}%>
+                            </tr>
+                            <%}%>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <h3 class="classify-title">兴趣类型</h2>
+            <div class="classify-bd">
+                <div class="classify-interest col-sm-12">
+                    <label class="checkbox-inline"><input type="checkbox" name="interest_classify"
+                        <%if(it.interest == 'ALL'){%>checked<%}%>>全选</label>
+                    <div class="classify-level2 col-sm-12">
+                    <%for(var key in interests){%>
+                        <label class="col-sm-4">
+                            <input type="checkbox" name="interest" value="<%=key%>"
+                                <%if(it.interest == 'ALL' || $.inArray(key, it.interest) > -1){%>checked<%}%>><%=interests[key]%>
+                        </label>
+                    <%}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="tpl-direct-delivery-banner" type="text/x-dot-template">
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <label class="col-sm-2 control-label">视频vid:</label>
+            <div class="col-sm-8">
+                <div class="col-sm-8">
+                    <input class="form-control" name="vid" value="<%=it.vid%>" maxlength="64"
+                        oninput="if(!/[^\d]/g.test(value)) {return}; value=value.replace(/[^\d]/g,'')" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <%if(it.condition_data && it.condition_data.channel) {%>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <label class="col-sm-2 control-label">频道id:</label>
+            <div class="col-sm-10">
+                <div class="col-sm-12">
+                    <label class="radio-inline">
+                        <input type="radio" value="0" name="channel-radio" data-handle="choose-radio" <%if (it.channel.length === 0){%>checked<%}%> >不限
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" value="1" name="channel-checkbox">全选
+                        <span class="advertiser-select" role="button" data-toggle="collapse" href="#js-advertiser-list"
+                            aria-expanded="false" aria-controls="js-advertiser-list" id="js-expand">
+                            +展开
+                        </span>
+                    </label>
+                </div>
+                <div class="col-sm-12 collapse" id="js-advertiser-list">
+                    <%for(var key in it.condition_data.channel){%>
+                    <div class="col-sm-3" style="white-space: nowrap;padding-right: 0;">
+                        <label class="checkbox-inline" title="<%=it.condition_data.channel[key]%>" style="text-overflow: ellipsis;overflow:hidden;">
+                            <input type="checkbox" name="channel" value="<%=key%>" data-handle="choose"
+                                <%if ($.inArray(key, it.channel) > -1) {%>checked<%}%>><%=it.condition_data.channel[key]%>
+                        </label>
+                    </div>
+                    <%}%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%}%>
+    <div class="form-group classify">
+        <div class="col-sm-12">
+            <label class="col-sm-2 control-label">相关性:</label>
+            <div class="col-sm-8">
+                <div class="col-sm-8">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="filter_tag_off_function" value="filter_target_adtext"
+                            <%if ($.inArray('filter_target_adtext', it.filter_tag_off_function) > -1) {%>checked<%}%> >用户相关性</label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="filter_tag_off_function" value="filter_target_user"
+                            <%if ($.inArray('filter_target_user', it.filter_tag_off_function) > -1) {%>checked<%}%>>文本相关性</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="tpl-day-limit-program" type="text/x-dot-template">
+
+    <% if (it.revenue_type != CONSTANT.revenue_type_cps){%>
+        <div style="margin-bottom:-26px">
+            程序化投放每日总上限：<span class="day-limit-program-edit"><span class="text-warning day-limit-program-num"></span> 元
+        </div>
+    <%}%>
+</script>
+
+<!-- chart tooltip -->
+<script id="tpl-line-chart-tooltip" type="text/x-kendo-template">
+    <div class="tpl-chart-tootip">
+        <p>#: Date.parse(category).toString("yyyy-MM-dd") #</p>
+        # for (var i = 0; i < points.length; i++) {#
+            <p>#: points[i].series.name #: #: kendo.toString(Number(points[i].value), points[i].series.fformat) #</p>
+        # } #
+    </div>
+</script>
+
+<script src="../../js/common/validate.js"></script>
+<script src="../../js/plugins/plupload.full.min.js"></script>
+<script src="../../js/plugins/qiniu.js"></script>
+<script src="../../js/plugins/bootstrap-multiselect.js"></script>
+<script src="../../js/common/constant.js"></script>
+<script src="../../js/common/lang.js"></script>
+<script src="../../js/common/editable.js"></script>
+<script src="../../js/plugins/jquery.fancybox.pack.js"></script>
+<script src="../js/category-edit.js"></script>
+<script src="../../js/plugins/date.js"></script>
+<script src="../../js/plugins/bootstrap-slider.min.js"></script>
+<script src="../js/directional-conf.js"></script>
+<script src="../js/city-json.js"></script>
+<script src="../js/citySelect.js"></script>
+<script src="../js/campaign-directional.js"></script>
+<script src="../js/campaign-trend-banner.js"></script>
+<script src="../js/campaign-trend-report.js"></script>
+<script src="../js/campaign-index.js"></script>
+
+<script id="tpl-city-select" type="text/x-dot-template">
+    <%for (var i = 0; i < it.length; i++) {%>
+        <% var _a = it[i];%>
+        <div class="region-select-box">
+        <div class="region-select-box-area"><label class="checkbox-inline"><input type="checkbox" value="<%=_a.a%>" name="region"> <%=_a.a%></label></div>
+        <% var _d = _a.d;%>
+        <%if (_d && _d.length > 0) {%>
+            <div class="region-select-box-province">
+                <%for (var j = 0; j < _d.length; j++) {%>
+                    <% var _p = _d[j];%>
+                    <% var _c = _p.d;%>
+                    <% var _className = '';%>
+                    <% var _postclass = '';%>
+                    <% if (_c && _c.length > 0) {%>
+                        <% _className = 'region-province-haved';%>
+                        <% _postclass = '';%>
+                    <%} else {%>
+                        <% _className = '';%>
+                        <% _postclass = 'postclass';%>
+                    <%}%>
+
+                    <div class="region-province-item <%=_className%>"><label class="checkbox-inline province-label"><input type="checkbox" class="<%=_postclass%>" data-group="<%=_a.a%>" value="<%=_p.p%>" name="province" data-name="<%=_p.p%>"><%=_p.p%></label>
+                        <%if (_c && _c.length > 0) {%>
+                            <div class="region-locator"><div class="region-city-box">
+                                <%for (var k = 0; k < _c.length; k++) {%>
+                                    <label class="checkbox-inline"><input type="checkbox" class="postclass" data-province="<%=_p.p%>" value="<%=_c[k].c%>" name="city" data-name="<%=_c[k].c%>" data-group="<%=_a.a%>"> <%=_c[k].c%></label>
+                                <%}%>
+                            </div></div>
+                        <%}%>
+                    </div>
+                <%}%>
+            </div>
+        <% }%>
+        <div class="clear"></div></div>
+    <%}%>
+</script>
+
+<script id="tpl-search-field" type="text/x-dot-template">
+    <div class="row" id="js-search-row1">
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <span class="title">
+                业务类型:
+            </span>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default active">
+                    <input type="radio" name="select_business_type" value="" checked>全部
+                </label>
+            <%for (var key in LANG.business_type){%>
+                <%if(key == 0) {continue;}%>
+                <label class="btn btn-default">
+                    <input type="radio" name="select_business_type" value="<%=key%>" ><%=LANG.business_type[key]%>
+                </label>
+            <%}%>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-5">
+            <span class="title">
+                推广平台:
+            </span>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default active">
+                    <input type="radio" name="select_platform" value="" checked>全部
+                </label>
+            <%for (var key in LANG.platform){%>
+                <label class="btn btn-default">
+                    <input type="radio" name="select_platform" value="<%=key%>" ><%=LANG.platform[key]%>
+                </label>
+            <%}%>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-3">
+            <span class="title" style="width: 38px;">搜索:</span>
+            <input name="select_search" class="form-control" style="width: 60%;display: inline-block;">
+            <span class="advertiser-select" role="button" data-toggle="collapse" href="#js-high-search" style="display: inline-block;"
+                aria-expanded="false" aria-controls="js-high-search" id="js-high-expand">
+                高级
+            </span>
+        </div>
+    </div>
+    <div id="js-high-search" class="collapse">
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">计费类型:</span>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="select_revenue_type" value="" checked>全部
+                    </label>
+                <%for (var key in LANG.revenue_type){%>
+                    <label class="btn btn-default">
+                        <input type="radio" name="select_revenue_type" value="<%=key%>" ><%=LANG.revenue_type[key]%>
+                    </label>
+                <%}%>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-8">
+                <span class="title">投放状态:</span>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="select_status" value="" checked>全部
+                    </label>
+                <%for (var key in LANG.manager_status_select){%>
+                    <label class="btn btn-default">
+                        <input type="radio" name="select_status" value="<%=key%>" ><%=LANG.manager_status_select[key]%>
+                    </label>
+                <%}%>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">推广类型:</span>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="select_products_type" value="" checked>全部
+                    </label>
+                <%for (var key in LANG.products_type){%>
+                    <label class="btn btn-default">
+                        <input type="radio" name="select_products_type" value="<%=key%>" ><%=LANG.products_type[key]%>
+                    </label>
+                <%}%>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">创建时间:</span>
+                <div style="width: 33%;display: inline-block;vertical-align:middle;">
+                    <div class="input-group">
+                        <input type="text" name="created_at_start" class="form-control"
+                            data-provide="datepicker"
+                            data-date-format="yyyy-mm-dd"
+                            data-date-language="zh-CN"
+                            data-date-autoclose="true">
+                        <div class="time-close"><i class="fa fa-close"></i></div>
+                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                ~
+                <div style="width: 33%;display: inline-block;vertical-align:middle;">
+                    <div class="input-group">
+                        <input type="text" name="created_at_end" class="form-control"
+                            data-provide="datepicker"
+                            data-date-format="yyyy-mm-dd"
+                            data-date-language="zh-CN"
+                            data-date-autoclose="true">
+                        <div class="time-close"><i class="fa fa-close"></i></div>
+                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">最近操作:</span>
+                <div style="width: 33%;display: inline-block;vertical-align:middle;">
+                    <div class="input-group">
+                        <input type="text" name="operation_time_start" class="form-control"
+                            data-provide="datepicker"
+                            data-date-format="yyyy-mm-dd"
+                            data-date-language="zh-CN"
+                            data-date-autoclose="true">
+                        <div class="time-close"><i class="fa fa-close"></i></div>
+                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                ~
+                <div style="width: 33%;display: inline-block;vertical-align:middle;">
+                    <div class="input-group">
+                        <input type="text" name="operation_time_end" class="form-control"
+                            data-provide="datepicker"
+                            data-date-format="yyyy-mm-dd"
+                            data-date-language="zh-CN"
+                            data-date-autoclose="true">
+                        <div class="time-close"><i class="fa fa-close"></i></div>
+                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">停投广告:</span>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="select_status_stop" value="1" checked>不显示
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="select_status_stop" value="2" >显示
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">销售顾问:</span>
+                <select style="width: 70%;display: inline-block;" class="form-control" name="select_creator_uid">
+                    <option value="">所有销售顾问</option>
+                    <%for(var key in it.allSales) {%>
+                        <option value="<%=key%>"><%=it.allSales[key]%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <span class="title">运营顾问:</span>
+                <select style="width: 70%;display: inline-block;" class="form-control" name="select_operation_uid">
+                    <option value="">所有运营顾问</option>
+                    <%for(var key in it.allOpertions) {%>
+                        <option value="<%=key%>"><%=it.allOpertions[key]%></option>
+                    <%}%>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-12">
+                <span class="title">广告类型:</span>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="select_ad_type" value="" checked>全部
+                    </label>
+                <%for (var key in LANG.MANAGER_AD_TYPE){%>
+                    <label class="btn btn-default">
+                        <input type="radio" name="select_ad_type" value="<%=key%>" ><%=LANG.MANAGER_AD_TYPE[key]%>
+                    </label>
+                <%}%>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script src="../../js/plugins/bootstrap-datepicker.min.js"></script>
+<script src="../../js/plugins/bootstrap-datepicker.zh-CN.min.js"></script>
+
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

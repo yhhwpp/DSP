@@ -1,0 +1,145 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox" id="js-mail-tab"></div>
+    <div class="table-ctl" id="js-add-btn">
+        <button type="button" class="btn btn-primary pull-right" id="js-add-advertiser">+ 群发直客广告主邮件</button>
+    </div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-mail-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<div class="modal fade" id="js-notice-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">群发直客广告主邮件</h4>
+            </div>
+            <div class="modal-body" style="height:600px;overflow-y:auto;">
+                <form class="form-horizontal">
+                    <input type="hidden" name="mailid" value="0">
+                    <div class="form-group required">
+                        <label class="col-sm-2 control-label">选择广告主:</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox-inline"><input type="checkbox" name="select-all" id="js-select-all">全选
+                                <span class="advertiser-select" role="button" data-toggle="collapse" href="#js-advertiser-list"
+                                    aria-expanded="false" aria-controls="js-advertiser-list" id="js-expand">
+                                    +展开有效广告主
+                                </span>
+                            </label>
+                            <div class="collapse" id="js-advertiser-list">
+                            </div>
+                            <input type="hidden" value="select-num" name="select-num" check-type="checkNum">
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label class="col-sm-2 control-label">标题:</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="title" data-name="title"
+                                placeholder="如：充80万送20万大优惠" maxlength="30"
+                                check-type="required" required-message="请填写标题">
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="description" class="col-sm-2 control-label">正文:</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" name="content" data-name="content" id="content"
+                            maxlength="1000" rows="6"></textarea>
+                            <input type="hidden" value="content" name="ck-content" check-type="checkContent">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="js-sent" data-tips="您确定要群发该邮件吗？" data-type="sent">群发邮件</button>
+                <button type="button" class="btn btn-default" id="js-save-draft" data-tips="您确定保存草稿吗？" data-type="draft">保存草稿</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade mail-modal" id="js-mail-detail-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">查看邮件内容</h4>
+            </div>
+            <div class="modal-body" style="height:600px;overflow-y:auto;">
+                <form class="form-horizontal">
+                    <input type="hidden" name="mailid" value="0">
+                    <div class="form-group required">
+                        <label class="col-sm-2 control-label">直客广告主:</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="js-show-advertiser"></p>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label class="col-sm-2 control-label">标题:</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static js-title"></p>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="description" class="col-sm-2 control-label">正文:</label>
+                        <div class="col-sm-10">
+                            <div id="showcontent"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text-x-dot-template" id="tpl-activity-notice-tab">
+    <ul class="nav nav-tabs">
+        <%if (it.report === 1) {%>
+        <li role="report">
+            <a href="../activity/index.html?tab=report">BiddingOS日报</a>
+        </li>
+        <%}%>
+        <li role="advertiser">
+            <a href="../activity/index.html?tab=advertiser">直客广告主-活动</a>
+        </li>
+        <li role="trafficker">
+            <a href="../activity/index.html?tab=trafficker">媒体商-活动</a>
+        </li>
+        <li role="advertiser">
+            <a href="../notice/index.html?tab=advertiser">直客广告主-站内信</a>
+        </li>
+        <li role="trafficker">
+            <a href="../notice/index.html?tab=trafficker">媒体商-站内信</a>
+        </li>
+        <li role="advertiser" class="active">
+            <a href="../notice/mail.html?tab=advertiser">直客广告主-邮件</a>
+        </li>
+    </ul>
+</script>
+<script type="text-x-dot-template" id="tpl-advertiser-tab">
+    <%if(it && it.length > 0) {%>
+        <%for(var i = 0, j = it.length; i < j; i++) {%>
+            <div class="col-sm-3 advertiser-check">
+                <label class="checkbox-inline" title="<%=it[i].clientname%>"><input type="checkbox" name="advertiser" value="<%=it[i].user_id%>"
+                    data-clientname="<%=it[i].clientname%>" data-email_address="<%=it[i].email_address%>" data-account_id="<%=it[i].account_id%>">
+                    <%=it[i].clientname%>
+                </label>
+            </div>
+        <%}%>
+    <%} else {%>
+        没有广告主
+    <%}%>
+</script>
+<script type="text-x-dot-template" id="tpl-show-advertiser-tab">
+    <%if(it && it.length > 0) {%>
+        <%for(var i = 0, j = it.length; i < j; i++) {%>
+            <div class="col-sm-4 advertiser-check" title="<%=it[i].clientname%>(<%=it[i].email_address%>)">
+            <div class="adv-label"><span style=""><%=it[i].clientname%></span>(<%=it[i].email_address%>)</div>
+            </div>
+        <%}%>
+    <%}%>
+</script>
+<script src="../../ckeditor/ckeditor.js"></script>
+<script src="../../js/common/validate.js"></script>
+<script src="../js/notice-mail.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

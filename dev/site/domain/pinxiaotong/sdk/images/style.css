@@ -1,0 +1,15 @@
+*{padding: 0; margin:0;}
+body {font-family: Verdana, "\5FAE\8F6F\96C5\9ED1", Helvetica, Arial, sans-serif;padding: 0; height: 100%}
+.header{background-color: #101010;position: fixed; left: 0; top:0; width: 100%;z-index: 22;}
+.sdk {width: 1000px; height: 420px; overflow: hidden; color: #7c7c7c;font-size: 15px;position: fixed; left: 50%; top:50%; left: 50%; margin-left: -500px; margin-top: -220px;}
+.sdk table {width: 100%;margin-bottom: 50px;background: #f7f7f7;border-collapse:collapse;height: 100px}
+.sdk table td {border: 1px solid #e3e3e3; text-align: center; vertical-align: middle; padding: 15px; }
+.sdk .sdk-icon {width: 156px; padding: 0;}
+.sdk .sdk-des { vertical-align: top; text-align: left;padding: 30px;width: 600px;}
+.sdk h4 {font-size: 20px; color: #585858; padding: 0 0 5px;font-weight: normal;}
+.sdk .sdk-doc {margin-top: 20px; line-height: 1.8;}
+.sdk .sdk-doc a {color: #fc7603;}
+.sdk .sdk-down a {display: block; color: #fc7603; text-align: center;font-size: 16px;}
+.sdk .sdk-down img {display: block; margin: 0 auto 10px auto;}
+.sdk a:hover,.sdk a {text-decoration: none;}
+.footer{background-color: #f5f5f5;text-align: center;line-height: 50px;height: 50px;font-size: 12px; position: fixed; left: 0; bottom:0; width: 100%}

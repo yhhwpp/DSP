@@ -1,0 +1,76 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link href="../../css/bootstrap-multiselect.css" rel="stylesheet">
+<div id="overview">
+    <div>
+        <div id="chart-zone-header" class="overview-header">
+            <h2>
+                <select id="select-trend-type" style="background:rgba(0,0,0,0); border:none;">
+                    <option value="0">30天变化趋势</option>
+                    <option value="1">7天变化趋势</option>
+                </select>
+                <span style="font-size:14px; margin-left: 20px; font-weight:400; color: #fc7603;"> ※ 整点更新</span>
+                <div id="select-camp-wrapper" class="select-camp-wrapper">
+                    <select id="select-camp" multiple style="display:none;"></select>
+                </div>
+            </h2>
+        </div>
+        <div>
+            <ul id="overview-chart-wripper" class="overview-chart-wripper" style="overflow: auto; margin: 20px 0;">
+            </ul>
+        </div>
+    </div>
+    <div>
+        <div id="chart-rank-header" class="overview-header clear-float">
+            <h2>收入分布与排行
+                <a href="javascript:void(0);" data-day-type="0" class="cur">今日</a>
+                <a href="javascript:void(0);" data-day-type="1">昨日</a>
+                <a href="javascript:void(0);" data-day-type="2">本周</a>
+                <a href="javascript:void(0);" data-day-type="3">上周</a>
+                <a href="javascript:void(0);" data-day-type="4">本月</a>
+                <a href="javascript:void(0);" data-day-type="5">上月</a>
+                <a href="javascript:void(0);" data-day-type="6">累计</a>   
+            </h2>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-7">
+                    <div id="pie-chart-wrapper" class="js-chart" style="height:400px; padding:20px; text-align:center;"></div>
+                </div>
+                <div class="col-sm-5">
+                    <div style="margin:15px;">
+                        <table id="rank-table-wrapper" class="table table-striped table-bordered table-hover align-center"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- chart -->   
+<script id="tpl-chart-li" type="text/x-dot-template">
+    <li class="col-sm-4" style="padding:0 20px 20px 20px;">
+        <div class="m-chart-wripper">
+            <div class="chart-head">
+                <% if (it.app_show_icon) {%>
+                    <img src="<%=it.app_show_icon%>" />
+                <% } %>
+                <span><%= it.app_name%></span>     
+            </div>
+            <div class="js-chart" style="height: 300px; position: relative;"></div>
+        </div>
+    </li>
+</script>
+
+<!-- chart tooltip -->
+<script id="tpl-line-chart-tooltip" type="text/x-kendo-template">
+    <div class="tpl-chart-tootip">
+        <p>#: Date.parse(category).toString("yyyy-MM-dd") #</p>
+        # for (var i = 0; i < points.length; i++) { #
+            <p>#: points[i].series.name #: #: kendo.toString(points[i].value, points[i].series.fformat) #</p>
+        # } #
+    </div>
+</script>
+<script src="../../js/plugins/bootstrap-multiselect.js"></script>
+<script src="../../js/plugins/date.js"></script>
+<script src="../js/overview-sale.js" ></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

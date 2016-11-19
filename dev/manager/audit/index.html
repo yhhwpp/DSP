@@ -1,0 +1,88 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div style="display: none;"><div id="js-file-up" style="display: none;">导入明细</div></div>
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox js-audit-tab"></div>
+    <!-- 表格数据 -->
+    <div>
+        <table id="js-audit-table" class="table table-striped table-bordered table-hover table-fixed-header audit-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="mtable-col-bdr">日期</th>
+                    <th colspan="3" class="mtable-col-bdr mtable-col-tac">实时明细</th>
+                    <th colspan="3" class="mtable-col-bdr mtable-col-tac">人工投放明细</th>
+                    <th colspan="2" class=" mtable-col-bdr mtable-col-tac">程序化投放审计后明细</th>
+                    <th rowspan="2" class="mtable-col-bdr">状态</th>
+                    <th rowspan="2">审计操作</th>
+                </tr>
+                <tr>
+                    <th>广告主消耗</th>
+                    <th>媒体分成</th>
+                    <th class="mtable-col-bdr">联盟收益</th>
+                    <th>广告主消耗</th>
+                    <th>媒体分成</th>
+                    <th class="mtable-col-bdr">联盟收益</th>
+                    <th>媒体分成</th>
+                    <th class="mtable-col-bdr">联盟收益</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td>汇总</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<!-- 广告设定弹出 -->
+<div class="modal fade js-audit-modal">
+    <div class="modal-dialog" style="width: 80%; min-width:820px; position:relative;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">审计管理</h4>
+            </div>
+            <div class="modal-body height-table">
+                <table id="js-audit-modal-table" class="table table-striped table-bordered table-hover table-fixed-header wrap-table">
+                </table>
+                <p class="clear">
+                    <button type="button" class="btn btn-primary trafficker-audit-modify" style="float:right">确定修改</button>
+                    <div class="clear"></div>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text-x-dot-template" id="tpl-audittab">
+    <ul class="nav nav-tabs">
+        <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_trafficker_audit) > -1) {%>
+        <li role="trafficker" class="active"><a href="./index.html">媒体商数据审计</a></li>
+        <%}%>
+        <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_client_audit) > -1) {%>
+        <li role="advertiser"><a href="./advertiser.html">D&C广告数据审计</a></li>
+        <li role="advertiser"><a href="./advertiser.html?revenue_type=4">A广告数据审计</a></li>
+        <li role="advertiser"><a href="./advertiser.html?revenue_type=8">T广告数据审计</a></li>
+        <li role="advertiser"><a href="./advertiser.html?revenue_type=32">S广告数据审计</a></li>
+        <%}%>
+    </ul>
+</script>
+<script src="../../js/plugins/jquery.form.min.js"></script>
+<script src="../../js/plugins/jquery.uploadfile.min.js"></script>
+<script src="../js/operation-common.js"></script>
+<script src="../js/audit-index.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

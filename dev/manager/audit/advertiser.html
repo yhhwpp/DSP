@@ -1,0 +1,101 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link href="../../css/bootstrap-datepicker3.min.css" rel="stylesheet">
+<div class="tf-receipt">
+    <!-- Tab项 -->
+    <div class="tabbox js-audit-tab"></div>
+    <div class="audit-date" style="padding-bottom: 20px;">
+        <form class="form-inline">
+            <div class="form-group">
+            <label for="startdate">开始时间：</label><input type="text" name="startdate" id="startdate" class="form-control input-sm" 
+            data-provide="datepicker"
+            data-date-format="yyyy-mm-dd"
+            data-date-language="zh-CN"
+            data-date-autoclose="true">
+            <label for="enddate">结束时间：</label><input type="text" name="enddate" id="enddate"  class="form-control input-sm" 
+                data-provide="datepicker"
+                data-date-format="yyyy-mm-dd"
+                data-date-language="zh-CN"
+                data-date-autoclose="true">
+            <span class="revenue-type">
+            </span>
+            <button type="button" class="btn btn-default" id="js-search">查询</button>
+            </div>
+        </form>
+        
+    </div>
+    <!-- 表格数据 -->
+    <div>
+        <div class="table-toolbar pull-left" id="js-batch-ope">
+            <label class="checkbox-inline" style="margin-left:5px;"><input type="checkbox" id="adv-select-all" data-type="adv-select-all">全选</label>
+            <span class="btn btn-primary" id="js-update-batch" style="margin-left:10px;">批量更新并通过</span>
+        </div>
+        <table id="js-advertiser-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+    </div>
+</div>
+<input type="hidden" name="status">
+<div class="modal fade" id="js-delivery-modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document" style="width:65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    <!-- htmlcs-disable img-alt,img-src -->
+                    <img src="" alt="" id="js-products-icon" width="30" height="30">
+                    <span id="js-products-name"></span>-
+                    <span id="js-app-name"></span>
+                    <span style="font-size: 14px;">-投放数据</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="campaignid">
+                <input type="hidden" name="date">
+                <table id="js-delivery-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text-x-dot-template" id="tpl-audittab">
+    <ul class="nav nav-tabs">
+        <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_trafficker_audit) > -1) {%>
+        <li role="trafficker"><a href="./index.html">媒体商数据审计</a></li>
+        <%}%>
+        <%if (it.obj.operation_list === 'all' || it.obj.operation_list.indexOf(OPERATION_LIST.manager_client_audit) > -1) {%>
+        <li role="advertiser" data-revenue_type="<%=CONSTANT.revenue_type_cpd%>"
+            class="<%if (!(it.revenue_type == CONSTANT.revenue_type_cpa || it.revenue_type == CONSTANT.revenue_type_cpt || it.revenue_type == CONSTANT.revenue_type_cps)) {%>active<%}%>">
+            <a href="./advertiser.html">D&C广告数据审计</a>
+        </li>
+        <li role="advertiser" data-revenue_type="<%=CONSTANT.revenue_type_cpa%>"
+            class="<%if (it.revenue_type == CONSTANT.revenue_type_cpa) {%>active<%}%>">
+            <a href="./advertiser.html?revenue_type=4">A广告数据审计</a>
+        </li>
+        <li role="advertiser" data-revenue_type="<%=CONSTANT.revenue_type_cpt%>"
+            class="<%if (it.revenue_type == CONSTANT.revenue_type_cpt) {%>active<%}%>">
+            <a href="./advertiser.html?revenue_type=8">T广告数据审计</a>
+        </li>
+        <li role="advertiser" data-revenue_type="<%=CONSTANT.revenue_type_cps%>"
+            class="<%if (it.revenue_type == CONSTANT.revenue_type_cps) {%>active<%}%>">
+            <a href="./advertiser.html?revenue_type=32">S广告数据审计</a>
+        </li>
+        <%}%>
+    </ul>
+</script>
+<script type="text-x-dot-template" id="tpl-revenue-type">
+    <%if (it.revenue_type === ''){%> 
+    <select class="form-control" name="revenue-type">
+        <option value="">计费类型</option>
+        <option value="<%=CONSTANT.revenue_type_cpc%>">CPC</option>
+        <option value="<%=CONSTANT.revenue_type_cpd%>">CPD</option>
+    </select>
+    <select class="form-control" name="platform">
+        <option value="">平台</option>
+        <%for(key in LANG.platform_group) {%>
+            <option value="<%=key%>"><%=LANG.platform_group[key]%></option>
+        <%}%>
+    </select>
+    <%}%>
+
+</script>
+<script src="../../js/plugins/bootstrap-datepicker.min.js"></script>
+<script src="../../js/plugins/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="../js/audit-advertiser.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

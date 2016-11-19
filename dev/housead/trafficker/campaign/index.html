@@ -1,0 +1,98 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<link rel="stylesheet" href="../../../css/jquery.fancybox.css">
+<div class="tf-receipt">
+    <table id="js-campaign-table" class="table table-striped table-bordered table-hover table-fixed-header"></table>
+</div>
+
+<!-- 驳回 -->
+<input type="hidden" name="approve-reject-campaignid">
+<div class="modal fade" id="approve-reject-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close js-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">不通过审核原因（必须填写）</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <textarea id="reject-content" class="form-control" style="height:200px; width:100%;"></textarea>
+                    <span id="reject-msg" class="text-warning"></span>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="approve-reject-accept">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 通过审核 -->
+<div class="modal fade" id="approve-panel" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close js-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">请确定广告投放的级别和类别</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group required rank-set">
+                        <label class="col-sm-3 control-label">广告级别</label>
+                        <div class="col-sm-9"></div>
+                    </div>
+                    <div class="form-group required category-set">
+                        <label class="col-sm-3 control-label">广告类别</label>
+                        <div class="col-sm-9">
+                            <div id="category-list"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="approve-accept">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 搜索关键字 -->
+<div id="zones-up" class="zones-up">
+    <div class="zones-up-ct">
+        <span  class="am-close am-close-spin floater-close">×</span>
+        <table class="floatertb table table-striped table-bordered table-hover table-fixed-header" id="floatertb">
+            <thead>
+                <tr>
+                    <th width="220">关键字</th>
+                    <th width="150">竞争力</th>
+                    <th width="130">加价（元）</th>
+                    <th width="120">类型</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 单元测试 -->
+<!-- <script src="/bos-front/dev/data/mock.js"></script>
+<script src="/bos-front/dev/data/trafficker-campaign-json.js"></script>  -->
+
+<script type="text-x-dot-template" id="tpl-trafficler-rank">
+<div class="label-rank-container">
+    <%for(var k in LANG.app_rank) {%>
+        <span class="label label-rank" data-value='<%=k%>'><%=LANG.app_rank[k]%></span>   
+    <%}%>
+    <input  type="hidden" name="app-rank-set" value="" check-type="required" required-message="请选择级别" />
+</div>
+</script>
+
+
+<script src="../../../js/plugins/jquery.fancybox.pack.js"></script>
+<script src="../../../js/common/editable.js"></script>
+<script src="../../../js/common/modal.js"></script>
+<script src="../../../js/common/validate.js"></script>
+<script src="../../../js/common/common.js"></script>
+<script src="../../../js/common/lang.js"></script>
+<script src="../../../js/common/constant.js"></script>
+<script src="../js/campaign-index.js"></script>
+
+<!--#include virtual="/bos-front/dev/common/footer.html"-->

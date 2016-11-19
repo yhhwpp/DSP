@@ -1,0 +1,48 @@
+<!--#include virtual="/bos-front/dev/common/head.html"-->
+<div class="recharge">
+    <div id="js-recharge"></div>
+</div>
+<script type="text-x-dot-template" id="tpl-recharge">
+    <h2>充值金额</h2>
+    <div class="rechargeSelect">
+        <form action="<%=it.payUrl%>" class="form-horizontal" method="post" target='_blank' id="js-rechargeForm" style="max-width:600px;">
+            <div class="form-group">
+                 <div class="col-sm-9">
+                     <div class="radio">
+                         <label>
+                             <input type="radio" name="recharge" id="recharge1" value="1" check-type="required isPayMoney" required-message="请选中充值金额类型">￥5万元</label>
+                     </div>
+                     <div class="radio">
+                         <label>
+                             <input type="radio" name="recharge" id="recharge2" value="2">￥10万元</label>
+                     </div>
+                     <div class="radio">
+                         <label>
+                             <input type="radio" name="recharge" id="recharge3" value="3">￥20万元</label>
+                     </div>
+                     <div class="radio">
+                         <label>
+                             <input type="radio" name="recharge" id="js-rechargeOther" value="4">其它</label>
+                         <input type="text" class="rechargeSelectIn" id="js-payMoney" name="money" onkeyup="value=value.replace(/[^\d]/g,'')" placeholder='请输入整数，最少2000元' >
+                     </div>
+                 </div>
+             </div>
+             <div class="form-group">
+                 <div class="col-sm-9">
+                     <button type="submit" class="btn btn-default" name="sub" id="js-submitRecharge">下一步</button>
+                 </div>
+             </div>
+            <div class="rechargeTips">
+                <span>提示:</span>
+                <ul>
+                    <li>1.充值时，如遇到未及时到账情况，系统会自动核查，在充值当天入账，请及时关注。</li>
+                    <li>2.充值成功以后，因账户余额不足而暂停的推广任务会自动开始投放，请关注。</li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</script>
+<script src="../../js/common/validate.js"></script>
+<script src="../../js/common/modal.js"></script>
+<script src="../js/balance-pay.js"></script>
+<!--#include virtual="/bos-front/dev/common/footer.html"-->
